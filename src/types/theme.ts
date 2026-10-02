@@ -1,3 +1,4 @@
+import { ViewStyle } from 'react-native';
 import { spacing, borderRadius, typography, dimensions } from '../theme/tokens';
 
 export type ColorScheme = 'light' | 'dark';
@@ -27,8 +28,30 @@ export interface ThemeColors {
   infoMuted: string;
 }
 
+export interface ClayTheme {
+  surface: string;
+  surfaceElevated: string;
+  surfaceRecessed: string;
+  surfaceTrack: string;
+  surfaceChip: string;
+  surfaceNeutralChip: string;
+  borderHighlight: string;
+  borderSubtle: string;
+  borderActive: string;
+  shadowColor: string;
+  shadowCard: ViewStyle;
+  shadowButton: ViewStyle;
+  shadowChip: ViewStyle;
+  webCardShadow: string;
+  webRecessedShadow: string;
+  webButtonShadow: string;
+  webChipShadow: string;
+  webNeutralChipShadow: string;
+}
+
 export interface Theme {
   colors: ThemeColors;
+  clay: ClayTheme;
   spacing: typeof spacing;
   borderRadius: typeof borderRadius;
   typography: typeof typography;
