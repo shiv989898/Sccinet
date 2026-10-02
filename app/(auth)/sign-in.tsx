@@ -13,7 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
 import { authService } from '../../src/services/auth/authService';
 import { signInSchema, signUpSchema } from '../../src/features/auth/schemas';
-import { Card, Button, Input, Badge } from '../../src/components/ui';
+import { Card, Button, Input } from '../../src/components/ui';
 
 export default function SignInScreen() {
   const theme = useTheme();
@@ -63,9 +63,8 @@ export default function SignInScreen() {
       if (data?.session) {
         router.replace('/(auth)/onboarding');
       } else {
-        // Confirmation email sent or awaiting confirmation
         setErrorMessage(
-          'Registration initiated! If email confirmation is enabled on your Supabase instance, please check your inbox.'
+          'Registration initiated! If email confirmation is enabled, please check your inbox.'
         );
       }
     } else {
@@ -102,225 +101,363 @@ export default function SignInScreen() {
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        {/* Brand Header */}
-        <View style={styles.brandSection}>
-          <View
-            style={[
-              styles.logoBadge,
-              {
-                backgroundColor: theme.colors.primaryMuted,
-                borderColor: theme.colors.primary,
-              },
-            ]}
-          >
-            <Ionicons name="sparkles" size={28} color={theme.colors.primary} />
-          </View>
-          <Text
-            style={[
-              styles.brandTitle,
-              {
-                color: theme.colors.text,
-                fontSize: theme.typography.sizes.xxxl,
-                fontWeight: theme.typography.weights.bold,
-              },
-            ]}
-          >
-            Sccinet
-          </Text>
-          <Text
-            style={[
-              styles.brandTagline,
-              {
-                color: theme.colors.textSecondary,
-                fontSize: theme.typography.sizes.sm,
-              },
-            ]}
-          >
-            Where builders connect, showcase, and collaborate
-          </Text>
-        </View>
-
-        {/* Auth Card */}
-        <Card variant="elevated" style={styles.card}>
-          {/* Segmented Mode Toggle */}
-          <View
-            style={[
-              styles.toggleContainer,
-              {
-                backgroundColor: theme.colors.surfaceSubtle,
-                borderRadius: theme.borderRadius.md,
-              },
-            ]}
-          >
-            <TouchableOpacity
-              onPress={() => switchMode('signin')}
-              style={[
-                styles.toggleBtn,
-                !isSignUp && {
-                  backgroundColor: theme.colors.surface,
-                  borderRadius: theme.borderRadius.sm,
-                  borderWidth: 1,
-                  borderColor: theme.colors.border,
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.toggleText,
-                  {
-                    color: !isSignUp ? theme.colors.text : theme.colors.textMuted,
-                    fontWeight: !isSignUp ? '600' : '400',
-                    fontSize: theme.typography.sizes.sm,
-                  },
-                ]}
-              >
-                Sign In
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => switchMode('signup')}
-              style={[
-                styles.toggleBtn,
-                isSignUp && {
-                  backgroundColor: theme.colors.surface,
-                  borderRadius: theme.borderRadius.sm,
-                  borderWidth: 1,
-                  borderColor: theme.colors.border,
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.toggleText,
-                  {
-                    color: isSignUp ? theme.colors.text : theme.colors.textMuted,
-                    fontWeight: isSignUp ? '600' : '400',
-                    fontSize: theme.typography.sizes.sm,
-                  },
-                ]}
-              >
-                Create Account
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Error Banner */}
-          {errorMessage && (
+        {/* Top Minimal App Bar */}
+        <View style={styles.topBar}>
+          <View style={styles.brandRow}>
             <View
               style={[
-                styles.errorBanner,
+                styles.brandLogoSmall,
                 {
-                  backgroundColor: theme.colors.errorMuted,
-                  borderColor: theme.colors.error,
+                  backgroundColor: theme.colors.primary,
                 },
               ]}
             >
-              <Ionicons
-                name="alert-circle-outline"
-                size={18}
-                color={theme.colors.error}
-                style={{ marginRight: 8 }}
+              <Ionicons name="shield-checkmark" size={14} color="#FFFFFF" />
+            </View>
+            <Text
+              style={[
+                styles.brandTitle,
+                { color: theme.colors.text, fontSize: theme.typography.sizes.lg },
+              ]}
+            >
+              Sccinet
+            </Text>
+          </View>
+        </View>
+
+        {/* Main Minimal Clay Container */}
+        <View style={styles.centerContainer}>
+          <Card variant="clay" padding="xl" style={styles.authCard}>
+            {/* Header / Identity */}
+            <View style={styles.header}>
+              <View
+                style={[
+                  styles.logoBadge,
+                  {
+                    backgroundColor: theme.clay.surface,
+                    borderColor: theme.clay.borderCard,
+                    ...Platform.select({
+                      web: {
+                        boxShadow: theme.isDark
+                          ? '0 4px 14px rgba(0, 0, 0, 0.4)'
+                          : '0 4px 14px rgba(37, 99, 235, 0.08)',
+                      } as any,
+                      default: {
+                        ...theme.clay.shadowChip,
+                      },
+                    }),
+                  },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.logoInner,
+                    {
+                      backgroundColor: theme.colors.primary,
+                    },
+                  ]}
+                >
+                  <Ionicons name="code-slash" size={18} color="#FFFFFF" />
+                </View>
+              </View>
+
+              <Text
+                style={[
+                  styles.title,
+                  {
+                    color: theme.colors.text,
+                    fontSize: theme.typography.sizes.xxl,
+                    fontWeight: theme.typography.weights.semibold,
+                  },
+                ]}
+              >
+                {isSignUp ? 'Create account' : 'Welcome back'}
+              </Text>
+              <Text
+                style={[
+                  styles.subtitle,
+                  {
+                    color: theme.colors.textSecondary,
+                    fontSize: theme.typography.sizes.sm,
+                  },
+                ]}
+              >
+                {isSignUp
+                  ? 'Start building and collaborating'
+                  : 'Sign in to your builder workspace'}
+              </Text>
+            </View>
+
+            {/* Segmented Pill Track */}
+            <View
+              style={[
+                styles.segmentedTrack,
+                {
+                  backgroundColor: theme.clay.surfaceTrack,
+                },
+              ]}
+            >
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => switchMode('signin')}
+                style={[
+                  styles.segmentTab,
+                  !isSignUp && [
+                    styles.segmentTabActive,
+                    {
+                      backgroundColor: theme.clay.surfaceActivePill,
+                      borderColor: theme.clay.borderCard,
+                      ...Platform.select({
+                        web: {
+                          boxShadow: theme.clay.webPillShadow,
+                        } as any,
+                        default: {
+                          ...theme.clay.shadowPill,
+                        },
+                      }),
+                    },
+                  ],
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.segmentText,
+                    {
+                      color: !isSignUp ? theme.colors.primary : theme.colors.textSecondary,
+                      fontWeight: !isSignUp
+                        ? theme.typography.weights.semibold
+                        : theme.typography.weights.medium,
+                      fontSize: theme.typography.sizes.sm,
+                    },
+                  ]}
+                >
+                  Sign In
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => switchMode('signup')}
+                style={[
+                  styles.segmentTab,
+                  isSignUp && [
+                    styles.segmentTabActive,
+                    {
+                      backgroundColor: theme.clay.surfaceActivePill,
+                      borderColor: theme.clay.borderCard,
+                      ...Platform.select({
+                        web: {
+                          boxShadow: theme.clay.webPillShadow,
+                        } as any,
+                        default: {
+                          ...theme.clay.shadowPill,
+                        },
+                      }),
+                    },
+                  ],
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.segmentText,
+                    {
+                      color: isSignUp ? theme.colors.primary : theme.colors.textSecondary,
+                      fontWeight: isSignUp
+                        ? theme.typography.weights.semibold
+                        : theme.typography.weights.medium,
+                      fontSize: theme.typography.sizes.sm,
+                    },
+                  ]}
+                >
+                  Sign Up
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Error Message */}
+            {errorMessage && (
+              <View
+                style={[
+                  styles.errorBanner,
+                  {
+                    backgroundColor: theme.colors.errorMuted,
+                    borderColor: theme.colors.error,
+                  },
+                ]}
+              >
+                <Ionicons name="alert-circle" size={16} color={theme.colors.error} />
+                <Text style={[styles.errorText, { color: theme.colors.error }]}>
+                  {errorMessage}
+                </Text>
+              </View>
+            )}
+
+            {/* Form Fields */}
+            <View style={styles.form}>
+              {isSignUp && (
+                <Input
+                  label="Full Name"
+                  placeholder="e.g. Alex Rivera"
+                  value={fullName}
+                  onChangeText={setFullName}
+                  autoCapitalize="words"
+                  error={fieldErrors.fullName}
+                  leftAccessory={
+                    <Ionicons
+                      name="person-outline"
+                      size={18}
+                      color={theme.colors.textMuted}
+                      style={styles.inputIcon}
+                    />
+                  }
+                />
+              )}
+
+              <Input
+                label="Email address"
+                placeholder="name@work.com"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+                error={fieldErrors.email}
+                leftAccessory={
+                  <Ionicons
+                    name="mail-outline"
+                    size={18}
+                    color={theme.colors.textMuted}
+                    style={styles.inputIcon}
+                  />
+                }
+              />
+
+              <View style={styles.passwordWrapper}>
+                <Input
+                  label="Password"
+                  placeholder="••••••••••••"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  error={fieldErrors.password}
+                  leftAccessory={
+                    <Ionicons
+                      name="lock-closed-outline"
+                      size={18}
+                      color={theme.colors.textMuted}
+                      style={styles.inputIcon}
+                    />
+                  }
+                  rightAccessory={
+                    <TouchableOpacity
+                      onPress={() => setShowPassword(!showPassword)}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                    >
+                      <Ionicons
+                        name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                        size={18}
+                        color={theme.colors.textMuted}
+                      />
+                    </TouchableOpacity>
+                  }
+                />
+              </View>
+
+              {!isSignUp && (
+                <View style={styles.forgotRow}>
+                  <TouchableOpacity activeOpacity={0.7}>
+                    <Text
+                      style={[
+                        styles.forgotText,
+                        {
+                          color: theme.colors.primary,
+                          fontSize: theme.typography.sizes.xs,
+                        },
+                      ]}
+                    >
+                      Forgot password?
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+
+              {/* Primary Action Button */}
+              <View style={styles.actionContainer}>
+                <Button
+                  title={isSignUp ? 'Create account' : 'Sign in'}
+                  variant="clayPrimary"
+                  size="lg"
+                  loading={loading}
+                  onPress={handleAuth}
+                />
+              </View>
+            </View>
+
+            {/* Subtle Divider */}
+            <View style={styles.dividerRow}>
+              <View
+                style={[
+                  styles.dividerLine,
+                  { backgroundColor: theme.clay.borderCard },
+                ]}
               />
               <Text
                 style={[
-                  styles.errorBannerText,
+                  styles.dividerText,
                   {
-                    color: theme.colors.error,
+                    color: theme.colors.textMuted,
                     fontSize: theme.typography.sizes.xs,
                   },
                 ]}
               >
-                {errorMessage}
+                or continue with
               </Text>
-            </View>
-          )}
-
-          {/* Form Fields */}
-          <View style={styles.formGroup}>
-            {isSignUp && (
-              <Input
-                label="Full Name"
-                placeholder="Alex Rivera"
-                value={fullName}
-                onChangeText={setFullName}
-                error={fieldErrors.fullName}
-                autoCapitalize="words"
-                leftAccessory={
-                  <Ionicons
-                    name="person-outline"
-                    size={18}
-                    color={theme.colors.textMuted}
-                    style={{ marginRight: 8 }}
-                  />
-                }
+              <View
+                style={[
+                  styles.dividerLine,
+                  { backgroundColor: theme.clay.borderCard },
+                ]}
               />
-            )}
+            </View>
 
-            <Input
-              label="Email Address"
-              placeholder="you@domain.com"
-              value={email}
-              onChangeText={setEmail}
-              error={fieldErrors.email}
-              autoCapitalize="none"
-              keyboardType="email-address"
-              leftAccessory={
-                <Ionicons
-                  name="mail-outline"
-                  size={18}
-                  color={theme.colors.textMuted}
-                  style={{ marginRight: 8 }}
-                />
-              }
-            />
+            {/* Tactile Secondary / Social Buttons */}
+            <View style={styles.socialRow}>
+              <Button
+                title="Google"
+                variant="claySecondary"
+                style={styles.socialButton}
+                leftIcon={
+                  <Ionicons name="logo-google" size={16} color={theme.colors.text} />
+                }
+                onPress={() => {
+                  setErrorMessage('Google OAuth integration configured via Supabase provider.');
+                }}
+              />
+              <Button
+                title="GitHub"
+                variant="claySecondary"
+                style={styles.socialButton}
+                leftIcon={
+                  <Ionicons name="logo-github" size={16} color={theme.colors.text} />
+                }
+                onPress={() => {
+                  setErrorMessage('GitHub OAuth integration configured via Supabase provider.');
+                }}
+              />
+            </View>
+          </Card>
 
-            <Input
-              label="Password"
-              placeholder="••••••••••••"
-              value={password}
-              onChangeText={setPassword}
-              error={fieldErrors.password}
-              secureTextEntry={!showPassword}
-              autoCapitalize="none"
-              leftAccessory={
-                <Ionicons
-                  name="lock-closed-outline"
-                  size={18}
-                  color={theme.colors.textMuted}
-                  style={{ marginRight: 8 }}
-                />
-              }
-              rightAccessory={
-                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                  <Ionicons
-                    name={showPassword ? 'eye-off-outline' : 'eye-outline'}
-                    size={18}
-                    color={theme.colors.textMuted}
-                  />
-                </TouchableOpacity>
-              }
-            />
-
-            <Button
-              title={isSignUp ? 'Create Account' : 'Sign In'}
-              onPress={handleAuth}
-              loading={loading}
-              variant="primary"
-              size="lg"
-              style={styles.submitBtn}
-            />
-          </View>
-
-          {/* Mode Switch Helper */}
-          <View style={styles.switchRow}>
+          {/* Minimal Bottom Switch Link */}
+          <View style={styles.bottomSwitchRow}>
             <Text
               style={[
-                styles.switchPrompt,
+                styles.bottomSwitchPrompt,
                 {
                   color: theme.colors.textSecondary,
-                  fontSize: theme.typography.sizes.xs,
+                  fontSize: theme.typography.sizes.sm,
                 },
               ]}
             >
@@ -328,31 +465,37 @@ export default function SignInScreen() {
             </Text>
             <TouchableOpacity
               onPress={() => switchMode(isSignUp ? 'signin' : 'signup')}
-              style={styles.switchLinkBtn}
+              activeOpacity={0.7}
             >
               <Text
                 style={[
-                  styles.switchLink,
+                  styles.bottomSwitchAction,
                   {
                     color: theme.colors.primary,
-                    fontSize: theme.typography.sizes.xs,
                     fontWeight: theme.typography.weights.semibold,
+                    fontSize: theme.typography.sizes.sm,
                   },
                 ]}
               >
-                {isSignUp ? 'Sign In' : 'Sign Up'}
+                {isSignUp ? 'Sign in' : 'Sign up'}
               </Text>
             </TouchableOpacity>
           </View>
-        </Card>
+        </View>
 
-        {/* Footer info pill */}
-        <View style={styles.footerPill}>
-          <Badge
-            label="Built for engineers, designers & builders"
-            variant="default"
-            size="sm"
-          />
+        {/* Minimal Quiet Footer */}
+        <View style={styles.footer}>
+          <Text
+            style={[
+              styles.footerText,
+              {
+                color: theme.colors.textMuted,
+                fontSize: theme.typography.sizes.xs,
+              },
+            ]}
+          >
+            Sccinet • Professional Network for Builders
+          </Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -365,76 +508,149 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
-    padding: 20,
-    paddingVertical: 40,
+    justifyContent: 'space-between',
+    paddingVertical: 16,
+    paddingHorizontal: 16,
   },
-  brandSection: {
+  topBar: {
+    width: '100%',
+    maxWidth: 440,
+    alignSelf: 'center',
+    height: 48,
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 28,
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  brandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  brandLogoSmall: {
+    width: 26,
+    height: 26,
+    borderRadius: 7,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  brandTitle: {
+    fontWeight: '700',
+    letterSpacing: -0.3,
+  },
+  centerContainer: {
+    width: '100%',
+    maxWidth: 440,
+    alignSelf: 'center',
+  },
+  authCard: {
+    width: '100%',
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 20,
   },
   logoBadge: {
-    width: 60,
-    height: 60,
+    width: 52,
+    height: 52,
     borderRadius: 16,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12,
+    marginBottom: 14,
   },
-  brandTitle: {
-    letterSpacing: -0.5,
-  },
-  brandTagline: {
-    marginTop: 4,
-    textAlign: 'center',
-  },
-  card: {
-    padding: 20,
-  },
-  toggleContainer: {
-    flexDirection: 'row',
-    padding: 4,
-    marginBottom: 20,
-  },
-  toggleBtn: {
-    flex: 1,
-    paddingVertical: 10,
+  logoInner: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  toggleText: {},
+  title: {
+    letterSpacing: -0.3,
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  subtitle: {
+    textAlign: 'center',
+  },
+  segmentedTrack: {
+    flexDirection: 'row',
+    borderRadius: 14,
+    padding: 3,
+    marginBottom: 20,
+  },
+  segmentTab: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 11,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  segmentTabActive: {
+    borderWidth: 1,
+  },
+  segmentText: {},
   errorBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 10,
     padding: 10,
     marginBottom: 16,
+    gap: 8,
   },
-  errorBannerText: {
+  errorText: {
     flex: 1,
-    lineHeight: 18,
+    fontSize: 13,
   },
-  formGroup: {
-    gap: 16,
+  form: {
+    gap: 14,
   },
-  submitBtn: {
-    marginTop: 8,
+  inputIcon: {
+    marginRight: 10,
   },
-  switchRow: {
+  passwordWrapper: {},
+  forgotRow: {
+    alignItems: 'flex-end',
+    marginTop: -4,
+  },
+  forgotText: {
+    fontWeight: '500',
+  },
+  actionContainer: {
+    marginTop: 6,
+  },
+  dividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 20,
+    gap: 12,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+  },
+  dividerText: {},
+  socialRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  socialButton: {
+    flex: 1,
+  },
+  bottomSwitchRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 20,
+    gap: 6,
   },
-  switchPrompt: {},
-  switchLinkBtn: {
-    marginLeft: 6,
-  },
-  switchLink: {},
-  footerPill: {
+  bottomSwitchPrompt: {},
+  bottomSwitchAction: {},
+  footer: {
     alignItems: 'center',
-    marginTop: 28,
+    paddingVertical: 12,
   },
+  footerText: {},
 });

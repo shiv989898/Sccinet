@@ -9,14 +9,14 @@ import {
 } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
 
-export type CardVariant = 'default' | 'elevated' | 'outlined';
+export type CardVariant = 'default' | 'elevated' | 'outlined' | 'clay';
 
 export interface CardProps extends Omit<PressableProps, 'style'> {
   children: React.ReactNode;
   variant?: CardVariant;
   style?: StyleProp<ViewStyle>;
   onPress?: () => void;
-  padding?: 'none' | 'sm' | 'md' | 'lg';
+  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
 }
 
 export function Card({
@@ -37,6 +37,8 @@ export function Card({
         return theme.spacing.sm;
       case 'lg':
         return theme.spacing.xl;
+      case 'xl':
+        return theme.spacing.xxl;
       case 'md':
       default:
         return theme.spacing.lg;
@@ -45,6 +47,21 @@ export function Card({
 
   const getVariantStyle = (): ViewStyle => {
     switch (variant) {
+      case 'clay':
+        return {
+          backgroundColor: theme.clay.surface,
+          borderWidth: 1,
+          borderColor: theme.clay.borderCard,
+          borderRadius: 24,
+          ...Platform.select({
+            web: {
+              boxShadow: theme.clay.webCardShadow,
+            } as any,
+            default: {
+              ...theme.clay.shadowCard,
+            },
+          }),
+        };
       case 'elevated':
         return {
           backgroundColor: theme.colors.surfaceElevated,
@@ -82,7 +99,7 @@ export function Card({
   };
 
   const containerStyle: ViewStyle = {
-    borderRadius: theme.borderRadius.lg,
+    borderRadius: variant === 'clay' ? 24 : theme.borderRadius.lg,
     padding: getPadding(),
     ...getVariantStyle(),
   };
@@ -94,7 +111,7 @@ export function Card({
         onPress={onPress}
         style={({ pressed }) => [
           containerStyle,
-          pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
+          pressed && { opacity: 0.95, transform: [{ scale: 0.99 }] },
           style,
         ]}
         {...props}

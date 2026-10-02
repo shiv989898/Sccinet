@@ -1,12 +1,20 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Alert,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useThemeStore } from '../../src/stores/useThemeStore';
 import { useAuth } from '../../src/features/auth/AuthContext';
 import { useCurrentProfile, useUserSkills } from '../../src/features/profiles/useProfile';
-import { Card, Badge, Button, Avatar } from '../../src/components/ui';
+import { Card, Button, Avatar } from '../../src/components/ui';
 
 export default function ProfileScreen() {
   const theme = useTheme();
@@ -15,243 +23,565 @@ export default function ProfileScreen() {
   const { data: profile } = useCurrentProfile();
   const { data: userSkills = [] } = useUserSkills(user?.id);
 
-  const cycleTheme = () => {
-    if (preference === 'system') setPreference('dark');
-    else if (preference === 'dark') setPreference('light');
-    else setPreference('system');
-  };
-
   const handleEditProfile = () => {
     router.push('/(auth)/onboarding');
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    router.replace('/(auth)/sign-in');
+  const handleSignOut = () => {
+    Alert.alert(
+      'Sign Out',
+      'Are you sure you want to sign out of Sccinet?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Sign Out',
+          style: 'destructive',
+          onPress: async () => {
+            await signOut();
+            router.replace('/(auth)/sign-in');
+          },
+        },
+      ]
+    );
   };
 
   const displayName = profile?.full_name || user?.user_metadata?.full_name || 'Builder Profile';
-  const username = profile?.username ? `@${profile.username}` : (user?.email ? `@${user.email.split('@')[0]}` : '@builder');
-  const headline = profile?.headline || 'Builder • Collaborator';
-  const bio = profile?.bio || 'No bio provided yet. Tap Edit Profile to add your story.';
+  const username = profile?.username
+    ? `@${profile.username}`
+    : user?.email
+    ? `@${user.email.split('@')[0]}`
+    : '@builder';
+  const headline = profile?.headline || 'Builder & Creator';
+  const bio = profile?.bio || 'Building tools and open-source software on Sccinet.';
   const location = profile?.location || null;
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-      contentContainerStyle={[styles.content, { padding: theme.spacing.lg }]}
-    >
-      {/* Profile Header Card */}
-      <Card variant="elevated" style={styles.headerCard}>
-        <View style={styles.profileRow}>
-          <Avatar name={displayName} url={profile?.avatar_url} size="lg" />
-          <View style={styles.profileInfo}>
-            <Text
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Top Minimal Header */}
+        <View style={styles.topBar}>
+          <View style={styles.brandRow}>
+            <View
               style={[
-                styles.displayName,
+                styles.brandLogoSmall,
                 {
-                  color: theme.colors.text,
-                  fontSize: theme.typography.sizes.xl,
-                  fontWeight: theme.typography.weights.bold,
+                  backgroundColor: theme.colors.primary,
                 },
               ]}
             >
-              {displayName}
-            </Text>
+              <Ionicons name="shield-checkmark" size={14} color="#FFFFFF" />
+            </View>
             <Text
               style={[
-                styles.handle,
-                {
-                  color: theme.colors.textMuted,
-                  fontSize: theme.typography.sizes.sm,
-                  marginTop: 2,
-                },
+                styles.brandTitle,
+                { color: theme.colors.text, fontSize: theme.typography.sizes.lg },
               ]}
             >
-              {username}
+              Sccinet
             </Text>
-            <Text
-              style={[
-                styles.headline,
-                {
-                  color: theme.colors.textSecondary,
-                  fontSize: theme.typography.sizes.xs,
-                  marginTop: 6,
-                },
-              ]}
-            >
-              {headline}
-            </Text>
-            {location && (
-              <View style={styles.locationRow}>
-                <Ionicons name="location-outline" size={13} color={theme.colors.textMuted} />
+          </View>
+        </View>
+
+        <View style={styles.centerContainer}>
+          {/* Profile Identity Card */}
+          <Card variant="clay" padding="xl" style={styles.identityCard}>
+            <View style={styles.avatarRow}>
+              <View
+                style={[
+                  styles.avatarWrapper,
+                  {
+                    backgroundColor: theme.clay.surface,
+                    borderColor: theme.clay.borderCard,
+                    ...Platform.select({
+                      web: {
+                        boxShadow: theme.clay.webCardShadow,
+                      } as any,
+                      default: {
+                        ...theme.clay.shadowCard,
+                      },
+                    }),
+                  },
+                ]}
+              >
+                <Avatar name={displayName} url={profile?.avatar_url} size="xl" />
+              </View>
+            </View>
+
+            <View style={styles.identityInfo}>
+              <Text
+                style={[
+                  styles.displayName,
+                  {
+                    color: theme.colors.text,
+                    fontSize: theme.typography.sizes.xxl,
+                    fontWeight: theme.typography.weights.semibold,
+                  },
+                ]}
+              >
+                {displayName}
+              </Text>
+              <Text
+                style={[
+                  styles.handleText,
+                  {
+                    color: theme.colors.textSecondary,
+                    fontSize: theme.typography.sizes.sm,
+                  },
+                ]}
+              >
+                {username}
+              </Text>
+
+              {headline ? (
                 <Text
                   style={[
-                    styles.locationText,
-                    { color: theme.colors.textMuted, fontSize: theme.typography.sizes.xs },
+                    styles.headlineText,
+                    {
+                      color: theme.colors.text,
+                      fontSize: theme.typography.sizes.sm,
+                      fontWeight: theme.typography.weights.medium,
+                    },
                   ]}
                 >
-                  {location}
+                  {headline}
+                </Text>
+              ) : null}
+
+              {location ? (
+                <View style={styles.locationRow}>
+                  <Ionicons
+                    name="location-outline"
+                    size={14}
+                    color={theme.colors.textSecondary}
+                  />
+                  <Text
+                    style={[
+                      styles.locationText,
+                      {
+                        color: theme.colors.textSecondary,
+                        fontSize: theme.typography.sizes.sm,
+                      },
+                    ]}
+                  >
+                    {location}
+                  </Text>
+                </View>
+              ) : null}
+
+              {bio ? (
+                <Text
+                  style={[
+                    styles.bioText,
+                    {
+                      color: theme.colors.textSecondary,
+                      fontSize: theme.typography.sizes.sm,
+                    },
+                  ]}
+                >
+                  {bio}
+                </Text>
+              ) : null}
+            </View>
+
+            {/* Primary Action: Edit Profile */}
+            <View style={styles.editActionWrapper}>
+              <Button
+                title="Edit Profile"
+                variant="clayPrimary"
+                size="md"
+                leftIcon={
+                  <Ionicons name="create-outline" size={17} color="#FFFFFF" />
+                }
+                onPress={handleEditProfile}
+              />
+            </View>
+
+            {/* Appearance Segmented Pill */}
+            <View
+              style={[
+                styles.appearanceRow,
+                { borderTopColor: theme.clay.borderCard },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.appearanceLabel,
+                  {
+                    color: theme.colors.textSecondary,
+                    fontSize: theme.typography.sizes.sm,
+                    fontWeight: theme.typography.weights.medium,
+                  },
+                ]}
+              >
+                Appearance
+              </Text>
+
+              <View
+                style={[
+                  styles.themePillTrack,
+                  { backgroundColor: theme.clay.surfaceTrack },
+                ]}
+              >
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => setPreference('light')}
+                  style={[
+                    styles.themeTab,
+                    preference === 'light' && [
+                      styles.themeTabActive,
+                      {
+                        backgroundColor: theme.clay.surfaceActivePill,
+                        borderColor: theme.clay.borderCard,
+                        ...Platform.select({
+                          web: {
+                            boxShadow: theme.clay.webPillShadow,
+                          } as any,
+                          default: {
+                            ...theme.clay.shadowPill,
+                          },
+                        }),
+                      },
+                    ],
+                  ]}
+                >
+                  <Ionicons
+                    name="sunny-outline"
+                    size={13}
+                    color={
+                      preference === 'light'
+                        ? theme.colors.primary
+                        : theme.colors.textSecondary
+                    }
+                  />
+                  <Text
+                    style={[
+                      styles.themeTabText,
+                      {
+                        color:
+                          preference === 'light'
+                            ? theme.colors.primary
+                            : theme.colors.textSecondary,
+                        fontSize: theme.typography.sizes.xs,
+                        fontWeight:
+                          preference === 'light'
+                            ? theme.typography.weights.semibold
+                            : theme.typography.weights.medium,
+                      },
+                    ]}
+                  >
+                    Light
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => setPreference('dark')}
+                  style={[
+                    styles.themeTab,
+                    preference === 'dark' && [
+                      styles.themeTabActive,
+                      {
+                        backgroundColor: theme.clay.surfaceActivePill,
+                        borderColor: theme.clay.borderCard,
+                        ...Platform.select({
+                          web: {
+                            boxShadow: theme.clay.webPillShadow,
+                          } as any,
+                          default: {
+                            ...theme.clay.shadowPill,
+                          },
+                        }),
+                      },
+                    ],
+                  ]}
+                >
+                  <Ionicons
+                    name="moon-outline"
+                    size={13}
+                    color={
+                      preference === 'dark'
+                        ? theme.colors.primary
+                        : theme.colors.textSecondary
+                    }
+                  />
+                  <Text
+                    style={[
+                      styles.themeTabText,
+                      {
+                        color:
+                          preference === 'dark'
+                            ? theme.colors.primary
+                            : theme.colors.textSecondary,
+                        fontSize: theme.typography.sizes.xs,
+                        fontWeight:
+                          preference === 'dark'
+                            ? theme.typography.weights.semibold
+                            : theme.typography.weights.medium,
+                      },
+                    ]}
+                  >
+                    Dark
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => setPreference('system')}
+                  style={[
+                    styles.themeTab,
+                    preference === 'system' && [
+                      styles.themeTabActive,
+                      {
+                        backgroundColor: theme.clay.surfaceActivePill,
+                        borderColor: theme.clay.borderCard,
+                        ...Platform.select({
+                          web: {
+                            boxShadow: theme.clay.webPillShadow,
+                          } as any,
+                          default: {
+                            ...theme.clay.shadowPill,
+                          },
+                        }),
+                      },
+                    ],
+                  ]}
+                >
+                  <Ionicons
+                    name="phone-portrait-outline"
+                    size={13}
+                    color={
+                      preference === 'system'
+                        ? theme.colors.primary
+                        : theme.colors.textSecondary
+                    }
+                  />
+                  <Text
+                    style={[
+                      styles.themeTabText,
+                      {
+                        color:
+                          preference === 'system'
+                            ? theme.colors.primary
+                            : theme.colors.textSecondary,
+                        fontSize: theme.typography.sizes.xs,
+                        fontWeight:
+                          preference === 'system'
+                            ? theme.typography.weights.semibold
+                            : theme.typography.weights.medium,
+                      },
+                    ]}
+                  >
+                    Auto
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Card>
+
+          {/* Skills Section */}
+          <Card variant="clay" padding="lg" style={styles.sectionCard}>
+            <View style={styles.sectionHeader}>
+              <View style={styles.sectionHeaderTitle}>
+                <Ionicons
+                  name="code-outline"
+                  size={18}
+                  color={theme.colors.primary}
+                />
+                <Text
+                  style={[
+                    styles.sectionTitle,
+                    {
+                      color: theme.colors.text,
+                      fontSize: theme.typography.sizes.lg,
+                      fontWeight: theme.typography.weights.semibold,
+                    },
+                  ]}
+                >
+                  Skills
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                onPress={handleEditProfile}
+                activeOpacity={0.7}
+              >
+                <Text
+                  style={[
+                    styles.editLink,
+                    {
+                      color: theme.colors.primary,
+                      fontSize: theme.typography.sizes.xs,
+                      fontWeight: theme.typography.weights.medium,
+                    },
+                  ]}
+                >
+                  {userSkills.length > 0 ? 'Edit' : 'Add Skills'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {userSkills.length > 0 ? (
+              <View style={styles.chipsRow}>
+                {userSkills.map((skill) => (
+                  <View
+                    key={skill.id}
+                    style={[
+                      styles.skillChip,
+                      {
+                        backgroundColor: theme.clay.surfaceChipSelected,
+                        borderColor: theme.clay.borderChipSelected,
+                        ...Platform.select({
+                          web: {
+                            boxShadow: theme.clay.webChipShadow,
+                          } as any,
+                          default: {
+                            ...theme.clay.shadowChip,
+                          },
+                        }),
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.skillChipText,
+                        {
+                          color: theme.clay.textChipSelected,
+                          fontSize: theme.typography.sizes.xs,
+                          fontWeight: theme.typography.weights.medium,
+                        },
+                      ]}
+                    >
+                      {skill.name}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            ) : (
+              <View style={styles.emptySkillsContainer}>
+                <Text
+                  style={[
+                    styles.emptySkillsText,
+                    {
+                      color: theme.colors.textMuted,
+                      fontSize: theme.typography.sizes.sm,
+                    },
+                  ]}
+                >
+                  No skills selected yet.
                 </Text>
               </View>
             )}
-          </View>
-        </View>
+          </Card>
 
-        {/* Bio */}
-        <Text
-          style={[
-            styles.bioText,
-            {
-              color: theme.colors.textSecondary,
-              fontSize: theme.typography.sizes.xs,
-              marginTop: 14,
-              lineHeight: 18,
-            },
-          ]}
-        >
-          {bio}
-        </Text>
+          {/* Projects Section */}
+          <Card variant="clay" padding="lg" style={styles.sectionCard}>
+            <View style={styles.sectionHeader}>
+              <View style={styles.sectionHeaderTitle}>
+                <Ionicons
+                  name="folder-outline"
+                  size={18}
+                  color={theme.colors.primary}
+                />
+                <Text
+                  style={[
+                    styles.sectionTitle,
+                    {
+                      color: theme.colors.text,
+                      fontSize: theme.typography.sizes.lg,
+                      fontWeight: theme.typography.weights.semibold,
+                    },
+                  ]}
+                >
+                  Projects
+                </Text>
+              </View>
+            </View>
 
-        {/* Skills Section */}
-        <View style={styles.skillsSection}>
-          <View style={styles.skillsHeader}>
-            <Text
+            {/* Clean Tactile Empty State */}
+            <View
               style={[
-                styles.sectionTitle,
+                styles.emptyProjectsSlot,
                 {
-                  color: theme.colors.textMuted,
-                  fontSize: theme.typography.sizes.xs,
-                  fontWeight: theme.typography.weights.semibold,
-                  letterSpacing: 0.5,
+                  backgroundColor: theme.clay.surfaceRecessed,
+                  borderColor: theme.clay.borderRecessed,
+                  borderRadius: theme.borderRadius.lg,
+                  ...Platform.select({
+                    web: {
+                      boxShadow: theme.clay.webRecessedShadow,
+                    } as any,
+                  }),
                 },
               ]}
             >
-              SKILLS ({userSkills.length})
-            </Text>
-          </View>
-          <View style={styles.skillsGrid}>
-            {userSkills.length > 0 ? (
-              userSkills.map((skill) => (
-                <Badge key={skill.id} label={skill.name} variant="primary" size="sm" />
-              ))
-            ) : (
-              <Text style={{ color: theme.colors.textMuted, fontSize: theme.typography.sizes.xs }}>
-                No skills linked yet. Tap Edit Profile to add skills.
+              <View
+                style={[
+                  styles.emptyProjectsIcon,
+                  {
+                    backgroundColor: theme.clay.surface,
+                    borderColor: theme.clay.borderCard,
+                    ...Platform.select({
+                      web: {
+                        boxShadow: theme.clay.webPillShadow,
+                      } as any,
+                      default: {
+                        ...theme.clay.shadowChip,
+                      },
+                    }),
+                  },
+                ]}
+              >
+                <Ionicons
+                  name="folder-open-outline"
+                  size={24}
+                  color={theme.colors.textSecondary}
+                />
+              </View>
+              <Text
+                style={[
+                  styles.emptyProjectsText,
+                  {
+                    color: theme.colors.textSecondary,
+                    fontSize: theme.typography.sizes.sm,
+                  },
+                ]}
+              >
+                No projects yet. Projects you create or collaborate on will appear here.
               </Text>
-            )}
-          </View>
-        </View>
+            </View>
+          </Card>
 
-        {/* Action Button */}
-        <Button
-          title="Edit Profile & Skills"
-          onPress={handleEditProfile}
-          variant="outline"
-          size="sm"
-          style={styles.editBtn}
-          leftIcon={<Ionicons name="create-outline" size={16} color={theme.colors.text} />}
-        />
-      </Card>
-
-      {/* Theme & Settings Card */}
-      <Card variant="default">
-        <View style={styles.settingsHeader}>
-          <View style={styles.settingsTitleRow}>
-            <Ionicons
-              name={theme.isDark ? 'moon-outline' : 'sunny-outline'}
-              size={20}
-              color={theme.colors.primary}
-            />
-            <Text
-              style={[
-                styles.settingsTitle,
-                {
-                  color: theme.colors.text,
-                  fontSize: theme.typography.sizes.md,
-                  fontWeight: theme.typography.weights.semibold,
-                  marginLeft: 8,
-                },
-              ]}
+          {/* Bottom Sign Out Button */}
+          <View style={styles.signOutWrapper}>
+            <TouchableOpacity
+              onPress={handleSignOut}
+              activeOpacity={0.7}
+              style={styles.signOutButton}
             >
-              Appearance & Theme
-            </Text>
+              <Ionicons
+                name="log-out-outline"
+                size={16}
+                color={theme.colors.error}
+              />
+              <Text
+                style={[
+                  styles.signOutText,
+                  {
+                    color: theme.colors.error,
+                    fontSize: theme.typography.sizes.sm,
+                    fontWeight: theme.typography.weights.medium,
+                  },
+                ]}
+              >
+                Sign Out
+              </Text>
+            </TouchableOpacity>
           </View>
-          <Badge
-            label={preference.toUpperCase()}
-            variant="outline"
-            size="sm"
-          />
         </View>
-
-        <Text
-          style={[
-            styles.settingsDesc,
-            {
-              color: theme.colors.textSecondary,
-              fontSize: theme.typography.sizes.xs,
-              marginTop: 6,
-              marginBottom: 14,
-            },
-          ]}
-        >
-          Toggle between system, dark, and light themes to test responsive styling tokens.
-        </Text>
-
-        <Button
-          title={`Switch Theme (Current: ${preference})`}
-          size="sm"
-          variant="secondary"
-          onPress={cycleTheme}
-          leftIcon={<Ionicons name="color-palette-outline" size={16} color={theme.colors.text} />}
-        />
-      </Card>
-
-      {/* Account & Session Card */}
-      <Card variant="default">
-        <View style={styles.settingsHeader}>
-          <View style={styles.settingsTitleRow}>
-            <Ionicons name="shield-checkmark-outline" size={20} color={theme.colors.primary} />
-            <Text
-              style={[
-                styles.settingsTitle,
-                {
-                  color: theme.colors.text,
-                  fontSize: theme.typography.sizes.md,
-                  fontWeight: theme.typography.weights.semibold,
-                  marginLeft: 8,
-                },
-              ]}
-            >
-              Account Session
-            </Text>
-          </View>
-          <Badge label={user ? 'Active' : 'Guest'} variant="success" size="sm" />
-        </View>
-
-        <Text
-          style={[
-            styles.settingsDesc,
-            {
-              color: theme.colors.textSecondary,
-              fontSize: theme.typography.sizes.xs,
-              marginTop: 6,
-              marginBottom: 14,
-            },
-          ]}
-        >
-          {user ? `Signed in as ${user.email}` : 'Not signed in'}
-        </Text>
-
-        <Button
-          title="Sign Out"
-          onPress={handleSignOut}
-          size="sm"
-          variant="danger"
-          leftIcon={<Ionicons name="log-out-outline" size={16} color="#FFFFFF" />}
-        />
-      </Card>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -259,59 +589,180 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  content: {
-    gap: 16,
+  scrollContent: {
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 32,
   },
-  headerCard: {},
-  profileRow: {
+  topBar: {
+    width: '100%',
+    maxWidth: 440,
+    alignSelf: 'center',
+    height: 48,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
   },
-  profileInfo: {
-    marginLeft: 16,
-    flex: 1,
+  brandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
-  displayName: {},
-  handle: {},
-  headline: {},
+  brandLogoSmall: {
+    width: 26,
+    height: 26,
+    borderRadius: 7,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  brandTitle: {
+    fontWeight: '700',
+    letterSpacing: -0.3,
+  },
+  centerContainer: {
+    width: '100%',
+    maxWidth: 440,
+    alignSelf: 'center',
+    gap: 16,
+  },
+  identityCard: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  avatarRow: {
+    marginBottom: 12,
+  },
+  avatarWrapper: {
+    padding: 3,
+    borderRadius: 9999,
+    borderWidth: 1,
+  },
+  identityInfo: {
+    alignItems: 'center',
+    width: '100%',
+  },
+  displayName: {
+    letterSpacing: -0.3,
+    textAlign: 'center',
+  },
+  handleText: {
+    marginTop: 2,
+    textAlign: 'center',
+  },
+  headlineText: {
+    marginTop: 6,
+    textAlign: 'center',
+  },
   locationRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
     gap: 4,
+    marginTop: 4,
   },
   locationText: {},
-  bioText: {},
-  skillsSection: {
+  bioText: {
+    marginTop: 10,
+    textAlign: 'center',
+    lineHeight: 20,
+    maxWidth: 320,
+  },
+  editActionWrapper: {
+    width: '100%',
     marginTop: 18,
+  },
+  appearanceRow: {
+    width: '100%',
+    marginTop: 16,
     paddingTop: 14,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: 'rgba(150, 150, 150, 0.2)',
-  },
-  skillsHeader: {
+    borderTopWidth: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    justifyContent: 'space-between',
   },
-  sectionTitle: {},
-  skillsGrid: {
+  appearanceLabel: {},
+  themePillTrack: {
+    flexDirection: 'row',
+    borderRadius: 9999,
+    padding: 3,
+    gap: 2,
+  },
+  themeTab: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 9999,
+  },
+  themeTabActive: {
+    borderWidth: 1,
+  },
+  themeTabText: {},
+  sectionCard: {
+    width: '100%',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 14,
+  },
+  sectionHeaderTitle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  sectionTitle: {
+    letterSpacing: -0.2,
+  },
+  editLink: {},
+  chipsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
   },
-  editBtn: {
-    marginTop: 18,
+  skillChip: {
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
   },
-  settingsHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  skillChipText: {},
+  emptySkillsContainer: {
+    paddingVertical: 8,
+  },
+  emptySkillsText: {},
+  emptyProjectsSlot: {
+    borderWidth: 1,
+    padding: 20,
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
   },
-  settingsTitleRow: {
+  emptyProjectsIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyProjectsText: {
+    textAlign: 'center',
+    maxWidth: 260,
+    lineHeight: 18,
+  },
+  signOutWrapper: {
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  signOutButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
-  settingsTitle: {},
-  settingsDesc: {},
+  signOutText: {},
 });

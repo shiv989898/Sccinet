@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   ActivityIndicator,
+  Platform,
   Pressable,
   PressableProps,
   StyleProp,
@@ -12,7 +13,14 @@ import {
 } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+export type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'outline'
+  | 'ghost'
+  | 'danger'
+  | 'clayPrimary'
+  | 'claySecondary';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps extends Omit<PressableProps, 'style'> {
@@ -74,14 +82,49 @@ export function Button({
       alignItems: 'center',
       justifyContent: 'center',
       paddingHorizontal: size === 'sm' ? theme.spacing.md : theme.spacing.xl,
-      opacity: isDisabled ? 0.5 : pressed ? 0.85 : 1,
+      opacity: isDisabled ? 0.5 : 1,
     };
 
     switch (variant) {
+      case 'clayPrimary':
+        return {
+          ...base,
+          backgroundColor: theme.colors.primary,
+          transform: pressed ? [{ scale: 0.985 }, { translateY: 1 }] : [],
+          ...Platform.select({
+            web: {
+              boxShadow: pressed
+                ? '0 2px 6px rgba(37, 99, 235, 0.25)'
+                : theme.clay.webButtonShadow,
+            } as any,
+            default: {
+              ...theme.clay.shadowButton,
+            },
+          }),
+        };
+      case 'claySecondary':
+        return {
+          ...base,
+          backgroundColor: theme.clay.surface,
+          borderWidth: 1,
+          borderColor: theme.clay.borderCard,
+          transform: pressed ? [{ scale: 0.985 }] : [],
+          ...Platform.select({
+            web: {
+              boxShadow: pressed
+                ? 'inset 0 1px 2px rgba(15, 23, 42, 0.04)'
+                : '0 2px 6px rgba(15, 23, 42, 0.03)',
+            } as any,
+            default: {
+              ...theme.clay.shadowPill,
+            },
+          }),
+        };
       case 'secondary':
         return {
           ...base,
           backgroundColor: theme.colors.surfaceSubtle,
+          opacity: isDisabled ? 0.5 : pressed ? 0.85 : 1,
         };
       case 'outline':
         return {
@@ -89,35 +132,40 @@ export function Button({
           backgroundColor: 'transparent',
           borderWidth: 1,
           borderColor: theme.colors.border,
+          opacity: isDisabled ? 0.5 : pressed ? 0.85 : 1,
         };
       case 'ghost':
         return {
           ...base,
           backgroundColor: 'transparent',
+          opacity: isDisabled ? 0.5 : pressed ? 0.85 : 1,
         };
       case 'danger':
         return {
           ...base,
           backgroundColor: theme.colors.error,
+          opacity: isDisabled ? 0.5 : pressed ? 0.85 : 1,
         };
       case 'primary':
       default:
         return {
           ...base,
           backgroundColor: theme.colors.primary,
+          opacity: isDisabled ? 0.5 : pressed ? 0.85 : 1,
         };
     }
   };
 
   const getTextColor = (): string => {
     switch (variant) {
+      case 'claySecondary':
       case 'secondary':
-        return theme.colors.text;
       case 'outline':
         return theme.colors.text;
       case 'ghost':
         return theme.colors.primary;
       case 'danger':
+      case 'clayPrimary':
       case 'primary':
       default:
         return '#FFFFFF';
@@ -133,12 +181,17 @@ export function Button({
       {...props}
     >
       {loading ? (
-        <ActivityIndicator size="small" color={getTextColor()} />
+        <ActivityIndicator
+          size="small"
+          color={getTextColor()}
+          style={styles.spinner}
+        />
       ) : (
-        <View style={styles.contentRow}>
-          {leftIcon && <View style={styles.leftIconContainer}>{leftIcon}</View>}
+        <>
+          {leftIcon && <View style={styles.leftIcon}>{leftIcon}</View>}
           <Text
             style={[
+              styles.text,
               {
                 color: getTextColor(),
                 fontSize: getFontSize(),
@@ -149,23 +202,24 @@ export function Button({
           >
             {title}
           </Text>
-          {rightIcon && <View style={styles.rightIconContainer}>{rightIcon}</View>}
-        </View>
+          {rightIcon && <View style={styles.rightIcon}>{rightIcon}</View>}
+        </>
       )}
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  contentRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+  spinner: {
+    marginRight: 6,
   },
-  leftIconContainer: {
+  leftIcon: {
     marginRight: 8,
   },
-  rightIconContainer: {
+  rightIcon: {
     marginLeft: 8,
+  },
+  text: {
+    textAlign: 'center',
   },
 });

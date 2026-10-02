@@ -21,7 +21,7 @@ import {
   useAddSkill,
   useRemoveSkill,
 } from '../../src/features/profiles/useProfile';
-import { Card, Button, Input, Badge } from '../../src/components/ui';
+import { Card, Button, Input } from '../../src/components/ui';
 
 export default function OnboardingScreen() {
   const theme = useTheme();
@@ -110,9 +110,13 @@ export default function OnboardingScreen() {
     }
   };
 
+  // Filter skills based on search
   const filteredSkills = availableSkills.filter((s) =>
-    s.name.toLowerCase().includes(skillSearch.toLowerCase())
+    s.name.toLowerCase().includes(skillSearch.toLowerCase().trim())
   );
+
+  const selectedSkillIds = new Set(userSkills.map((s) => s.id));
+  const suggestedSkills = filteredSkills.filter((s) => !selectedSkillIds.has(s.id));
 
   return (
     <KeyboardAvoidingView
@@ -122,267 +126,456 @@ export default function OnboardingScreen() {
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        {/* Onboarding Header */}
-        <View style={styles.headerSection}>
-          <Badge label="Step 1 of 1 • Identity" variant="primary" size="sm" />
-          <Text
-            style={[
-              styles.headerTitle,
-              {
-                color: theme.colors.text,
-                fontSize: theme.typography.sizes.xxl,
-                fontWeight: theme.typography.weights.bold,
-                marginTop: 8,
-              },
-            ]}
-          >
-            Build Your Profile
-          </Text>
-          <Text
-            style={[
-              styles.headerSubtitle,
-              {
-                color: theme.colors.textSecondary,
-                fontSize: theme.typography.sizes.sm,
-                marginTop: 4,
-              },
-            ]}
-          >
-            Tell the community who you are, what you build, and your core technical skills.
-          </Text>
-        </View>
-
-        {generalError && (
-          <View
-            style={[
-              styles.errorBanner,
-              {
-                backgroundColor: theme.colors.errorMuted,
-                borderColor: theme.colors.error,
-              },
-            ]}
-          >
-            <Ionicons
-              name="alert-circle-outline"
-              size={18}
-              color={theme.colors.error}
-              style={{ marginRight: 8 }}
-            />
-            <Text
+        {/* Top Minimal Bar */}
+        <View style={styles.topBar}>
+          <View style={styles.brandRow}>
+            <View
               style={[
-                styles.errorText,
-                { color: theme.colors.error, fontSize: theme.typography.sizes.xs },
+                styles.brandLogoSmall,
+                {
+                  backgroundColor: theme.colors.primary,
+                },
               ]}
             >
-              {generalError}
+              <Ionicons name="shield-checkmark" size={14} color="#FFFFFF" />
+            </View>
+            <Text
+              style={[
+                styles.brandTitle,
+                { color: theme.colors.text, fontSize: theme.typography.sizes.lg },
+              ]}
+            >
+              Sccinet
             </Text>
           </View>
-        )}
+        </View>
 
-        {/* Profile Details Card */}
-        <Card variant="elevated" style={styles.card}>
-          <Text
-            style={[
-              styles.cardSectionTitle,
-              {
-                color: theme.colors.text,
-                fontSize: theme.typography.sizes.md,
-                fontWeight: theme.typography.weights.semibold,
-                marginBottom: 16,
-              },
-            ]}
-          >
-            Personal Information
-          </Text>
-
-          <View style={styles.inputsStack}>
-            <Input
-              label="Full Name *"
-              placeholder="Alex Rivera"
-              value={fullName}
-              onChangeText={setFullName}
-              error={fieldErrors.fullName}
-              leftAccessory={
-                <Ionicons
-                  name="person-outline"
-                  size={18}
-                  color={theme.colors.textMuted}
-                  style={{ marginRight: 8 }}
-                />
-              }
-            />
-
-            <Input
-              label="Username (@handle) *"
-              placeholder="alex_rivera"
-              value={username}
-              onChangeText={setUsername}
-              error={fieldErrors.username}
-              autoCapitalize="none"
-              hint="Letters, numbers, and underscores (3-30 characters)"
-              leftAccessory={
-                <Ionicons
-                  name="at-outline"
-                  size={18}
-                  color={theme.colors.textMuted}
-                  style={{ marginRight: 8 }}
-                />
-              }
-            />
-
-            <Input
-              label="Headline / Role"
-              placeholder="Full-Stack Developer • Mobile Enthusiast"
-              value={headline}
-              onChangeText={setHeadline}
-              error={fieldErrors.headline}
-              leftAccessory={
-                <Ionicons
-                  name="briefcase-outline"
-                  size={18}
-                  color={theme.colors.textMuted}
-                  style={{ marginRight: 8 }}
-                />
-              }
-            />
-
-            <Input
-              label="Location"
-              placeholder="San Francisco, CA / Remote"
-              value={location}
-              onChangeText={setLocation}
-              error={fieldErrors.location}
-              leftAccessory={
-                <Ionicons
-                  name="location-outline"
-                  size={18}
-                  color={theme.colors.textMuted}
-                  style={{ marginRight: 8 }}
-                />
-              }
-            />
-
-            <Input
-              label="Bio"
-              placeholder="Passionate about building performant apps, open source tools, and scalable distributed systems."
-              value={bio}
-              onChangeText={setBio}
-              error={fieldErrors.bio}
-              multiline
-              numberOfLines={3}
-              inputStyle={{ height: 72, textAlignVertical: 'top', paddingTop: 8 }}
-            />
-          </View>
-        </Card>
-
-        {/* Skill Selection Card */}
-        <Card variant="default" style={styles.skillsCard}>
-          <Text
-            style={[
-              styles.cardSectionTitle,
-              {
-                color: theme.colors.text,
-                fontSize: theme.typography.sizes.md,
-                fontWeight: theme.typography.weights.semibold,
-              },
-            ]}
-          >
-            Your Technical & Creative Skills
-          </Text>
-          <Text
-            style={[
-              styles.skillsSubtitle,
-              {
-                color: theme.colors.textSecondary,
-                fontSize: theme.typography.sizes.xs,
-                marginTop: 4,
-                marginBottom: 12,
-              },
-            ]}
-          >
-            Tap skills to link them to your profile. These help collaborators find you for projects.
-          </Text>
-
-          {/* Selected Skills Pills */}
-          {userSkills.length > 0 && (
-            <View style={styles.selectedSkillsWrapper}>
-              <Text
+        {/* Main Content Area */}
+        <View style={styles.centerContainer}>
+          {/* Header */}
+          <View style={styles.header}>
+            <View
+              style={[
+                styles.avatarContainer,
+                {
+                  backgroundColor: theme.clay.surface,
+                  borderColor: theme.clay.borderCard,
+                  ...Platform.select({
+                    web: {
+                      boxShadow: theme.clay.webCardShadow,
+                    } as any,
+                    default: {
+                      ...theme.clay.shadowCard,
+                    },
+                  }),
+                },
+              ]}
+            >
+              <View
                 style={[
-                  styles.selectedLabel,
+                  styles.avatarInner,
                   {
-                    color: theme.colors.textMuted,
-                    fontSize: theme.typography.sizes.xs,
-                    fontWeight: theme.typography.weights.semibold,
-                    marginBottom: 8,
-                    letterSpacing: 0.5,
+                    backgroundColor: theme.colors.primaryMuted,
                   },
                 ]}
               >
-                SELECTED ({userSkills.length})
-              </Text>
-              <View style={styles.chipsRow}>
-                {userSkills.map((skill) => (
-                  <TouchableOpacity
-                    key={skill.id}
-                    onPress={() => handleToggleSkill(skill.id)}
-                  >
-                    <Badge
-                      label={`${skill.name}  ✕`}
-                      variant="primary"
-                      size="sm"
-                    />
-                  </TouchableOpacity>
-                ))}
+                <Ionicons name="person" size={26} color={theme.colors.primary} />
               </View>
             </View>
-          )}
 
-          {/* Search Skills */}
-          <Input
-            placeholder="Search skills (e.g. React, Python, UI/UX)..."
-            value={skillSearch}
-            onChangeText={setSkillSearch}
-            containerStyle={{ marginBottom: 12 }}
-            leftAccessory={
-              <Ionicons
-                name="search"
-                size={16}
-                color={theme.colors.textMuted}
-                style={{ marginRight: 8 }}
-              />
-            }
-          />
-
-          {/* Available Skills Grid */}
-          <View style={styles.chipsRow}>
-            {filteredSkills.map((skill) => {
-              const isSelected = userSkills.some((s) => s.id === skill.id);
-              return (
-                <TouchableOpacity
-                  key={skill.id}
-                  onPress={() => handleToggleSkill(skill.id)}
-                >
-                  <Badge
-                    label={isSelected ? `✓ ${skill.name}` : `+ ${skill.name}`}
-                    variant={isSelected ? 'primary' : 'outline'}
-                    size="sm"
-                  />
-                </TouchableOpacity>
-              );
-            })}
+            <Text
+              style={[
+                styles.title,
+                {
+                  color: theme.colors.text,
+                  fontSize: theme.typography.sizes.xxl,
+                  fontWeight: theme.typography.weights.semibold,
+                },
+              ]}
+            >
+              Set up your profile
+            </Text>
+            <Text
+              style={[
+                styles.subtitle,
+                {
+                  color: theme.colors.textSecondary,
+                  fontSize: theme.typography.sizes.sm,
+                },
+              ]}
+            >
+              Tell the community what you build
+            </Text>
           </View>
-        </Card>
 
-        {/* Action Button */}
-        <Button
-          title={isUpdating ? 'Saving Profile...' : 'Complete Profile & Enter'}
-          onPress={handleSaveProfile}
-          loading={isUpdating || profileLoading}
-          variant="primary"
-          size="lg"
-          style={styles.submitBtn}
-        />
+          {/* Form Card */}
+          <Card variant="clay" padding="xl" style={styles.formCard}>
+            {generalError && (
+              <View
+                style={[
+                  styles.errorBanner,
+                  {
+                    backgroundColor: theme.colors.errorMuted,
+                    borderColor: theme.colors.error,
+                  },
+                ]}
+              >
+                <Ionicons name="alert-circle" size={16} color={theme.colors.error} />
+                <Text style={[styles.errorText, { color: theme.colors.error }]}>
+                  {generalError}
+                </Text>
+              </View>
+            )}
+
+            <View style={styles.fieldGroup}>
+              {/* Full Name */}
+              <Input
+                label="Full Name"
+                placeholder="e.g. Alex Rivera"
+                value={fullName}
+                onChangeText={setFullName}
+                error={fieldErrors.fullName}
+              />
+
+              {/* Username */}
+              <Input
+                label="Username"
+                placeholder="username"
+                value={username}
+                onChangeText={(text) => setUsername(text.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
+                autoCapitalize="none"
+                autoCorrect={false}
+                error={fieldErrors.username}
+                leftAccessory={
+                  <Text
+                    style={[
+                      styles.prefixText,
+                      { color: theme.colors.textMuted, fontSize: theme.typography.sizes.md },
+                    ]}
+                  >
+                    @
+                  </Text>
+                }
+                rightAccessory={
+                  username.length >= 3 ? (
+                    <View style={styles.availableBadge}>
+                      <Ionicons name="checkmark-circle" size={15} color={theme.colors.success} />
+                      <Text
+                        style={[
+                          styles.availableText,
+                          { color: theme.colors.success, fontSize: theme.typography.sizes.micro },
+                        ]}
+                      >
+                        Available
+                      </Text>
+                    </View>
+                  ) : null
+                }
+              />
+
+              {/* Headline */}
+              <Input
+                label="Headline"
+                placeholder="e.g. Software Engineer or Product Designer"
+                value={headline}
+                onChangeText={setHeadline}
+                error={fieldErrors.headline}
+              />
+
+              {/* Location */}
+              <Input
+                label="Location"
+                placeholder="e.g. San Francisco, CA or Remote"
+                value={location}
+                onChangeText={setLocation}
+                error={fieldErrors.location}
+                leftAccessory={
+                  <Ionicons
+                    name="location-outline"
+                    size={18}
+                    color={theme.colors.textMuted}
+                    style={styles.fieldIcon}
+                  />
+                }
+              />
+
+              {/* Bio */}
+              <View style={styles.bioWrapper}>
+                <View style={styles.bioHeader}>
+                  <Text
+                    style={[
+                      styles.fieldLabel,
+                      {
+                        color: theme.colors.textSecondary,
+                        fontSize: theme.typography.sizes.sm,
+                        fontWeight: theme.typography.weights.medium,
+                      },
+                    ]}
+                  >
+                    Bio
+                  </Text>
+                  <Text
+                    style={[
+                      styles.charCount,
+                      {
+                        color: theme.colors.textMuted,
+                        fontSize: theme.typography.sizes.xs,
+                      },
+                    ]}
+                  >
+                    {bio.length}/160
+                  </Text>
+                </View>
+                <View
+                  style={[
+                    styles.textareaContainer,
+                    {
+                      backgroundColor: theme.clay.surfaceRecessed,
+                      borderColor: fieldErrors.bio
+                        ? theme.colors.error
+                        : theme.clay.borderRecessed,
+                      borderRadius: theme.borderRadius.md,
+                      ...Platform.select({
+                        web: {
+                          boxShadow: theme.clay.webRecessedShadow,
+                        } as any,
+                      }),
+                    },
+                  ]}
+                >
+                  <Input
+                    multiline
+                    numberOfLines={3}
+                    maxLength={160}
+                    placeholder="A brief summary of what you're working on and looking to build..."
+                    value={bio}
+                    onChangeText={setBio}
+                    containerStyle={styles.borderlessInputContainer}
+                    inputContainerStyle={styles.borderlessInput}
+                    inputStyle={styles.textareaInput}
+                  />
+                </View>
+                {fieldErrors.bio && (
+                  <Text style={[styles.inlineError, { color: theme.colors.error }]}>
+                    {fieldErrors.bio}
+                  </Text>
+                )}
+              </View>
+            </View>
+
+            {/* Core Skills Section */}
+            <View style={styles.skillsSection}>
+              <View style={styles.skillsHeader}>
+                <Text
+                  style={[
+                    styles.skillsTitle,
+                    {
+                      color: theme.colors.text,
+                      fontSize: theme.typography.sizes.lg,
+                      fontWeight: theme.typography.weights.semibold,
+                    },
+                  ]}
+                >
+                  Core Skills &amp; Tech
+                </Text>
+                <Text
+                  style={[
+                    styles.skillsSubtitle,
+                    {
+                      color: theme.colors.textSecondary,
+                      fontSize: theme.typography.sizes.xs,
+                      marginTop: 2,
+                    },
+                  ]}
+                >
+                  Add the technologies you work with
+                </Text>
+              </View>
+
+              {/* Skill Search Input */}
+              <Input
+                placeholder="Search skills (e.g. React, Python, Rust)..."
+                value={skillSearch}
+                onChangeText={setSkillSearch}
+                leftAccessory={
+                  <Ionicons
+                    name="search-outline"
+                    size={17}
+                    color={theme.colors.textMuted}
+                    style={styles.fieldIcon}
+                  />
+                }
+              />
+
+              {/* Active Selected Skills */}
+              {userSkills.length > 0 && (
+                <View style={styles.selectedSkillsWrapper}>
+                  <Text
+                    style={[
+                      styles.sectionSublabel,
+                      {
+                        color: theme.colors.textSecondary,
+                        fontSize: theme.typography.sizes.xs,
+                        fontWeight: theme.typography.weights.medium,
+                      },
+                    ]}
+                  >
+                    Selected ({userSkills.length})
+                  </Text>
+                  <View style={styles.chipsRow}>
+                    {userSkills.map((skill) => (
+                      <TouchableOpacity
+                        key={skill.id}
+                        activeOpacity={0.7}
+                        onPress={() => handleToggleSkill(skill.id)}
+                        style={[
+                          styles.chipSelected,
+                          {
+                            backgroundColor: theme.clay.surfaceChipSelected,
+                            borderColor: theme.clay.borderChipSelected,
+                            ...Platform.select({
+                              web: {
+                                boxShadow: theme.clay.webChipShadow,
+                              } as any,
+                              default: {
+                                ...theme.clay.shadowChip,
+                              },
+                            }),
+                          },
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.chipSelectedText,
+                            {
+                              color: theme.clay.textChipSelected,
+                              fontSize: theme.typography.sizes.xs,
+                              fontWeight: theme.typography.weights.medium,
+                            },
+                          ]}
+                        >
+                          {skill.name}
+                        </Text>
+                        <Ionicons
+                          name="close-outline"
+                          size={14}
+                          color={theme.clay.textChipSelected}
+                        />
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              )}
+
+              {/* Suggested Skills */}
+              {suggestedSkills.length > 0 && (
+                <View style={styles.suggestedSkillsWrapper}>
+                  <Text
+                    style={[
+                      styles.sectionSublabel,
+                      {
+                        color: theme.colors.textMuted,
+                        fontSize: theme.typography.sizes.xs,
+                        fontWeight: theme.typography.weights.medium,
+                      },
+                    ]}
+                  >
+                    {skillSearch ? 'Matching' : 'Suggested'}
+                  </Text>
+                  <View style={styles.chipsRow}>
+                    {suggestedSkills.slice(0, 12).map((skill) => (
+                      <TouchableOpacity
+                        key={skill.id}
+                        activeOpacity={0.7}
+                        onPress={() => handleToggleSkill(skill.id)}
+                        style={[
+                          styles.chipSuggested,
+                          {
+                            backgroundColor: theme.clay.surfaceChipSuggested,
+                            borderColor: theme.clay.borderChipSuggested,
+                            ...Platform.select({
+                              web: {
+                                boxShadow: theme.clay.webChipShadow,
+                              } as any,
+                              default: {
+                                ...theme.clay.shadowChip,
+                              },
+                            }),
+                          },
+                        ]}
+                      >
+                        <Ionicons
+                          name="add-outline"
+                          size={14}
+                          color={theme.colors.textSecondary}
+                        />
+                        <Text
+                          style={[
+                            styles.chipSuggestedText,
+                            {
+                              color: theme.clay.textChipSuggested,
+                              fontSize: theme.typography.sizes.xs,
+                              fontWeight: theme.typography.weights.medium,
+                            },
+                          ]}
+                        >
+                          {skill.name}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              )}
+            </View>
+
+            {/* Actions */}
+            <View style={styles.actionsWrapper}>
+              <Button
+                title="Continue to Workspace"
+                variant="clayPrimary"
+                size="lg"
+                loading={isUpdating}
+                onPress={handleSaveProfile}
+              />
+
+              <TouchableOpacity
+                onPress={() => router.replace('/(tabs)')}
+                activeOpacity={0.7}
+                style={styles.skipButton}
+              >
+                <Text
+                  style={[
+                    styles.skipText,
+                    {
+                      color: theme.colors.textSecondary,
+                      fontSize: theme.typography.sizes.sm,
+                      fontWeight: theme.typography.weights.medium,
+                    },
+                  ]}
+                >
+                  Skip for now
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </Card>
+        </View>
+
+        {/* Minimal Footer */}
+        <View style={styles.footer}>
+          <Text
+            style={[
+              styles.footerText,
+              {
+                color: theme.colors.textMuted,
+                fontSize: theme.typography.sizes.xs,
+              },
+            ]}
+          >
+            Sccinet • Professional Network for Builders
+          </Text>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -393,56 +586,195 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: 20,
-    paddingVertical: 32,
-    gap: 18,
+    flexGrow: 1,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
   },
-  headerSection: {
-    marginBottom: 6,
+  topBar: {
+    width: '100%',
+    maxWidth: 440,
+    alignSelf: 'center',
+    height: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
   },
-  headerTitle: {
-    letterSpacing: -0.5,
+  brandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
-  headerSubtitle: {
-    lineHeight: 20,
+  brandLogoSmall: {
+    width: 26,
+    height: 26,
+    borderRadius: 7,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  brandTitle: {
+    fontWeight: '700',
+    letterSpacing: -0.3,
+  },
+  centerContainer: {
+    width: '100%',
+    maxWidth: 440,
+    alignSelf: 'center',
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  avatarContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  avatarInner: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    letterSpacing: -0.3,
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  subtitle: {
+    textAlign: 'center',
+  },
+  formCard: {
+    width: '100%',
   },
   errorBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderRadius: 8,
-    padding: 12,
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 16,
+    gap: 8,
   },
   errorText: {
     flex: 1,
+    fontSize: 13,
   },
-  card: {
-    padding: 18,
-  },
-  cardSectionTitle: {},
-  inputsStack: {
+  fieldGroup: {
     gap: 14,
   },
-  skillsCard: {
-    padding: 18,
+  prefixText: {
+    marginRight: 2,
+    fontWeight: '500',
   },
-  skillsSubtitle: {
-    lineHeight: 18,
+  availableBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
+  availableText: {
+    fontWeight: '600',
+  },
+  fieldIcon: {
+    marginRight: 8,
+  },
+  bioWrapper: {
+    gap: 6,
+  },
+  bioHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  fieldLabel: {},
+  charCount: {},
+  textareaContainer: {
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
+  borderlessInputContainer: {
+    width: '100%',
+  },
+  borderlessInput: {
+    borderWidth: 0,
+    backgroundColor: 'transparent',
+    height: 'auto',
+    minHeight: 80,
+    paddingVertical: 8,
+  },
+  textareaInput: {
+    height: 72,
+    textAlignVertical: 'top',
+  },
+  inlineError: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+  skillsSection: {
+    marginTop: 20,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0, 0, 0, 0.05)',
+    gap: 12,
+  },
+  skillsHeader: {
+    marginBottom: 4,
+  },
+  skillsTitle: {
+    letterSpacing: -0.2,
+  },
+  skillsSubtitle: {},
   selectedSkillsWrapper: {
-    marginBottom: 16,
-    paddingBottom: 14,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(150, 150, 150, 0.2)',
+    gap: 8,
+    marginTop: 4,
   },
-  selectedLabel: {},
+  suggestedSkillsWrapper: {
+    gap: 8,
+    marginTop: 4,
+  },
+  sectionSublabel: {},
   chipsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
   },
-  submitBtn: {
-    marginTop: 8,
-    marginBottom: 20,
+  chipSelected: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
   },
+  chipSelectedText: {},
+  chipSuggested: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  chipSuggestedText: {},
+  actionsWrapper: {
+    marginTop: 24,
+    gap: 12,
+  },
+  skipButton: {
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  skipText: {},
+  footer: {
+    alignItems: 'center',
+    paddingVertical: 16,
+  },
+  footerText: {},
 });

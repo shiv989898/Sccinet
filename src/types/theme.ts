@@ -12,8 +12,10 @@ export interface ThemeColors {
   surface: string;
   surfaceSubtle: string;
   surfaceElevated: string;
+  surfaceRecessed: string;
   border: string;
   borderSubtle: string;
+  borderActive: string;
   text: string;
   textSecondary: string;
   textMuted: string;
@@ -33,20 +35,24 @@ export interface ClayTheme {
   surfaceElevated: string;
   surfaceRecessed: string;
   surfaceTrack: string;
-  surfaceChip: string;
-  surfaceNeutralChip: string;
-  borderHighlight: string;
-  borderSubtle: string;
-  borderActive: string;
-  shadowColor: string;
+  surfaceActivePill: string;
+  surfaceChipSelected: string;
+  surfaceChipSuggested: string;
+  borderCard: string;
+  borderRecessed: string;
+  borderChipSelected: string;
+  borderChipSuggested: string;
+  textChipSelected: string;
+  textChipSuggested: string;
   shadowCard: ViewStyle;
   shadowButton: ViewStyle;
+  shadowPill: ViewStyle;
   shadowChip: ViewStyle;
   webCardShadow: string;
   webRecessedShadow: string;
   webButtonShadow: string;
+  webPillShadow: string;
   webChipShadow: string;
-  webNeutralChipShadow: string;
 }
 
 export interface Theme {

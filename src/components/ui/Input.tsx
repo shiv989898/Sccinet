@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Platform,
   StyleProp,
   StyleSheet,
   Text,
@@ -15,9 +16,11 @@ export interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
   hint?: string;
+  variant?: 'default' | 'clay';
   leftAccessory?: React.ReactNode;
   rightAccessory?: React.ReactNode;
   containerStyle?: StyleProp<ViewStyle>;
+  inputContainerStyle?: StyleProp<ViewStyle>;
   inputStyle?: StyleProp<TextStyle>;
 }
 
@@ -25,9 +28,11 @@ export function Input({
   label,
   error,
   hint,
+  variant = 'clay',
   leftAccessory,
   rightAccessory,
   containerStyle,
+  inputContainerStyle,
   inputStyle,
   onFocus,
   onBlur,
@@ -49,7 +54,12 @@ export function Input({
   const getBorderColor = () => {
     if (error) return theme.colors.error;
     if (isFocused) return theme.colors.primary;
-    return theme.colors.border;
+    return variant === 'clay' ? theme.clay.borderRecessed : theme.colors.border;
+  };
+
+  const getBackgroundColor = () => {
+    if (variant === 'clay') return theme.clay.surfaceRecessed;
+    return theme.colors.surface;
   };
 
   return (
@@ -59,7 +69,7 @@ export function Input({
           style={[
             styles.label,
             {
-              color: theme.colors.text,
+              color: theme.colors.textSecondary,
               fontSize: theme.typography.sizes.sm,
               fontWeight: theme.typography.weights.medium,
               marginBottom: theme.spacing.xs,
@@ -74,12 +84,22 @@ export function Input({
         style={[
           styles.inputContainer,
           {
-            backgroundColor: theme.colors.surface,
+            backgroundColor: getBackgroundColor(),
             borderColor: getBorderColor(),
             borderRadius: theme.borderRadius.md,
             height: theme.dimensions.inputHeight,
             paddingHorizontal: theme.spacing.md,
+            ...Platform.select({
+              web: {
+                boxShadow: isFocused
+                  ? '0 0 0 3px rgba(37, 99, 235, 0.12)'
+                  : variant === 'clay'
+                  ? theme.clay.webRecessedShadow
+                  : undefined,
+              } as any,
+            }),
           },
+          inputContainerStyle,
         ]}
       >
         {leftAccessory && <View style={styles.accessory}>{leftAccessory}</View>}
@@ -149,8 +169,8 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   accessory: {
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
   },
   helperText: {},
 });
