@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Animated, StyleProp, ViewStyle } from 'react-native';
+import { Animated, Platform, StyleProp, ViewStyle } from 'react-native';
 
 export interface AnimatedEntranceProps {
   children: React.ReactNode;
@@ -12,26 +12,27 @@ export interface AnimatedEntranceProps {
 export function AnimatedEntrance({
   children,
   delay = 0,
-  duration = 300,
-  offsetY = 12,
+  duration = 320,
+  offsetY = 14,
   style,
 }: AnimatedEntranceProps) {
   const [opacityAnim] = useState(() => new Animated.Value(0));
   const [translateYAnim] = useState(() => new Animated.Value(offsetY));
 
   useEffect(() => {
+    const isWeb = Platform.OS === 'web';
     const timer = setTimeout(() => {
       Animated.parallel([
         Animated.timing(opacityAnim, {
           toValue: 1,
           duration,
-          useNativeDriver: true,
+          useNativeDriver: !isWeb,
         }),
         Animated.spring(translateYAnim, {
           toValue: 0,
-          tension: 140,
-          friction: 12,
-          useNativeDriver: true,
+          tension: 160,
+          friction: 16,
+          useNativeDriver: !isWeb,
         }),
       ]).start();
     }, delay);
