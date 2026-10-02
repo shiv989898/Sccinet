@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Animated,
   KeyboardAvoidingView,
@@ -27,7 +27,7 @@ export default function SignInScreen() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const [fadeAnim] = useState(() => new Animated.Value(1));
   const isSignUp = mode === 'signup';
 
   const switchMode = (newMode: 'signin' | 'signup') => {
@@ -474,6 +474,7 @@ export default function SignInScreen() {
               />
             </View>
           </Card>
+        </AnimatedEntrance>
 
           {/* Minimal Bottom Switch Link */}
           <View style={styles.bottomSwitchRow}>

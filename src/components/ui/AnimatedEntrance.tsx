@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Animated, StyleProp, ViewStyle } from 'react-native';
 
 export interface AnimatedEntranceProps {
@@ -16,8 +16,8 @@ export function AnimatedEntrance({
   offsetY = 12,
   style,
 }: AnimatedEntranceProps) {
-  const opacityAnim = useRef(new Animated.Value(0)).current;
-  const translateYAnim = useRef(new Animated.Value(offsetY)).current;
+  const [opacityAnim] = useState(() => new Animated.Value(0));
+  const [translateYAnim] = useState(() => new Animated.Value(offsetY));
 
   useEffect(() => {
     const timer = setTimeout(() => {

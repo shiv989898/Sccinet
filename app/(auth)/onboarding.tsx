@@ -21,7 +21,7 @@ import {
   useAddSkill,
   useRemoveSkill,
 } from '../../src/features/profiles/useProfile';
-import { Card, Button, Input } from '../../src/components/ui';
+import { Card, Button, Input, AnimatedEntrance } from '../../src/components/ui';
 
 export default function OnboardingScreen() {
   const theme = useTheme();
@@ -153,8 +153,9 @@ export default function OnboardingScreen() {
         </View>
 
         {/* Main Content Area */}
-        <View style={styles.centerContainer}>
-          {/* Header */}
+        <AnimatedEntrance duration={280}>
+          <View style={styles.centerContainer}>
+            {/* Header */}
           <View style={styles.header}>
             <View
               style={[
@@ -561,6 +562,7 @@ export default function OnboardingScreen() {
             </View>
           </Card>
         </View>
+      </AnimatedEntrance>
 
         {/* Minimal Footer */}
         <View style={styles.footer}>

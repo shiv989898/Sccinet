@@ -14,7 +14,7 @@ import { useTheme } from '../../src/hooks/useTheme';
 import { useThemeStore } from '../../src/stores/useThemeStore';
 import { useAuth } from '../../src/features/auth/AuthContext';
 import { useCurrentProfile, useUserSkills } from '../../src/features/profiles/useProfile';
-import { Card, Button, Avatar } from '../../src/components/ui';
+import { Card, Button, Avatar, AnimatedEntrance } from '../../src/components/ui';
 
 export default function ProfileScreen() {
   const theme = useTheme();
@@ -113,9 +113,10 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.centerContainer}>
-          {/* Profile Identity Card */}
-          <Card variant="clay" padding="xl" style={styles.identityCard}>
+        <AnimatedEntrance duration={280}>
+          <View style={styles.centerContainer}>
+            {/* Profile Identity Card */}
+            <Card variant="clay" padding="xl" style={styles.identityCard}>
             <View style={styles.avatarRow}>
               <View
                 style={[
@@ -435,7 +436,8 @@ export default function ProfileScreen() {
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
+      </AnimatedEntrance>
+    </ScrollView>
     </View>
   );
 }
