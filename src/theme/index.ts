@@ -1,4 +1,4 @@
-import { palette, spacing, borderRadius, typography, dimensions } from './tokens';
+import { palette, clayTokens, spacing, borderRadius, typography, dimensions } from './tokens';
 import { Theme, ThemeColors, ColorScheme } from '../types/theme';
 
 export const lightColors: ThemeColors = {
@@ -53,6 +53,7 @@ export const darkColors: ThemeColors = {
 
 export const getTheme = (scheme: ColorScheme): Theme => ({
   colors: scheme === 'dark' ? darkColors : lightColors,
+  clay: scheme === 'dark' ? (clayTokens.dark as any) : (clayTokens.light as any),
   spacing,
   borderRadius,
   typography,
