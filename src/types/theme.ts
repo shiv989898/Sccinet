@@ -50,9 +50,14 @@ export interface ClayTheme {
   shadowChip: ViewStyle;
   webCardShadow: string;
   webRecessedShadow: string;
+  webRecessedTrackShadow: string;
   webButtonShadow: string;
+  webButtonPressedShadow: string;
+  webSecondaryButtonShadow: string;
+  webSecondaryButtonPressedShadow: string;
   webPillShadow: string;
   webChipShadow: string;
+  webChipSelectedShadow: string;
 }
 
 export interface Theme {

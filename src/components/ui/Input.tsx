@@ -53,8 +53,8 @@ export function Input({
 
   const getBorderColor = () => {
     if (error) return theme.colors.error;
-    if (isFocused) return theme.colors.primary;
-    return variant === 'clay' ? theme.clay.borderRecessed : theme.colors.border;
+    if (isFocused) return theme.isDark ? 'rgba(59, 130, 246, 0.4)' : 'rgba(37, 99, 235, 0.35)';
+    return variant === 'clay' ? 'transparent' : theme.colors.border;
   };
 
   const getBackgroundColor = () => {
@@ -86,16 +86,19 @@ export function Input({
           {
             backgroundColor: getBackgroundColor(),
             borderColor: getBorderColor(),
-            borderRadius: theme.borderRadius.md,
+            borderRadius: 14,
             height: theme.dimensions.inputHeight,
             paddingHorizontal: theme.spacing.md,
             ...Platform.select({
               web: {
                 boxShadow: isFocused
-                  ? '0 0 0 3px rgba(37, 99, 235, 0.12)'
+                  ? theme.isDark
+                    ? 'inset 0 1px 2px 0 rgba(0, 0, 0, 0.25), 0 0 0 2px rgba(59, 130, 246, 0.2)'
+                    : 'inset 0 1px 2px 0 rgba(25, 42, 75, 0.04), 0 0 0 2px rgba(37, 99, 235, 0.15)'
                   : variant === 'clay'
                   ? theme.clay.webRecessedShadow
                   : undefined,
+                transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
               } as any,
             }),
           },

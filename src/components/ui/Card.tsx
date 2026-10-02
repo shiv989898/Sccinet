@@ -52,7 +52,7 @@ export function Card({
           backgroundColor: theme.clay.surface,
           borderWidth: 1,
           borderColor: theme.clay.borderCard,
-          borderRadius: 24,
+          borderRadius: 28,
           ...Platform.select({
             web: {
               boxShadow: theme.clay.webCardShadow,
@@ -99,7 +99,7 @@ export function Card({
   };
 
   const containerStyle: ViewStyle = {
-    borderRadius: variant === 'clay' ? 24 : theme.borderRadius.lg,
+    borderRadius: variant === 'clay' ? 28 : theme.borderRadius.lg,
     padding: getPadding(),
     ...getVariantStyle(),
   };

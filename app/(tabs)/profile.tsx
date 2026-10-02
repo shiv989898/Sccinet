@@ -83,6 +83,34 @@ export default function ProfileScreen() {
               Sccinet
             </Text>
           </View>
+
+          {/* Discreet theme toggle */}
+          <TouchableOpacity
+            onPress={() => setPreference(preference === 'dark' ? 'light' : 'dark')}
+            activeOpacity={0.8}
+            accessibilityLabel="Toggle appearance"
+            style={[
+              styles.themeSwitchButton,
+              {
+                backgroundColor: theme.clay.surface,
+                borderColor: theme.clay.borderCard,
+                ...Platform.select({
+                  web: {
+                    boxShadow: theme.clay.webChipShadow,
+                  } as any,
+                  default: {
+                    ...theme.clay.shadowChip,
+                  },
+                }),
+              },
+            ]}
+          >
+            <Ionicons
+              name={preference === 'dark' ? 'sunny-outline' : 'moon-outline'}
+              size={16}
+              color={theme.colors.textSecondary}
+            />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.centerContainer}>
@@ -198,187 +226,6 @@ export default function ProfileScreen() {
                 onPress={handleEditProfile}
               />
             </View>
-
-            {/* Appearance Segmented Pill */}
-            <View
-              style={[
-                styles.appearanceRow,
-                { borderTopColor: theme.clay.borderCard },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.appearanceLabel,
-                  {
-                    color: theme.colors.textSecondary,
-                    fontSize: theme.typography.sizes.sm,
-                    fontWeight: theme.typography.weights.medium,
-                  },
-                ]}
-              >
-                Appearance
-              </Text>
-
-              <View
-                style={[
-                  styles.themePillTrack,
-                  { backgroundColor: theme.clay.surfaceTrack },
-                ]}
-              >
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={() => setPreference('light')}
-                  style={[
-                    styles.themeTab,
-                    preference === 'light' && [
-                      styles.themeTabActive,
-                      {
-                        backgroundColor: theme.clay.surfaceActivePill,
-                        borderColor: theme.clay.borderCard,
-                        ...Platform.select({
-                          web: {
-                            boxShadow: theme.clay.webPillShadow,
-                          } as any,
-                          default: {
-                            ...theme.clay.shadowPill,
-                          },
-                        }),
-                      },
-                    ],
-                  ]}
-                >
-                  <Ionicons
-                    name="sunny-outline"
-                    size={13}
-                    color={
-                      preference === 'light'
-                        ? theme.colors.primary
-                        : theme.colors.textSecondary
-                    }
-                  />
-                  <Text
-                    style={[
-                      styles.themeTabText,
-                      {
-                        color:
-                          preference === 'light'
-                            ? theme.colors.primary
-                            : theme.colors.textSecondary,
-                        fontSize: theme.typography.sizes.xs,
-                        fontWeight:
-                          preference === 'light'
-                            ? theme.typography.weights.semibold
-                            : theme.typography.weights.medium,
-                      },
-                    ]}
-                  >
-                    Light
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={() => setPreference('dark')}
-                  style={[
-                    styles.themeTab,
-                    preference === 'dark' && [
-                      styles.themeTabActive,
-                      {
-                        backgroundColor: theme.clay.surfaceActivePill,
-                        borderColor: theme.clay.borderCard,
-                        ...Platform.select({
-                          web: {
-                            boxShadow: theme.clay.webPillShadow,
-                          } as any,
-                          default: {
-                            ...theme.clay.shadowPill,
-                          },
-                        }),
-                      },
-                    ],
-                  ]}
-                >
-                  <Ionicons
-                    name="moon-outline"
-                    size={13}
-                    color={
-                      preference === 'dark'
-                        ? theme.colors.primary
-                        : theme.colors.textSecondary
-                    }
-                  />
-                  <Text
-                    style={[
-                      styles.themeTabText,
-                      {
-                        color:
-                          preference === 'dark'
-                            ? theme.colors.primary
-                            : theme.colors.textSecondary,
-                        fontSize: theme.typography.sizes.xs,
-                        fontWeight:
-                          preference === 'dark'
-                            ? theme.typography.weights.semibold
-                            : theme.typography.weights.medium,
-                      },
-                    ]}
-                  >
-                    Dark
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={() => setPreference('system')}
-                  style={[
-                    styles.themeTab,
-                    preference === 'system' && [
-                      styles.themeTabActive,
-                      {
-                        backgroundColor: theme.clay.surfaceActivePill,
-                        borderColor: theme.clay.borderCard,
-                        ...Platform.select({
-                          web: {
-                            boxShadow: theme.clay.webPillShadow,
-                          } as any,
-                          default: {
-                            ...theme.clay.shadowPill,
-                          },
-                        }),
-                      },
-                    ],
-                  ]}
-                >
-                  <Ionicons
-                    name="phone-portrait-outline"
-                    size={13}
-                    color={
-                      preference === 'system'
-                        ? theme.colors.primary
-                        : theme.colors.textSecondary
-                    }
-                  />
-                  <Text
-                    style={[
-                      styles.themeTabText,
-                      {
-                        color:
-                          preference === 'system'
-                            ? theme.colors.primary
-                            : theme.colors.textSecondary,
-                        fontSize: theme.typography.sizes.xs,
-                        fontWeight:
-                          preference === 'system'
-                            ? theme.typography.weights.semibold
-                            : theme.typography.weights.medium,
-                      },
-                    ]}
-                  >
-                    Auto
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
           </Card>
 
           {/* Skills Section */}
@@ -435,7 +282,7 @@ export default function ProfileScreen() {
                         borderColor: theme.clay.borderChipSelected,
                         ...Platform.select({
                           web: {
-                            boxShadow: theme.clay.webChipShadow,
+                            boxShadow: theme.clay.webChipSelectedShadow,
                           } as any,
                           default: {
                             ...theme.clay.shadowChip,
@@ -550,6 +397,14 @@ export default function ProfileScreen() {
               >
                 No projects yet. Projects you create or collaborate on will appear here.
               </Text>
+              <Button
+                title="+ Create Project"
+                variant="claySecondary"
+                size="sm"
+                onPress={() => {
+                  Alert.alert('Create Project', 'Project creation will be available in Phase 2.');
+                }}
+              />
             </View>
           </Card>
 
@@ -620,6 +475,14 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: -0.3,
   },
+  themeSwitchButton: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   centerContainer: {
     width: '100%',
     maxWidth: 440,
@@ -671,34 +534,6 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 18,
   },
-  appearanceRow: {
-    width: '100%',
-    marginTop: 16,
-    paddingTop: 14,
-    borderTopWidth: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  appearanceLabel: {},
-  themePillTrack: {
-    flexDirection: 'row',
-    borderRadius: 9999,
-    padding: 3,
-    gap: 2,
-  },
-  themeTab: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 9999,
-  },
-  themeTabActive: {
-    borderWidth: 1,
-  },
-  themeTabText: {},
   sectionCard: {
     width: '100%',
   },
@@ -738,7 +573,7 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
+    gap: 12,
   },
   emptyProjectsIcon: {
     width: 48,

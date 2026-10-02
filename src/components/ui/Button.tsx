@@ -90,12 +90,16 @@ export function Button({
         return {
           ...base,
           backgroundColor: theme.colors.primary,
-          transform: pressed ? [{ scale: 0.985 }, { translateY: 1 }] : [],
+          borderWidth: 1,
+          borderColor: 'rgba(255, 255, 255, 0.15)',
+          borderRadius: theme.borderRadius.lg,
+          transform: pressed ? [{ scale: 0.985 }, { translateY: 1.5 }] : [],
           ...Platform.select({
             web: {
               boxShadow: pressed
-                ? '0 2px 6px rgba(37, 99, 235, 0.25)'
+                ? theme.clay.webButtonPressedShadow
                 : theme.clay.webButtonShadow,
+              transition: 'transform 0.15s ease, box-shadow 0.15s ease',
             } as any,
             default: {
               ...theme.clay.shadowButton,
@@ -108,12 +112,14 @@ export function Button({
           backgroundColor: theme.clay.surface,
           borderWidth: 1,
           borderColor: theme.clay.borderCard,
-          transform: pressed ? [{ scale: 0.985 }] : [],
+          borderRadius: theme.borderRadius.lg,
+          transform: pressed ? [{ scale: 0.985 }, { translateY: 1 }] : [],
           ...Platform.select({
             web: {
               boxShadow: pressed
-                ? 'inset 0 1px 2px rgba(15, 23, 42, 0.04)'
-                : '0 2px 6px rgba(15, 23, 42, 0.03)',
+                ? theme.clay.webSecondaryButtonPressedShadow
+                : theme.clay.webSecondaryButtonShadow,
+              transition: 'transform 0.15s ease, box-shadow 0.15s ease',
             } as any,
             default: {
               ...theme.clay.shadowPill,

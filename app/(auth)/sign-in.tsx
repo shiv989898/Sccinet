@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
+  Animated,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -13,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
 import { authService } from '../../src/services/auth/authService';
 import { signInSchema, signUpSchema } from '../../src/features/auth/schemas';
-import { Card, Button, Input } from '../../src/components/ui';
+import { Card, Button, Input, AnimatedEntrance } from '../../src/components/ui';
 
 export default function SignInScreen() {
   const theme = useTheme();
@@ -26,12 +27,29 @@ export default function SignInScreen() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
+  const fadeAnim = useRef(new Animated.Value(1)).current;
   const isSignUp = mode === 'signup';
 
   const switchMode = (newMode: 'signin' | 'signup') => {
-    setMode(newMode);
-    setErrorMessage(null);
-    setFieldErrors({});
+    if (newMode === mode) return;
+    Animated.sequence([
+      Animated.timing(fadeAnim, {
+        toValue: 0.15,
+        duration: 90,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    setTimeout(() => {
+      setMode(newMode);
+      setErrorMessage(null);
+      setFieldErrors({});
+    }, 90);
   };
 
   const handleAuth = async () => {
@@ -129,66 +147,67 @@ export default function SignInScreen() {
 
         {/* Main Minimal Clay Container */}
         <View style={styles.centerContainer}>
-          <Card variant="clay" padding="xl" style={styles.authCard}>
-            {/* Header / Identity */}
-            <View style={styles.header}>
-              <View
-                style={[
-                  styles.logoBadge,
-                  {
-                    backgroundColor: theme.clay.surface,
-                    borderColor: theme.clay.borderCard,
-                    ...Platform.select({
-                      web: {
-                        boxShadow: theme.isDark
-                          ? '0 4px 14px rgba(0, 0, 0, 0.4)'
-                          : '0 4px 14px rgba(37, 99, 235, 0.08)',
-                      } as any,
-                      default: {
-                        ...theme.clay.shadowChip,
-                      },
-                    }),
-                  },
-                ]}
-              >
+          <AnimatedEntrance duration={280}>
+            <Card variant="clay" padding="xl" style={styles.authCard}>
+              {/* Header / Identity */}
+              <View style={styles.header}>
                 <View
                   style={[
-                    styles.logoInner,
+                    styles.logoBadge,
                     {
-                      backgroundColor: theme.colors.primary,
+                      backgroundColor: theme.clay.surface,
+                      borderColor: theme.clay.borderCard,
+                      ...Platform.select({
+                        web: {
+                          boxShadow: theme.clay.webChipShadow,
+                        } as any,
+                        default: {
+                          ...theme.clay.shadowChip,
+                        },
+                      }),
                     },
                   ]}
                 >
-                  <Ionicons name="code-slash" size={18} color="#FFFFFF" />
+                  <View
+                    style={[
+                      styles.logoInner,
+                      {
+                        backgroundColor: theme.colors.primary,
+                      },
+                    ]}
+                  >
+                    <Ionicons name="shield-checkmark" size={18} color="#FFFFFF" />
+                  </View>
                 </View>
-              </View>
 
-              <Text
-                style={[
-                  styles.title,
-                  {
-                    color: theme.colors.text,
-                    fontSize: theme.typography.sizes.xxl,
-                    fontWeight: theme.typography.weights.semibold,
-                  },
-                ]}
-              >
-                {isSignUp ? 'Create account' : 'Welcome back'}
-              </Text>
-              <Text
-                style={[
-                  styles.subtitle,
-                  {
-                    color: theme.colors.textSecondary,
-                    fontSize: theme.typography.sizes.sm,
-                  },
-                ]}
-              >
-                {isSignUp
-                  ? 'Start building and collaborating'
-                  : 'Sign in to your builder workspace'}
-              </Text>
-            </View>
+                <Animated.View style={{ opacity: fadeAnim, alignItems: 'center' }}>
+                  <Text
+                    style={[
+                      styles.title,
+                      {
+                        color: theme.colors.text,
+                        fontSize: theme.typography.sizes.xxl,
+                        fontWeight: theme.typography.weights.semibold,
+                      },
+                    ]}
+                  >
+                    {isSignUp ? 'Create account' : 'Welcome back'}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.subtitle,
+                      {
+                        color: theme.colors.textSecondary,
+                        fontSize: theme.typography.sizes.sm,
+                      },
+                    ]}
+                  >
+                    {isSignUp
+                      ? 'Start building and collaborating'
+                      : 'Sign in to your builder workspace'}
+                  </Text>
+                </Animated.View>
+              </View>
 
             {/* Segmented Pill Track */}
             <View
@@ -196,6 +215,12 @@ export default function SignInScreen() {
                 styles.segmentedTrack,
                 {
                   backgroundColor: theme.clay.surfaceTrack,
+                  borderColor: theme.clay.borderRecessed,
+                  ...Platform.select({
+                    web: {
+                      boxShadow: theme.clay.webRecessedTrackShadow,
+                    } as any,
+                  }),
                 },
               ]}
             >

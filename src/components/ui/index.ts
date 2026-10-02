@@ -5,3 +5,4 @@ export * from './Badge';
 export * from './Avatar';
 export * from './SkeletonLoader';
 export * from './EmptyState';
+export * from './AnimatedEntrance';

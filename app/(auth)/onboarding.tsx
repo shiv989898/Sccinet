@@ -26,7 +26,7 @@ import { Card, Button, Input } from '../../src/components/ui';
 export default function OnboardingScreen() {
   const theme = useTheme();
   const { user } = useAuth();
-  const { data: profile, isLoading: profileLoading } = useCurrentProfile();
+  const { data: profile } = useCurrentProfile();
   const { mutateAsync: updateProfile, isPending: isUpdating } = useUpdateProfile();
   const { data: availableSkills = [] } = useAvailableSkills();
   const { data: userSkills = [] } = useUserSkills(user?.id);
@@ -437,7 +437,7 @@ export default function OnboardingScreen() {
                             borderColor: theme.clay.borderChipSelected,
                             ...Platform.select({
                               web: {
-                                boxShadow: theme.clay.webChipShadow,
+                                boxShadow: theme.clay.webChipSelectedShadow,
                               } as any,
                               default: {
                                 ...theme.clay.shadowChip,
