@@ -27,22 +27,52 @@ export default function SignInScreen() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  const [fadeAnim] = useState(() => new Animated.Value(1));
+  const isWeb = Platform.OS === 'web';
+  const [tabAnim] = useState(() => new Animated.Value(mode === 'signup' ? 1 : 0));
+  const [contentFadeAnim] = useState(() => new Animated.Value(1));
+  const [contentSlideAnim] = useState(() => new Animated.Value(0));
+  const [trackWidth, setTrackWidth] = useState(0);
   const isSignUp = mode === 'signup';
 
   const switchMode = (newMode: 'signin' | 'signup') => {
     if (newMode === mode) return;
+
+    // Apple-level fluid spring for the segmented pill thumb
+    Animated.spring(tabAnim, {
+      toValue: newMode === 'signup' ? 1 : 0,
+      tension: 280,
+      friction: 24,
+      useNativeDriver: !isWeb,
+    }).start();
+
+    // Silky crossfade + micro drift for header and form content
     Animated.sequence([
-      Animated.timing(fadeAnim, {
-        toValue: 0.15,
-        duration: 90,
-        useNativeDriver: true,
-      }),
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 150,
-        useNativeDriver: true,
-      }),
+      Animated.parallel([
+        Animated.timing(contentFadeAnim, {
+          toValue: 0.15,
+          duration: 90,
+          useNativeDriver: !isWeb,
+        }),
+        Animated.timing(contentSlideAnim, {
+          toValue: 4,
+          duration: 90,
+          useNativeDriver: !isWeb,
+        }),
+      ]),
+      Animated.parallel([
+        Animated.spring(contentFadeAnim, {
+          toValue: 1,
+          tension: 220,
+          friction: 20,
+          useNativeDriver: !isWeb,
+        }),
+        Animated.spring(contentSlideAnim, {
+          toValue: 0,
+          tension: 220,
+          friction: 20,
+          useNativeDriver: !isWeb,
+        }),
+      ]),
     ]).start();
 
     setTimeout(() => {
@@ -601,10 +631,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   segmentedTrack: {
+    position: 'relative',
     flexDirection: 'row',
+    alignItems: 'center',
     borderRadius: 14,
     padding: 3,
     marginBottom: 20,
+    overflow: 'hidden',
+  },
+  slidingThumb: {
+    position: 'absolute',
+    top: 3,
+    bottom: 3,
+    left: 3,
+    borderRadius: 11,
+    borderWidth: 1,
+    zIndex: 1,
   },
   segmentTab: {
     flex: 1,
@@ -612,9 +654,8 @@ const styles = StyleSheet.create({
     borderRadius: 11,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  segmentTabActive: {
-    borderWidth: 1,
+    zIndex: 2,
+    backgroundColor: 'transparent',
   },
   segmentText: {},
   errorBanner: {

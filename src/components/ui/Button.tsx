@@ -99,7 +99,7 @@ export function Button({
               boxShadow: pressed
                 ? theme.clay.webButtonPressedShadow
                 : theme.clay.webButtonShadow,
-              transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+              transition: 'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.18s ease',
             } as any,
             default: {
               ...theme.clay.shadowButton,
@@ -119,7 +119,7 @@ export function Button({
               boxShadow: pressed
                 ? theme.clay.webSecondaryButtonPressedShadow
                 : theme.clay.webSecondaryButtonShadow,
-              transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+              transition: 'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.18s ease',
             } as any,
             default: {
               ...theme.clay.shadowPill,

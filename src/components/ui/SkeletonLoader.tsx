@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Animated,
   DimensionValue,
+  Platform,
   StyleProp,
   ViewStyle,
 } from 'react-native';
@@ -24,17 +25,18 @@ export function SkeletonLoader({
   const [opacityAnim] = useState(() => new Animated.Value(0.35));
 
   useEffect(() => {
+    const isWeb = Platform.OS === 'web';
     const loop = Animated.loop(
       Animated.sequence([
         Animated.timing(opacityAnim, {
           toValue: 0.75,
           duration: 800,
-          useNativeDriver: true,
+          useNativeDriver: !isWeb,
         }),
         Animated.timing(opacityAnim, {
           toValue: 0.35,
           duration: 800,
-          useNativeDriver: true,
+          useNativeDriver: !isWeb,
         }),
       ])
     );
