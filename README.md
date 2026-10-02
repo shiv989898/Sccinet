@@ -1,58 +1,86 @@
-# Welcome to your Expo app 👋
+# Sccinet
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A social collaboration platform connecting builders, showcasing projects, and forming meaningful team partnerships.
 
-## Get started
+> **People + Projects + Community + Collaboration**
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## Overview
 
-2. Start the app
+Sccinet combines ideas from:
+- **Project Discovery & Team Collaboration** (inspired by open collaboration models): Discover what is being built, explore open roles, and join project teams.
+- **Showcase & Visual Milestones** (inspired by creator showcases): Rich media feeds highlighting architecture, UI screens, release logs, and dev progress.
+- **Professional Identity & Verified Skill Graph**: Showcase projects you lead or contribute to, connect with builders, and grow your collaborative network.
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## Tech Stack
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- **Frontend**: React Native, Expo (SDK 57), TypeScript, Expo Router
+- **Backend**: Supabase (PostgreSQL, Auth, Storage, Realtime)
+- **State Management**: TanStack Query (v5) for server cache + Zustand for client state
+- **List Virtualization**: `@shopify/flash-list`
+- **Media Pipeline**: `expo-image` + `expo-image-manipulator`
+- **Validation**: Zod + React Hook Form
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## Getting Started
 
-When you're ready, run:
+### 1. Prerequisites
+- Node.js (v18+)
+- npm or bun
 
+### 2. Installation
 ```bash
-npm run reset-project
+# Clone the repository
+git clone https://github.com/shiv989898/Sccinet.git
+cd Sccinet
+
+# Install dependencies
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 3. Environment Variables
+Copy `.env.example` to `.env`:
+```bash
+cp .env.example .env
+```
+Configure your Supabase credentials:
+```env
+EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
+```
 
-### Other setup steps
+### 4. Running Locally
+```bash
+# Start the Expo development server
+npm start
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+# Run on web
+npm run web
 
-## Learn more
+# Run on Android
+npm run android
 
-To learn more about developing your project with Expo, look at the following resources:
+# Run on iOS (macOS required)
+npm run ios
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 5. Quality & Checks
+```bash
+# Typecheck
+npx tsc --noEmit
 
-## Join the community
+# Lint
+npm run lint
 
-Join our community of developers creating universal apps.
+# Dependency & config diagnostics
+npx expo-doctor
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
 
-# Sccinet
+## License
+MIT
