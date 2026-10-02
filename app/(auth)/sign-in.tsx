@@ -176,8 +176,8 @@ export default function SignInScreen() {
         </View>
 
         {/* Main Minimal Clay Container */}
-        <View style={styles.centerContainer}>
-          <AnimatedEntrance duration={280}>
+        <AnimatedEntrance duration={320}>
+          <View style={styles.centerContainer}>
             <Card variant="clay" padding="xl" style={styles.authCard}>
               {/* Header / Identity */}
               <View style={styles.header}>
@@ -210,7 +210,13 @@ export default function SignInScreen() {
                   </View>
                 </View>
 
-                <Animated.View style={{ opacity: fadeAnim, alignItems: 'center' }}>
+                <Animated.View
+                  style={{
+                    opacity: contentFadeAnim,
+                    transform: [{ translateY: contentSlideAnim }],
+                    alignItems: 'center',
+                  }}
+                >
                   <Text
                     style={[
                       styles.title,
@@ -239,305 +245,310 @@ export default function SignInScreen() {
                 </Animated.View>
               </View>
 
-            {/* Segmented Pill Track */}
-            <View
-              style={[
-                styles.segmentedTrack,
-                {
-                  backgroundColor: theme.clay.surfaceTrack,
-                  borderColor: theme.clay.borderRecessed,
-                  ...Platform.select({
-                    web: {
-                      boxShadow: theme.clay.webRecessedTrackShadow,
-                    } as any,
-                  }),
-                },
-              ]}
-            >
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => switchMode('signin')}
-                style={[
-                  styles.segmentTab,
-                  !isSignUp && [
-                    styles.segmentTabActive,
-                    {
-                      backgroundColor: theme.clay.surfaceActivePill,
-                      borderColor: theme.clay.borderCard,
-                      ...Platform.select({
-                        web: {
-                          boxShadow: theme.clay.webPillShadow,
-                        } as any,
-                        default: {
-                          ...theme.clay.shadowPill,
-                        },
-                      }),
-                    },
-                  ],
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.segmentText,
-                    {
-                      color: !isSignUp ? theme.colors.primary : theme.colors.textSecondary,
-                      fontWeight: !isSignUp
-                        ? theme.typography.weights.semibold
-                        : theme.typography.weights.medium,
-                      fontSize: theme.typography.sizes.sm,
-                    },
-                  ]}
-                >
-                  Sign In
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => switchMode('signup')}
-                style={[
-                  styles.segmentTab,
-                  isSignUp && [
-                    styles.segmentTabActive,
-                    {
-                      backgroundColor: theme.clay.surfaceActivePill,
-                      borderColor: theme.clay.borderCard,
-                      ...Platform.select({
-                        web: {
-                          boxShadow: theme.clay.webPillShadow,
-                        } as any,
-                        default: {
-                          ...theme.clay.shadowPill,
-                        },
-                      }),
-                    },
-                  ],
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.segmentText,
-                    {
-                      color: isSignUp ? theme.colors.primary : theme.colors.textSecondary,
-                      fontWeight: isSignUp
-                        ? theme.typography.weights.semibold
-                        : theme.typography.weights.medium,
-                      fontSize: theme.typography.sizes.sm,
-                    },
-                  ]}
-                >
-                  Sign Up
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* Error Message */}
-            {errorMessage && (
+              {/* Segmented Pill Track with Apple-level sliding thumb */}
               <View
+                onLayout={(e) => setTrackWidth(e.nativeEvent.layout.width)}
                 style={[
-                  styles.errorBanner,
+                  styles.segmentedTrack,
                   {
-                    backgroundColor: theme.colors.errorMuted,
-                    borderColor: theme.colors.error,
+                    backgroundColor: theme.clay.surfaceTrack,
+                    borderColor: theme.clay.borderRecessed,
+                    ...Platform.select({
+                      web: {
+                        boxShadow: theme.clay.webRecessedTrackShadow,
+                      } as any,
+                    }),
                   },
                 ]}
               >
-                <Ionicons name="alert-circle" size={16} color={theme.colors.error} />
-                <Text style={[styles.errorText, { color: theme.colors.error }]}>
-                  {errorMessage}
-                </Text>
-              </View>
-            )}
-
-            {/* Form Fields */}
-            <View style={styles.form}>
-              {isSignUp && (
-                <Input
-                  label="Full Name"
-                  placeholder="e.g. Alex Rivera"
-                  value={fullName}
-                  onChangeText={setFullName}
-                  autoCapitalize="words"
-                  error={fieldErrors.fullName}
-                  leftAccessory={
-                    <Ionicons
-                      name="person-outline"
-                      size={18}
-                      color={theme.colors.textMuted}
-                      style={styles.inputIcon}
-                    />
-                  }
-                />
-              )}
-
-              <Input
-                label="Email address"
-                placeholder="name@work.com"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                error={fieldErrors.email}
-                leftAccessory={
-                  <Ionicons
-                    name="mail-outline"
-                    size={18}
-                    color={theme.colors.textMuted}
-                    style={styles.inputIcon}
+                {/* Physical sliding clay thumb */}
+                {trackWidth > 0 && (
+                  <Animated.View
+                    style={[
+                      styles.slidingThumb,
+                      {
+                        width: (trackWidth - 6) / 2,
+                        backgroundColor: theme.clay.surfaceActivePill,
+                        borderColor: theme.clay.borderCard,
+                        transform: [
+                          {
+                            translateX: tabAnim.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: [0, (trackWidth - 6) / 2],
+                            }),
+                          },
+                        ],
+                        ...Platform.select({
+                          web: {
+                            boxShadow: theme.clay.webPillShadow,
+                          } as any,
+                          default: {
+                            ...theme.clay.shadowPill,
+                          },
+                        }),
+                      },
+                    ]}
                   />
-                }
-              />
+                )}
 
-              <View style={styles.passwordWrapper}>
-                <Input
-                  label="Password"
-                  placeholder="••••••••••••"
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry={!showPassword}
-                  autoCapitalize="none"
-                  error={fieldErrors.password}
-                  leftAccessory={
-                    <Ionicons
-                      name="lock-closed-outline"
-                      size={18}
-                      color={theme.colors.textMuted}
-                      style={styles.inputIcon}
-                    />
-                  }
-                  rightAccessory={
-                    <TouchableOpacity
-                      onPress={() => setShowPassword(!showPassword)}
-                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                    >
-                      <Ionicons
-                        name={showPassword ? 'eye-off-outline' : 'eye-outline'}
-                        size={18}
-                        color={theme.colors.textMuted}
-                      />
-                    </TouchableOpacity>
-                  }
-                />
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  onPress={() => switchMode('signin')}
+                  style={styles.segmentTab}
+                >
+                  <Text
+                    style={[
+                      styles.segmentText,
+                      {
+                        color: !isSignUp ? theme.colors.primary : theme.colors.textSecondary,
+                        fontWeight: !isSignUp
+                          ? theme.typography.weights.semibold
+                          : theme.typography.weights.medium,
+                        fontSize: theme.typography.sizes.sm,
+                      },
+                    ]}
+                  >
+                    Sign In
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  onPress={() => switchMode('signup')}
+                  style={styles.segmentTab}
+                >
+                  <Text
+                    style={[
+                      styles.segmentText,
+                      {
+                        color: isSignUp ? theme.colors.primary : theme.colors.textSecondary,
+                        fontWeight: isSignUp
+                          ? theme.typography.weights.semibold
+                          : theme.typography.weights.medium,
+                        fontSize: theme.typography.sizes.sm,
+                      },
+                    ]}
+                  >
+                    Sign Up
+                  </Text>
+                </TouchableOpacity>
               </View>
 
-              {!isSignUp && (
-                <View style={styles.forgotRow}>
-                  <TouchableOpacity activeOpacity={0.7}>
-                    <Text
-                      style={[
-                        styles.forgotText,
-                        {
-                          color: theme.colors.primary,
-                          fontSize: theme.typography.sizes.xs,
-                        },
-                      ]}
-                    >
-                      Forgot password?
-                    </Text>
-                  </TouchableOpacity>
+              {/* Error Message */}
+              {errorMessage && (
+                <View
+                  style={[
+                    styles.errorBanner,
+                    {
+                      backgroundColor: theme.colors.errorMuted,
+                      borderColor: theme.colors.error,
+                    },
+                  ]}
+                >
+                  <Ionicons name="alert-circle" size={16} color={theme.colors.error} />
+                  <Text style={[styles.errorText, { color: theme.colors.error }]}>
+                    {errorMessage}
+                  </Text>
                 </View>
               )}
 
-              {/* Primary Action Button */}
-              <View style={styles.actionContainer}>
-                <Button
-                  title={isSignUp ? 'Create account' : 'Sign in'}
-                  variant="clayPrimary"
-                  size="lg"
-                  loading={loading}
-                  onPress={handleAuth}
-                />
-              </View>
-            </View>
-
-            {/* Subtle Divider */}
-            <View style={styles.dividerRow}>
-              <View
+              {/* Form Fields with Apple Crossfade & Drift */}
+              <Animated.View
                 style={[
-                  styles.dividerLine,
-                  { backgroundColor: theme.clay.borderCard },
-                ]}
-              />
-              <Text
-                style={[
-                  styles.dividerText,
+                  styles.form,
                   {
-                    color: theme.colors.textMuted,
-                    fontSize: theme.typography.sizes.xs,
+                    opacity: contentFadeAnim,
+                    transform: [{ translateY: contentSlideAnim }],
                   },
                 ]}
               >
-                or continue with
-              </Text>
-              <View
-                style={[
-                  styles.dividerLine,
-                  { backgroundColor: theme.clay.borderCard },
-                ]}
-              />
-            </View>
+                {isSignUp && (
+                  <Input
+                    label="Full Name"
+                    placeholder="e.g. Alex Rivera"
+                    value={fullName}
+                    onChangeText={setFullName}
+                    autoCapitalize="words"
+                    error={fieldErrors.fullName}
+                    leftAccessory={
+                      <Ionicons
+                        name="person-outline"
+                        size={18}
+                        color={theme.colors.textMuted}
+                        style={styles.inputIcon}
+                      />
+                    }
+                  />
+                )}
 
-            {/* Tactile Secondary / Social Buttons */}
-            <View style={styles.socialRow}>
-              <Button
-                title="Google"
-                variant="claySecondary"
-                style={styles.socialButton}
-                leftIcon={
-                  <Ionicons name="logo-google" size={16} color={theme.colors.text} />
-                }
-                onPress={() => {
-                  setErrorMessage('Google OAuth integration configured via Supabase provider.');
-                }}
-              />
-              <Button
-                title="GitHub"
-                variant="claySecondary"
-                style={styles.socialButton}
-                leftIcon={
-                  <Ionicons name="logo-github" size={16} color={theme.colors.text} />
-                }
-                onPress={() => {
-                  setErrorMessage('GitHub OAuth integration configured via Supabase provider.');
-                }}
-              />
-            </View>
-          </Card>
-        </AnimatedEntrance>
+                <Input
+                  label="Email address"
+                  placeholder="name@work.com"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  error={fieldErrors.email}
+                  leftAccessory={
+                    <Ionicons
+                      name="mail-outline"
+                      size={18}
+                      color={theme.colors.textMuted}
+                      style={styles.inputIcon}
+                    />
+                  }
+                />
 
-          {/* Minimal Bottom Switch Link */}
-          <View style={styles.bottomSwitchRow}>
-            <Text
-              style={[
-                styles.bottomSwitchPrompt,
-                {
-                  color: theme.colors.textSecondary,
-                  fontSize: theme.typography.sizes.sm,
-                },
-              ]}
-            >
-              {isSignUp ? 'Already have an account?' : "Don't have an account?"}
-            </Text>
-            <TouchableOpacity
-              onPress={() => switchMode(isSignUp ? 'signin' : 'signup')}
-              activeOpacity={0.7}
-            >
+                <View style={styles.passwordWrapper}>
+                  <Input
+                    label="Password"
+                    placeholder="••••••••••••"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry={!showPassword}
+                    autoCapitalize="none"
+                    error={fieldErrors.password}
+                    leftAccessory={
+                      <Ionicons
+                        name="lock-closed-outline"
+                        size={18}
+                        color={theme.colors.textMuted}
+                        style={styles.inputIcon}
+                      />
+                    }
+                    rightAccessory={
+                      <TouchableOpacity
+                        onPress={() => setShowPassword(!showPassword)}
+                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                      >
+                        <Ionicons
+                          name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                          size={18}
+                          color={theme.colors.textMuted}
+                        />
+                      </TouchableOpacity>
+                    }
+                  />
+                </View>
+
+                {!isSignUp && (
+                  <View style={styles.forgotRow}>
+                    <TouchableOpacity activeOpacity={0.7}>
+                      <Text
+                        style={[
+                          styles.forgotText,
+                          {
+                            color: theme.colors.primary,
+                            fontSize: theme.typography.sizes.xs,
+                          },
+                        ]}
+                      >
+                        Forgot password?
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+
+                {/* Primary Action Button */}
+                <View style={styles.actionContainer}>
+                  <Button
+                    title={isSignUp ? 'Create account' : 'Sign in'}
+                    variant="clayPrimary"
+                    size="lg"
+                    loading={loading}
+                    onPress={handleAuth}
+                  />
+                </View>
+              </Animated.View>
+
+              {/* Subtle Divider */}
+              <View style={styles.dividerRow}>
+                <View
+                  style={[
+                    styles.dividerLine,
+                    { backgroundColor: theme.clay.borderCard },
+                  ]}
+                />
+                <Text
+                  style={[
+                    styles.dividerText,
+                    {
+                      color: theme.colors.textMuted,
+                      fontSize: theme.typography.sizes.xs,
+                    },
+                  ]}
+                >
+                  or continue with
+                </Text>
+                <View
+                  style={[
+                    styles.dividerLine,
+                    { backgroundColor: theme.clay.borderCard },
+                  ]}
+                />
+              </View>
+
+              {/* Tactile Secondary / Social Buttons */}
+              <View style={styles.socialRow}>
+                <Button
+                  title="Google"
+                  variant="claySecondary"
+                  style={styles.socialButton}
+                  leftIcon={
+                    <Ionicons name="logo-google" size={16} color={theme.colors.text} />
+                  }
+                  onPress={() => {
+                    setErrorMessage('Google OAuth integration configured via Supabase provider.');
+                  }}
+                />
+                <Button
+                  title="GitHub"
+                  variant="claySecondary"
+                  style={styles.socialButton}
+                  leftIcon={
+                    <Ionicons name="logo-github" size={16} color={theme.colors.text} />
+                  }
+                  onPress={() => {
+                    setErrorMessage('GitHub OAuth integration configured via Supabase provider.');
+                  }}
+                />
+              </View>
+            </Card>
+
+            {/* Minimal Bottom Switch Link */}
+            <View style={styles.bottomSwitchRow}>
               <Text
                 style={[
-                  styles.bottomSwitchAction,
+                  styles.bottomSwitchPrompt,
                   {
-                    color: theme.colors.primary,
-                    fontWeight: theme.typography.weights.semibold,
+                    color: theme.colors.textSecondary,
                     fontSize: theme.typography.sizes.sm,
                   },
                 ]}
               >
-                {isSignUp ? 'Sign in' : 'Sign up'}
+                {isSignUp ? 'Already have an account?' : "Don't have an account?"}
               </Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => switchMode(isSignUp ? 'signin' : 'signup')}
+                activeOpacity={0.7}
+              >
+                <Text
+                  style={[
+                    styles.bottomSwitchAction,
+                    {
+                      color: theme.colors.primary,
+                      fontWeight: theme.typography.weights.semibold,
+                      fontSize: theme.typography.sizes.sm,
+                    },
+                  ]}
+                >
+                  {isSignUp ? 'Sign in' : 'Sign up'}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </AnimatedEntrance>
 
         {/* Minimal Quiet Footer */}
         <View style={styles.footer}>
