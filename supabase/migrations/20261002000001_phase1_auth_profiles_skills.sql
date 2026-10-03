@@ -70,18 +70,12 @@ CREATE POLICY "Users can update their own profile"
     WITH CHECK (auth.uid() = id);
 
 -- 6. Skills RLS Policies
--- Anyone can view available skills
+-- Skills are a curated global taxonomy; readable by everyone (authenticated & anonymous),
+-- with no client-side INSERT, UPDATE, or DELETE permitted.
 CREATE POLICY "Skills are readable by everyone"
     ON public.skills
     FOR SELECT
     USING (true);
-
--- Only authenticated users can contribute a new skill
-CREATE POLICY "Authenticated users can insert new skills"
-    ON public.skills
-    FOR INSERT
-    TO authenticated
-    WITH CHECK (true);
 
 -- 7. Profile Skills RLS Policies
 -- Anyone can read profile skill mappings
@@ -105,7 +99,7 @@ CREATE POLICY "Users can remove skills from their own profile"
     USING (auth.uid() = profile_id);
 
 -- 8. Safe Automatic Profile Creation Trigger
--- When a user registers through auth.users, create their profile safely
+-- When a user registers through auth.users, create their profile safely with collision resolution
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER
 LANGUAGE plpgsql
@@ -113,35 +107,76 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
-    derived_username TEXT;
+    base_username TEXT;
+    candidate_username TEXT;
     derived_full_name TEXT;
+    clean_uuid TEXT;
+    collision_count INT := 0;
+    suffix TEXT;
+    max_base_len INT;
 BEGIN
     derived_full_name := COALESCE(
-        NEW.raw_user_meta_data->>'full_name',
-        split_part(NEW.email, '@', 1)
+        NULLIF(TRIM(NEW.raw_user_meta_data->>'full_name'), ''),
+        NULLIF(TRIM(split_part(NEW.email, '@', 1)), ''),
+        'Builder'
     );
 
-    -- Generate a clean, unique initial username
-    derived_username := LOWER(
+    -- Generate a clean base username from metadata or email prefix (strictly a-z0-9_)
+    base_username := LOWER(
         REGEXP_REPLACE(
-            COALESCE(NEW.raw_user_meta_data->>'username', split_part(NEW.email, '@', 1)),
+            COALESCE(
+                NULLIF(TRIM(NEW.raw_user_meta_data->>'username'), ''),
+                split_part(NEW.email, '@', 1)
+            ),
             '[^a-zA-Z0-9_]',
             '',
             'g'
         )
     );
 
-    IF char_length(derived_username) < 3 THEN
-        derived_username := 'user_' || substr(NEW.id::text, 1, 8);
+    -- Hex representation of user UUID (hyphens removed)
+    clean_uuid := replace(NEW.id::text, '-', '');
+
+    -- Ensure base_username satisfies minimum length of 3 characters
+    IF char_length(base_username) < 3 THEN
+        base_username := 'user_' || substr(clean_uuid, 1, 8);
     END IF;
 
-    -- Avoid collisions on fallback usernames
-    IF EXISTS (SELECT 1 FROM public.profiles WHERE username = derived_username) THEN
-        derived_username := derived_username || '_' || substr(NEW.id::text, 1, 4);
+    -- Ensure initial base_username does not exceed maximum length of 30 characters
+    IF char_length(base_username) > 30 THEN
+        base_username := substr(base_username, 1, 30);
     END IF;
+
+    candidate_username := base_username;
+
+    -- Collision resolution loop: safely handle collisions while preserving 3-30 char & allowed-character rules
+    WHILE EXISTS (SELECT 1 FROM public.profiles WHERE username = candidate_username) LOOP
+        collision_count := collision_count + 1;
+
+        IF collision_count = 1 THEN
+            -- First attempt: append 4 characters from the user's UUID
+            suffix := '_' || substr(clean_uuid, 1, 4);
+        ELSIF collision_count = 2 THEN
+            -- Second attempt: append 6 characters from the user's UUID
+            suffix := '_' || substr(clean_uuid, 1, 6);
+        ELSE
+            -- Subsequent attempts: append a pseudo-random 4-digit number
+            suffix := '_' || floor(random() * 9000 + 1000)::text;
+        END IF;
+
+        -- Truncate base so that char_length(candidate_username) <= 30
+        max_base_len := 30 - char_length(suffix);
+        candidate_username := substr(base_username, 1, max_base_len) || suffix;
+
+        -- Circuit breaker to prevent infinite loop
+        IF collision_count > 50 THEN
+            candidate_username := 'user_' || substr(replace(gen_random_uuid()::text, '-', ''), 1, 12);
+            EXIT;
+        END IF;
+    END LOOP;
 
     INSERT INTO public.profiles (id, username, full_name)
-    VALUES (NEW.id, derived_username, derived_full_name)
+    VALUES (NEW.id, candidate_username, derived_full_name)
     ON CONFLICT (id) DO NOTHING;
 
     RETURN NEW;

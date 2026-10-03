@@ -72,7 +72,7 @@ export function Input({
               color: theme.colors.textSecondary,
               fontSize: theme.typography.sizes.sm,
               fontWeight: theme.typography.weights.medium,
-              marginBottom: theme.spacing.xs,
+              marginBottom: 6,
             },
           ]}
         >

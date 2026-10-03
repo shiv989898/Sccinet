@@ -363,9 +363,9 @@ export default function SignInScreen() {
                   style={[
                     styles.expandableField,
                     {
-                      maxHeight: isSignUp ? 96 : 0,
+                      maxHeight: isSignUp ? 110 : 0,
                       opacity: isSignUp ? 1 : 0,
-                      marginBottom: isSignUp ? 14 : 0,
+                      marginBottom: isSignUp ? 18 : 0,
                       transform: isSignUp
                         ? [{ translateY: 0 }, { scale: 1 }]
                         : [{ translateY: -10 }, { scale: 0.98 }],
@@ -421,7 +421,7 @@ export default function SignInScreen() {
                 </View>
 
                 {/* Password */}
-                <View style={[styles.fieldWrapper, !isSignUp && { marginBottom: 6 }]}>
+                <View style={[styles.fieldWrapper, { marginBottom: isSignUp ? 22 : 10 }]}>
                   <Input
                     label="Password"
                     placeholder="••••••••••••"
@@ -461,7 +461,7 @@ export default function SignInScreen() {
                       maxHeight: !isSignUp ? 32 : 0,
                       opacity: !isSignUp ? 1 : 0,
                       transform: !isSignUp ? [{ translateY: 0 }] : [{ translateY: -6 }],
-                      marginBottom: !isSignUp ? 12 : 0,
+                      marginBottom: !isSignUp ? 20 : 0,
                       overflow: 'hidden',
                       ...Platform.select({
                         web: {
@@ -653,7 +653,7 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 24,
   },
   logoBadge: {
     width: 52,
@@ -662,7 +662,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 14,
+    marginBottom: 16,
   },
   logoInner: {
     width: 32,
@@ -673,7 +673,7 @@ const styles = StyleSheet.create({
   },
   title: {
     letterSpacing: -0.3,
-    marginBottom: 4,
+    marginBottom: 6,
     textAlign: 'center',
   },
   subtitle: {
@@ -685,7 +685,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 14,
     padding: 3,
-    marginBottom: 20,
+    marginBottom: 24,
     overflow: 'hidden',
   },
   slidingThumb: {
@@ -699,7 +699,7 @@ const styles = StyleSheet.create({
   },
   segmentTab: {
     flex: 1,
-    paddingVertical: 8,
+    paddingVertical: 9,
     borderRadius: 11,
     alignItems: 'center',
     justifyContent: 'center',
@@ -728,6 +728,7 @@ const styles = StyleSheet.create({
   },
   fieldWrapper: {
     width: '100%',
+    marginBottom: 18,
   },
   inputIcon: {
     marginRight: 10,
@@ -743,12 +744,13 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   actionContainer: {
-    marginTop: 6,
+    width: '100%',
+    marginTop: 0,
   },
   dividerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 20,
+    marginVertical: 22,
     gap: 12,
   },
   dividerLine: {
@@ -758,7 +760,7 @@ const styles = StyleSheet.create({
   dividerText: {},
   socialRow: {
     flexDirection: 'row',
-    gap: 10,
+    gap: 12,
   },
   socialButton: {
     flex: 1,
@@ -767,14 +769,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20,
+    marginTop: 24,
     gap: 6,
   },
   bottomSwitchPrompt: {},
   bottomSwitchAction: {},
   footer: {
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 16,
   },
   footerText: {},
 });
