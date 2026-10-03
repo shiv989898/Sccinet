@@ -1,5 +1,6 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
 import { Card, Badge, Button, EmptyState } from '../../src/components/ui';
@@ -45,6 +46,7 @@ export default function WorkspaceScreen() {
           size="sm"
           variant="primary"
           leftIcon={<Ionicons name="add" size={16} color="#FFFFFF" />}
+          onPress={() => router.push('/projects/new')}
         />
       </View>
 
@@ -92,7 +94,7 @@ export default function WorkspaceScreen() {
           title="No Active Projects Yet"
           description="Create your first project to start recruiting collaborators and sharing milestones."
           actionTitle="Create a Project"
-          onActionPress={() => {}}
+          onActionPress={() => router.push('/projects/new')}
         />
       </Card>
     </ScrollView>

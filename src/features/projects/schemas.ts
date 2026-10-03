@@ -46,8 +46,44 @@ export const projectMemberAddSchema = z.object({
   role_id: z.string().uuid('Invalid role ID').optional().nullable(),
 });
 
+export function generateSlug(title: string): string {
+  const sanitized = title
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9_-]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  if (sanitized.length < 2) {
+    const randomSuffix = Math.random().toString(36).substring(2, 6);
+    return sanitized.length === 1 ? `${sanitized}-${randomSuffix}` : `project-${randomSuffix}`;
+  }
+
+  const trimmed = sanitized.slice(0, 80).replace(/-+$/, '');
+  return trimmed.length < 2 ? `${trimmed}-${Math.random().toString(36).substring(2, 6)}` : trimmed;
+}
+
+export const projectFormSchema = z.object({
+  title: z
+    .string()
+    .trim()
+    .min(2, 'Project title must be at least 2 characters')
+    .max(100, 'Project title cannot exceed 100 characters'),
+  description: z
+    .string()
+    .trim()
+    .max(1000, 'Description cannot exceed 1000 characters')
+    .optional()
+    .or(z.literal('')),
+  status: z.enum(['ACTIVE', 'COMPLETED', 'ARCHIVED'] as const).default('ACTIVE'),
+  repository_url: optionalUrl,
+  live_url: optionalUrl,
+  skillIds: z.array(z.string().uuid()).default([]),
+});
+
 export type ProjectCreateInput = z.infer<typeof projectCreateSchema>;
 export type ProjectUpdateInput = z.infer<typeof projectUpdateSchema>;
 export type ProjectRoleCreateInput = z.infer<typeof projectRoleCreateSchema>;
 export type ProjectRoleUpdateInput = z.infer<typeof projectRoleUpdateSchema>;
 export type ProjectMemberAddInput = z.infer<typeof projectMemberAddSchema>;
+export type ProjectFormInput = z.infer<typeof projectFormSchema>;

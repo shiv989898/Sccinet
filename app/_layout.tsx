@@ -85,6 +85,8 @@ function RootNavigator() {
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="projects/new" options={{ headerShown: false }} />
+        <Stack.Screen name="projects/[id]" options={{ headerShown: false }} />
         <Stack.Screen
           name="+not-found"
           options={{

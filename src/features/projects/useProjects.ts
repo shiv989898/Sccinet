@@ -74,6 +74,27 @@ export function useCreateProject() {
   });
 }
 
+export function useCreateProjectWithSkills() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (
+      input: Omit<ProjectInsert, 'owner_id'> & { skillIds?: string[] }
+    ) => {
+      const { data, error } = await projectService.createProjectWithSkills(input);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (newProject) => {
+      queryClient.invalidateQueries({ queryKey: projectQueryKeys.lists() });
+      if (newProject) {
+        queryClient.setQueryData(projectQueryKeys.detailById(newProject.id), newProject);
+        queryClient.setQueryData(projectQueryKeys.detailBySlug(newProject.slug), newProject);
+      }
+    },
+  });
+}
+
 export function useUpdateProject(projectId: string) {
   const queryClient = useQueryClient();
 

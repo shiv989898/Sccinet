@@ -41,6 +41,49 @@ export const projectService = {
     }
   },
 
+  async createProjectWithSkills(
+    input: Omit<ProjectInsert, 'owner_id'> & { skillIds?: string[] }
+  ): Promise<{ data: Project | null; error: Error | null }> {
+    try {
+      const { skillIds = [], ...projectInput } = input;
+      let result = await this.createProject(projectInput);
+
+      // Handle duplicate slug collision gracefully
+      if (
+        result.error &&
+        (result.error.message.includes('projects_slug_key') ||
+          result.error.message.includes('duplicate key'))
+      ) {
+        const uniqueSlug = `${projectInput.slug.slice(0, 72)}-${Math.random().toString(36).substring(2, 6)}`;
+        result = await this.createProject({
+          ...projectInput,
+          slug: uniqueSlug,
+        });
+      }
+
+      if (result.error || !result.data) {
+        return result;
+      }
+
+      const createdProject = result.data;
+
+      // Associate skills if provided
+      if (skillIds.length > 0) {
+        const skillInserts = skillIds.map((skillId) =>
+          this.addProjectSkill(createdProject.id, skillId)
+        );
+        await Promise.allSettled(skillInserts);
+      }
+
+      return { data: createdProject, error: null };
+    } catch (err: any) {
+      return {
+        data: null,
+        error: new Error(err.message || 'Failed to create project with skills'),
+      };
+    }
+  },
+
   async getProjectById(
     id: string
   ): Promise<{ data: ProjectWithDetails | null; error: Error | null }> {
