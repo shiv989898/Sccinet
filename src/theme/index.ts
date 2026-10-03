@@ -1,4 +1,4 @@
-import { palette, clayTokens, spacing, borderRadius, typography, dimensions } from './tokens';
+import { palette, clayTokens, spacing, borderRadius, typography, dimensions, motion } from './tokens';
 import { Theme, ThemeColors, ColorScheme } from '../types/theme';
 
 export const lightColors: ThemeColors = {
@@ -62,7 +62,9 @@ export const getTheme = (scheme: ColorScheme): Theme => ({
   borderRadius,
   typography,
   dimensions,
+  motion,
   isDark: scheme === 'dark',
 });
+
 
 export * from './tokens';

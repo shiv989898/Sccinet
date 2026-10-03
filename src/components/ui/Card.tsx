@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
 
-export type CardVariant = 'default' | 'elevated' | 'outlined' | 'clay';
+export type CardVariant = 'clay' | 'elevated' | 'outlined' | 'default';
 
 export interface CardProps extends Omit<PressableProps, 'style'> {
   children: React.ReactNode;
@@ -21,7 +21,7 @@ export interface CardProps extends Omit<PressableProps, 'style'> {
 
 export function Card({
   children,
-  variant = 'default',
+  variant = 'clay',
   style,
   onPress,
   padding = 'md',
@@ -45,40 +45,46 @@ export function Card({
     }
   };
 
-  const getVariantStyle = (): ViewStyle => {
+  const getVariantStyle = (pressed?: boolean): ViewStyle => {
     switch (variant) {
       case 'clay':
+      case 'default':
         return {
           backgroundColor: theme.clay.surface,
           borderWidth: 1,
           borderColor: theme.clay.borderCard,
-          borderRadius: 28,
+          borderRadius: theme.borderRadius.card,
           ...Platform.select({
             web: {
-              boxShadow: theme.clay.webCardShadow,
+              boxShadow: pressed
+                ? theme.clay.webCardPressedShadow
+                : theme.clay.webCardShadow,
+              transition:
+                'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+              cursor: onPress ? 'pointer' : 'default',
             } as any,
             default: {
-              ...theme.clay.shadowCard,
+              ...(pressed ? theme.clay.shadowCardPressed : theme.clay.shadowCard),
             },
           }),
         };
       case 'elevated':
         return {
-          backgroundColor: theme.colors.surfaceElevated,
+          backgroundColor: theme.clay.surfaceElevated,
           borderWidth: 1,
-          borderColor: theme.colors.borderSubtle,
+          borderColor: theme.clay.borderCard,
+          borderRadius: theme.borderRadius.card,
           ...Platform.select({
             web: {
-              boxShadow: theme.isDark
-                ? '0 2px 8px rgba(0, 0, 0, 0.4)'
-                : '0 2px 8px rgba(0, 0, 0, 0.06)',
+              boxShadow: pressed
+                ? theme.clay.webCardPressedShadow
+                : theme.clay.webCardHoverShadow,
+              transition:
+                'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+              cursor: onPress ? 'pointer' : 'default',
             } as any,
             default: {
-              shadowColor: '#000000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: theme.isDark ? 0.3 : 0.06,
-              shadowRadius: 8,
-              elevation: 2,
+              ...(pressed ? theme.clay.shadowCardPressed : theme.clay.shadowCard),
             },
           }),
         };
@@ -86,22 +92,16 @@ export function Card({
         return {
           backgroundColor: 'transparent',
           borderWidth: 1,
-          borderColor: theme.colors.border,
-        };
-      case 'default':
-      default:
-        return {
-          backgroundColor: theme.colors.surface,
-          borderWidth: 1,
-          borderColor: theme.colors.border,
+          borderColor: theme.colors.borderSubtle,
+          borderRadius: theme.borderRadius.card,
+          ...Platform.select({
+            web: {
+              transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+              cursor: onPress ? 'pointer' : 'default',
+            } as any,
+          }),
         };
     }
-  };
-
-  const containerStyle: ViewStyle = {
-    borderRadius: variant === 'clay' ? 28 : theme.borderRadius.lg,
-    padding: getPadding(),
-    ...getVariantStyle(),
   };
 
   if (onPress) {
@@ -110,8 +110,11 @@ export function Card({
         accessibilityRole="button"
         onPress={onPress}
         style={({ pressed }) => [
-          containerStyle,
-          pressed && { opacity: 0.95, transform: [{ scale: 0.99 }] },
+          {
+            padding: getPadding(),
+            transform: pressed ? [{ scale: 0.988 }, { translateY: 1 }] : [],
+          },
+          getVariantStyle(pressed),
           style,
         ]}
         {...props}
@@ -121,5 +124,18 @@ export function Card({
     );
   }
 
-  return <View style={[containerStyle, style]}>{children}</View>;
+  return (
+    <View
+      style={[
+        {
+          padding: getPadding(),
+        },
+        getVariantStyle(false),
+        style,
+      ]}
+    >
+      {children}
+    </View>
+  );
 }
+

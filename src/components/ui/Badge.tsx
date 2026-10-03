@@ -41,39 +41,39 @@ export function Badge({
       case 'primary':
         return {
           bg: theme.colors.primaryMuted,
-          text: theme.colors.primary,
-          border: 'transparent',
+          text: theme.isDark ? theme.colors.primaryLight : theme.colors.primary,
+          border: theme.isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(37, 99, 235, 0.15)',
         };
       case 'success':
         return {
           bg: theme.colors.successMuted,
           text: theme.colors.success,
-          border: 'transparent',
+          border: theme.isDark ? 'rgba(16, 185, 129, 0.25)' : 'rgba(16, 185, 129, 0.2)',
         };
       case 'warning':
         return {
           bg: theme.colors.warningMuted,
           text: theme.colors.warning,
-          border: 'transparent',
+          border: theme.isDark ? 'rgba(245, 158, 11, 0.25)' : 'rgba(245, 158, 11, 0.2)',
         };
       case 'error':
         return {
           bg: theme.colors.errorMuted,
           text: theme.colors.error,
-          border: 'transparent',
+          border: theme.isDark ? 'rgba(239, 68, 68, 0.25)' : 'rgba(239, 68, 68, 0.2)',
         };
       case 'outline':
         return {
           bg: 'transparent',
           text: theme.colors.textSecondary,
-          border: theme.colors.border,
+          border: theme.colors.borderSubtle,
         };
       case 'default':
       default:
         return {
-          bg: theme.colors.surfaceSubtle,
+          bg: theme.clay.surfaceRecessed,
           text: theme.colors.textSecondary,
-          border: 'transparent',
+          border: theme.clay.borderCard,
         };
     }
   };
@@ -88,10 +88,10 @@ export function Badge({
         {
           backgroundColor: colors.bg,
           borderColor: colors.border,
-          borderWidth: variant === 'outline' ? 1 : 0,
+          borderWidth: 1,
           borderRadius: theme.borderRadius.full,
-          paddingVertical: isSm ? 2 : 4,
-          paddingHorizontal: isSm ? 8 : 12,
+          paddingVertical: isSm ? 2.5 : 4.5,
+          paddingHorizontal: isSm ? 9 : 12,
         },
         style,
       ]}
@@ -104,6 +104,7 @@ export function Badge({
             color: colors.text,
             fontSize: isSm ? theme.typography.sizes.xs : theme.typography.sizes.sm,
             fontWeight: theme.typography.weights.medium,
+            letterSpacing: 0.1,
           },
           textStyle,
         ]}
@@ -112,6 +113,7 @@ export function Badge({
       </Text>
     </View>
   );
+
 }
 
 const styles = StyleSheet.create({

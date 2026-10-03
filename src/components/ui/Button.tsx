@@ -86,78 +86,107 @@ export function Button({
     };
 
     switch (variant) {
+      case 'primary':
       case 'clayPrimary':
         return {
           ...base,
           backgroundColor: theme.colors.primary,
           borderWidth: 1,
-          borderColor: 'rgba(255, 255, 255, 0.15)',
-          borderRadius: theme.borderRadius.lg,
-          transform: pressed ? [{ scale: 0.985 }, { translateY: 1.5 }] : [],
+          borderColor: 'rgba(255, 255, 255, 0.18)',
+          borderRadius: size === 'sm' ? theme.borderRadius.md : theme.borderRadius.lg,
+          transform: pressed ? [{ scale: 0.985 }, { translateY: 1 }] : [],
           ...Platform.select({
             web: {
               boxShadow: pressed
                 ? theme.clay.webButtonPressedShadow
                 : theme.clay.webButtonShadow,
-              transition: 'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.18s ease',
+              transition:
+                'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.18s ease',
+              cursor: isDisabled ? 'not-allowed' : 'pointer',
             } as any,
             default: {
-              ...theme.clay.shadowButton,
+              ...(pressed ? theme.clay.shadowButtonPressed : theme.clay.shadowButton),
             },
           }),
         };
+      case 'secondary':
       case 'claySecondary':
         return {
           ...base,
           backgroundColor: theme.clay.surface,
           borderWidth: 1,
           borderColor: theme.clay.borderCard,
-          borderRadius: theme.borderRadius.lg,
+          borderRadius: size === 'sm' ? theme.borderRadius.md : theme.borderRadius.lg,
           transform: pressed ? [{ scale: 0.985 }, { translateY: 1 }] : [],
           ...Platform.select({
             web: {
               boxShadow: pressed
                 ? theme.clay.webSecondaryButtonPressedShadow
                 : theme.clay.webSecondaryButtonShadow,
-              transition: 'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.18s ease',
+              transition:
+                'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.18s ease',
+              cursor: isDisabled ? 'not-allowed' : 'pointer',
             } as any,
             default: {
               ...theme.clay.shadowPill,
             },
           }),
         };
-      case 'secondary':
-        return {
-          ...base,
-          backgroundColor: theme.colors.surfaceSubtle,
-          opacity: isDisabled ? 0.5 : pressed ? 0.85 : 1,
-        };
       case 'outline':
         return {
           ...base,
-          backgroundColor: 'transparent',
+          backgroundColor: pressed ? theme.colors.surfaceSubtle : 'transparent',
           borderWidth: 1,
-          borderColor: theme.colors.border,
-          opacity: isDisabled ? 0.5 : pressed ? 0.85 : 1,
+          borderColor: theme.colors.borderSubtle,
+          borderRadius: size === 'sm' ? theme.borderRadius.md : theme.borderRadius.lg,
+          transform: pressed ? [{ scale: 0.985 }] : [],
+          ...Platform.select({
+            web: {
+              transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+              cursor: isDisabled ? 'not-allowed' : 'pointer',
+            } as any,
+          }),
         };
       case 'ghost':
         return {
           ...base,
-          backgroundColor: 'transparent',
-          opacity: isDisabled ? 0.5 : pressed ? 0.85 : 1,
+          backgroundColor: pressed ? theme.colors.primaryMuted : 'transparent',
+          borderRadius: size === 'sm' ? theme.borderRadius.md : theme.borderRadius.lg,
+          transform: pressed ? [{ scale: 0.985 }] : [],
+          ...Platform.select({
+            web: {
+              transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+              cursor: isDisabled ? 'not-allowed' : 'pointer',
+            } as any,
+          }),
         };
       case 'danger':
         return {
           ...base,
           backgroundColor: theme.colors.error,
-          opacity: isDisabled ? 0.5 : pressed ? 0.85 : 1,
+          borderWidth: 1,
+          borderColor: 'rgba(255, 255, 255, 0.18)',
+          borderRadius: size === 'sm' ? theme.borderRadius.md : theme.borderRadius.lg,
+          transform: pressed ? [{ scale: 0.985 }, { translateY: 1 }] : [],
+          ...Platform.select({
+            web: {
+              boxShadow: pressed
+                ? '0 2px 6px -1px rgba(239, 68, 68, 0.25), inset 0 1px 1px 0 rgba(255, 255, 255, 0.2)'
+                : '0 6px 16px -3px rgba(239, 68, 68, 0.25), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.3)',
+              transition:
+                'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+              cursor: isDisabled ? 'not-allowed' : 'pointer',
+            } as any,
+            default: {
+              ...(pressed ? theme.clay.shadowButtonPressed : theme.clay.shadowButton),
+            },
+          }),
         };
-      case 'primary':
       default:
         return {
           ...base,
           backgroundColor: theme.colors.primary,
-          opacity: isDisabled ? 0.5 : pressed ? 0.85 : 1,
+          transform: pressed ? [{ scale: 0.985 }] : [],
         };
     }
   };
@@ -166,8 +195,9 @@ export function Button({
     switch (variant) {
       case 'claySecondary':
       case 'secondary':
-      case 'outline':
         return theme.colors.text;
+      case 'outline':
+        return theme.colors.textSecondary;
       case 'ghost':
         return theme.colors.primary;
       case 'danger':
@@ -177,6 +207,7 @@ export function Button({
         return '#FFFFFF';
     }
   };
+
 
   return (
     <Pressable

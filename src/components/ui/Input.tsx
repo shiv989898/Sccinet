@@ -53,8 +53,8 @@ export function Input({
 
   const getBorderColor = () => {
     if (error) return theme.colors.error;
-    if (isFocused) return theme.isDark ? 'rgba(59, 130, 246, 0.4)' : 'rgba(37, 99, 235, 0.35)';
-    return variant === 'clay' ? 'transparent' : theme.colors.border;
+    if (isFocused) return theme.isDark ? 'rgba(59, 130, 246, 0.5)' : 'rgba(37, 99, 235, 0.4)';
+    return theme.clay.borderCard;
   };
 
   const getBackgroundColor = () => {
@@ -73,6 +73,7 @@ export function Input({
               fontSize: theme.typography.sizes.sm,
               fontWeight: theme.typography.weights.medium,
               marginBottom: 6,
+              letterSpacing: -0.1,
             },
           ]}
         >
@@ -87,18 +88,19 @@ export function Input({
             backgroundColor: getBackgroundColor(),
             borderColor: getBorderColor(),
             borderRadius: 14,
-            height: theme.dimensions.inputHeight,
+            height: props.multiline ? undefined : theme.dimensions.inputHeight,
+            minHeight: props.multiline ? 88 : theme.dimensions.inputHeight,
             paddingHorizontal: theme.spacing.md,
             ...Platform.select({
               web: {
                 boxShadow: isFocused
-                  ? theme.isDark
-                    ? 'inset 0 1px 2px 0 rgba(0, 0, 0, 0.25), 0 0 0 2px rgba(59, 130, 246, 0.2)'
-                    : 'inset 0 1px 2px 0 rgba(25, 42, 75, 0.04), 0 0 0 2px rgba(37, 99, 235, 0.15)'
+                  ? error
+                    ? 'inset 0 1px 2px 0 rgba(239, 68, 68, 0.1), 0 0 0 2.5px rgba(239, 68, 68, 0.2)'
+                    : theme.clay.webRecessedFocusedShadow
                   : variant === 'clay'
                   ? theme.clay.webRecessedShadow
                   : undefined,
-                transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
               } as any,
             }),
           },
@@ -136,7 +138,7 @@ export function Input({
             {
               color: theme.colors.error,
               fontSize: theme.typography.sizes.xs,
-              marginTop: theme.spacing.xxs,
+              marginTop: 4,
             },
           ]}
         >
@@ -149,7 +151,7 @@ export function Input({
             {
               color: theme.colors.textMuted,
               fontSize: theme.typography.sizes.xs,
-              marginTop: theme.spacing.xxs,
+              marginTop: 4,
             },
           ]}
         >
@@ -158,6 +160,7 @@ export function Input({
       ) : null}
     </View>
   );
+
 }
 
 const styles = StyleSheet.create({
