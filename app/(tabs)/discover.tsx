@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
-import { Card, Badge, Input, Button, AnimatedEntrance } from '../../src/components/ui';
+import { Card, Input, Button, AnimatedEntrance } from '../../src/components/ui';
 
 export default function DiscoverScreen() {
   const theme = useTheme();
@@ -17,9 +17,38 @@ export default function DiscoverScreen() {
     >
       <AnimatedEntrance duration={240}>
         <View style={styles.innerStack}>
+          {/* Page Header */}
+          <View style={styles.pageHeader}>
+            <Text
+              style={[
+                styles.pageTitle,
+                {
+                  color: theme.colors.text,
+                  fontSize: theme.typography.sizes.xxl,
+                  fontWeight: theme.typography.weights.bold,
+                  letterSpacing: -0.5,
+                },
+              ]}
+            >
+              Discover
+            </Text>
+            <Text
+              style={[
+                styles.pageSubtitle,
+                {
+                  color: theme.colors.textMuted,
+                  fontSize: theme.typography.sizes.sm,
+                  marginTop: 2,
+                },
+              ]}
+            >
+              Find projects and collaborators
+            </Text>
+          </View>
+
           {/* Search Bar */}
           <Input
-            placeholder="Search projects, skills, or collaborators..."
+            placeholder="Search projects, skills, or people..."
             value={searchQuery}
             onChangeText={setSearchQuery}
             leftAccessory={
@@ -62,70 +91,51 @@ export default function DiscoverScreen() {
             />
           </View>
 
-          {/* Filter Category Chips */}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.filterScroll}
-          >
-            <Badge label="All Domains" variant="primary" size="md" />
-            <Badge label="Engineering" variant="outline" size="md" />
-            <Badge label="UI/UX Design" variant="outline" size="md" />
-            <Badge label="AI / ML" variant="outline" size="md" />
-            <Badge label="Mobile" variant="outline" size="md" />
-          </ScrollView>
-
-          {/* Featured Preview Card */}
-          <Card variant="clay" padding="lg" style={styles.previewCard}>
-            <View style={styles.cardTopRow}>
+          {/* Empty State */}
+          <Card variant="clay" padding="lg">
+            <View style={styles.emptyContent}>
+              <View
+                style={[
+                  styles.emptyIconWrap,
+                  { backgroundColor: theme.colors.primaryMuted },
+                ]}
+              >
+                <Ionicons
+                  name={activeTab === 'projects' ? 'folder-open-outline' : 'people-outline'}
+                  size={26}
+                  color={theme.colors.primary}
+                />
+              </View>
               <Text
                 style={[
-                  styles.projectTitle,
+                  styles.emptyTitle,
                   {
                     color: theme.colors.text,
                     fontSize: theme.typography.sizes.lg,
-                    fontWeight: theme.typography.weights.bold,
-                    letterSpacing: -0.2,
+                    fontWeight: theme.typography.weights.semibold,
+                    letterSpacing: -0.3,
+                    marginTop: 16,
                   },
                 ]}
               >
-                Sccinet Platform
+                {activeTab === 'projects' ? 'No projects yet' : 'No people yet'}
               </Text>
-              <Badge label="In Development" variant="warning" size="sm" />
-            </View>
-
-            <Text
-              style={[
-                styles.projectTagline,
-                {
-                  color: theme.colors.textSecondary,
-                  fontSize: theme.typography.sizes.sm,
-                  lineHeight: 20,
-                  marginVertical: theme.spacing.sm,
-                },
-              ]}
-            >
-              A dedicated social collaboration platform connecting builders, showcasing projects,
-              and organizing team partnerships.
-            </Text>
-
-            <View style={styles.rolesRow}>
               <Text
                 style={[
-                  styles.rolesLabel,
+                  styles.emptyDesc,
                   {
-                    color: theme.colors.textMuted,
-                    fontSize: theme.typography.sizes.xs,
-                    fontWeight: theme.typography.weights.medium,
+                    color: theme.colors.textSecondary,
+                    fontSize: theme.typography.sizes.sm,
+                    lineHeight: 20,
+                    marginTop: 6,
+                    textAlign: 'center',
                   },
                 ]}
               >
-                ROLES NEEDED:
+                {activeTab === 'projects'
+                  ? 'Published projects will appear here when builders share their work.'
+                  : 'Builders will appear here as the community grows.'}
               </Text>
-              <View style={styles.roleBadges}>
-                <Badge label="React Native" variant="default" size="sm" />
-                <Badge label="Supabase Architect" variant="default" size="sm" />
-              </View>
             </View>
           </Card>
         </View>
@@ -139,40 +149,32 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingBottom: 32,
+    paddingBottom: 40,
   },
   innerStack: {
     gap: 16,
   },
-
+  pageHeader: {
+    paddingTop: 4,
+  },
+  pageTitle: {},
+  pageSubtitle: {},
   segmentContainer: {
     flexDirection: 'row',
   },
-  filterScroll: {
-    flexDirection: 'row',
-    gap: 8,
-    paddingVertical: 4,
-  },
-  previewCard: {},
-  cardTopRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  emptyContent: {
     alignItems: 'center',
+    paddingVertical: 8,
   },
-  projectTitle: {},
-  projectTagline: {
-    lineHeight: 20,
+  emptyIconWrap: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  rolesRow: {
-    marginTop: 8,
+  emptyTitle: {
+    textAlign: 'center',
   },
-  rolesLabel: {
-    marginBottom: 6,
-    letterSpacing: 0.5,
-  },
-  roleBadges: {
-    flexDirection: 'row',
-    gap: 8,
-    flexWrap: 'wrap',
-  },
+  emptyDesc: {},
 });

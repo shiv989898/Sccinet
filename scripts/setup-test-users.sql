@@ -17,14 +17,18 @@ BEGIN
     -- 1. Owner
     INSERT INTO auth.users (
         instance_id, id, aud, role, email, encrypted_password,
-        email_confirmed_at, confirmed_at, confirmation_token,
+        email_confirmed_at, confirmation_token,
+        recovery_token, email_change_token_new, email_change_token_current, email_change,
+        phone_change, phone_change_token, reauthentication_token, email_change_confirm_status,
         is_anonymous, is_sso_user,
         raw_app_meta_data, raw_user_meta_data,
         created_at, updated_at
     ) VALUES (
         '00000000-0000-0000-0000-000000000000', owner_uid, 'authenticated', 'authenticated',
         'sccinet.owner.test@gmail.com', hashed_pwd,
-        now(), now(), '',
+        now(), '',
+        '', '', '', '',
+        '', '', '', 0,
         false, false,
         '{"provider":"email","providers":["email"]}'::jsonb,
         jsonb_build_object('sub', owner_uid, 'email', 'sccinet.owner.test@gmail.com', 'full_name', 'Alex Owner', 'email_verified', true),
@@ -32,25 +36,29 @@ BEGIN
     );
 
     INSERT INTO auth.identities (
-        id, user_id, provider_id, provider, identity_data, email,
+        id, user_id, provider_id, provider, identity_data,
         last_sign_in_at, created_at, updated_at
     ) VALUES (
         owner_uid, owner_uid, owner_uid::text, 'email',
         jsonb_build_object('sub', owner_uid, 'email', 'sccinet.owner.test@gmail.com', 'full_name', 'Alex Owner', 'email_verified', true),
-        'sccinet.owner.test@gmail.com', now(), now(), now()
+        now(), now(), now()
     );
 
     -- 2. Collaborator
     INSERT INTO auth.users (
         instance_id, id, aud, role, email, encrypted_password,
-        email_confirmed_at, confirmed_at, confirmation_token,
+        email_confirmed_at, confirmation_token,
+        recovery_token, email_change_token_new, email_change_token_current, email_change,
+        phone_change, phone_change_token, reauthentication_token, email_change_confirm_status,
         is_anonymous, is_sso_user,
         raw_app_meta_data, raw_user_meta_data,
         created_at, updated_at
     ) VALUES (
         '00000000-0000-0000-0000-000000000000', collab_uid, 'authenticated', 'authenticated',
         'sccinet.collab.test@gmail.com', hashed_pwd,
-        now(), now(), '',
+        now(), '',
+        '', '', '', '',
+        '', '', '', 0,
         false, false,
         '{"provider":"email","providers":["email"]}'::jsonb,
         jsonb_build_object('sub', collab_uid, 'email', 'sccinet.collab.test@gmail.com', 'full_name', 'Devin Collaborator', 'email_verified', true),
@@ -58,25 +66,29 @@ BEGIN
     );
 
     INSERT INTO auth.identities (
-        id, user_id, provider_id, provider, identity_data, email,
+        id, user_id, provider_id, provider, identity_data,
         last_sign_in_at, created_at, updated_at
     ) VALUES (
         collab_uid, collab_uid, collab_uid::text, 'email',
         jsonb_build_object('sub', collab_uid, 'email', 'sccinet.collab.test@gmail.com', 'full_name', 'Devin Collaborator', 'email_verified', true),
-        'sccinet.collab.test@gmail.com', now(), now(), now()
+        now(), now(), now()
     );
 
     -- 3. Outsider
     INSERT INTO auth.users (
         instance_id, id, aud, role, email, encrypted_password,
-        email_confirmed_at, confirmed_at, confirmation_token,
+        email_confirmed_at, confirmation_token,
+        recovery_token, email_change_token_new, email_change_token_current, email_change,
+        phone_change, phone_change_token, reauthentication_token, email_change_confirm_status,
         is_anonymous, is_sso_user,
         raw_app_meta_data, raw_user_meta_data,
         created_at, updated_at
     ) VALUES (
         '00000000-0000-0000-0000-000000000000', outsider_uid, 'authenticated', 'authenticated',
         'sccinet.outsider.test@gmail.com', hashed_pwd,
-        now(), now(), '',
+        now(), '',
+        '', '', '', '',
+        '', '', '', 0,
         false, false,
         '{"provider":"email","providers":["email"]}'::jsonb,
         jsonb_build_object('sub', outsider_uid, 'email', 'sccinet.outsider.test@gmail.com', 'full_name', 'Outsider Attacker', 'email_verified', true),
@@ -84,12 +96,12 @@ BEGIN
     );
 
     INSERT INTO auth.identities (
-        id, user_id, provider_id, provider, identity_data, email,
+        id, user_id, provider_id, provider, identity_data,
         last_sign_in_at, created_at, updated_at
     ) VALUES (
         outsider_uid, outsider_uid, outsider_uid::text, 'email',
         jsonb_build_object('sub', outsider_uid, 'email', 'sccinet.outsider.test@gmail.com', 'full_name', 'Outsider Attacker', 'email_verified', true),
-        'sccinet.outsider.test@gmail.com', now(), now(), now()
+        now(), now(), now()
     );
 END $$;
 

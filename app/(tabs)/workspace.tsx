@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
@@ -23,32 +23,33 @@ export default function WorkspaceScreen() {
     >
       <AnimatedEntrance duration={240}>
         <View style={styles.innerStack}>
-          {/* Workspace Quick Actions */}
-          <View style={styles.actionRow}>
+          {/* Header */}
+          <View style={styles.headerRow}>
             <View>
               <Text
                 style={[
-                  styles.sectionTitle,
+                  styles.pageTitle,
                   {
                     color: theme.colors.text,
-                    fontSize: theme.typography.sizes.xl,
+                    fontSize: theme.typography.sizes.xxl,
                     fontWeight: theme.typography.weights.bold,
-                    letterSpacing: -0.3,
+                    letterSpacing: -0.5,
                   },
                 ]}
               >
-                My Workspace
+                Workspace
               </Text>
               <Text
                 style={[
-                  styles.sectionSubtitle,
+                  styles.pageSubtitle,
                   {
                     color: theme.colors.textMuted,
-                    fontSize: theme.typography.sizes.xs,
+                    fontSize: theme.typography.sizes.sm,
+                    marginTop: 2,
                   },
                 ]}
               >
-                Manage active projects and team applications
+                Manage your active projects
               </Text>
             </View>
 
@@ -61,82 +62,47 @@ export default function WorkspaceScreen() {
             />
           </View>
 
-          {/* Collaboration Requests Quick Panel */}
-          <Card variant="clay" padding="lg" style={styles.requestsCard}>
-            <View style={styles.requestsHeader}>
-              <View style={styles.requestsTitleRow}>
-                <Ionicons name="mail-unread-outline" size={19} color={theme.colors.primary} />
-                <Text
-                  style={[
-                    styles.requestsTitle,
-                    {
-                      color: theme.colors.text,
-                      fontSize: theme.typography.sizes.md,
-                      fontWeight: theme.typography.weights.semibold,
-                      letterSpacing: -0.2,
-                      marginLeft: 8,
-                    },
-                  ]}
-                >
-                  Collaboration Requests
-                </Text>
-              </View>
-              <Badge label="0 Pending" variant="default" size="sm" />
-            </View>
-
-            <Text
-              style={[
-                styles.requestsNotice,
-                {
-                  color: theme.colors.textSecondary,
-                  fontSize: theme.typography.sizes.xs,
-                  lineHeight: 18,
-                  marginTop: theme.spacing.sm,
-                },
-              ]}
-            >
-              When other builders request to join your project roles, applications will appear here
-              for review.
-            </Text>
-          </Card>
-
-          {/* Projects Section */}
+          {/* Projects */}
           {isLoadingProjects ? (
             <View style={styles.loadingBox}>
               <ActivityIndicator size="small" color={theme.colors.primary} />
             </View>
           ) : userProjects.length > 0 ? (
-            <View style={styles.projectsSection}>
-              <View style={styles.projectsSectionHeader}>
-                <Text
-                  style={[
-                    styles.projectsHeading,
+            <View style={styles.projectsList}>
+              {userProjects.map((proj) => (
+                <Pressable
+                  key={proj.id}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/projects/[id]',
+                      params: { id: proj.id },
+                    })
+                  }
+                  style={({ pressed }) => [
+                    styles.projectCard,
                     {
-                      color: theme.colors.text,
-                      fontSize: theme.typography.sizes.md,
-                      fontWeight: theme.typography.weights.semibold,
-                      letterSpacing: -0.2,
+                      backgroundColor: theme.clay.surface,
+                      borderColor: theme.clay.borderCard,
+                      borderWidth: 1,
+                      borderRadius: theme.borderRadius.card,
+                      opacity: pressed ? 0.92 : 1,
+                      transform: pressed ? [{ scale: 0.992 }, { translateY: 1 }] : [],
+                      ...Platform.select({
+                        web: {
+                          boxShadow: pressed
+                            ? theme.clay.webCardPressedShadow
+                            : theme.clay.webCardShadow,
+                          transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+                          cursor: 'pointer',
+                        } as any,
+                        default: pressed
+                          ? theme.clay.shadowCardPressed
+                          : theme.clay.shadowCard,
+                      }),
                     },
                   ]}
                 >
-                  My Projects ({userProjects.length})
-                </Text>
-              </View>
-
-              <View style={styles.projectsList}>
-                {userProjects.map((proj) => (
-                  <Card
-                    key={proj.id}
-                    variant="clay"
-                    padding="lg"
-                    style={styles.projectItemCard}
-                    onPress={() =>
-                      router.push({
-                        pathname: '/projects/[id]',
-                        params: { id: proj.id },
-                      })
-                    }
-                  >
+                  <View style={styles.projectCardInner}>
                     <View style={styles.projectItemHeader}>
                       <Text
                         style={[
@@ -166,7 +132,7 @@ export default function WorkspaceScreen() {
                           {
                             color: theme.colors.textSecondary,
                             fontSize: theme.typography.sizes.sm,
-                            lineHeight: 20,
+                            lineHeight: 19,
                           },
                         ]}
                         numberOfLines={2}
@@ -189,16 +155,16 @@ export default function WorkspaceScreen() {
                       </Text>
                       <Ionicons name="chevron-forward" size={14} color={theme.colors.textMuted} />
                     </View>
-                  </Card>
-                ))}
-              </View>
+                  </View>
+                </Pressable>
+              ))}
             </View>
           ) : (
-            <Card variant="clay" padding="lg" style={styles.projectsContainer}>
+            <Card variant="clay" padding="lg">
               <EmptyState
                 icon={<Ionicons name="folder-open-outline" size={30} color={theme.colors.primary} />}
-                title="No Active Projects Yet"
-                description="Create your first project to start recruiting collaborators and sharing milestones."
+                title="No projects yet"
+                description="Create your first project to start building and recruiting collaborators."
                 actionTitle="Create a Project"
                 onActionPress={() => router.push('/projects/new')}
               />
@@ -208,7 +174,6 @@ export default function WorkspaceScreen() {
       </AnimatedEntrance>
     </ScrollView>
   );
-
 }
 
 const styles = StyleSheet.create({
@@ -216,52 +181,33 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingBottom: 32,
+    paddingBottom: 40,
   },
   innerStack: {
-    gap: 16,
+    gap: 20,
   },
-  actionRow: {
+  headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 4,
+    paddingTop: 4,
   },
-
-  sectionTitle: {},
-  sectionSubtitle: {
+  pageTitle: {},
+  pageSubtitle: {
     marginTop: 2,
   },
-  requestsCard: {},
-  requestsHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  requestsTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  requestsTitle: {},
-  requestsNotice: {},
   loadingBox: {
-    paddingVertical: 24,
+    paddingVertical: 32,
     alignItems: 'center',
   },
-  projectsSection: {
-    gap: 10,
-  },
-  projectsSectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  projectsHeading: {},
   projectsList: {
     gap: 10,
   },
-  projectItemCard: {
-    borderRadius: 16,
+  projectCard: {
+    overflow: 'hidden',
+  },
+  projectCardInner: {
+    padding: 16,
     gap: 6,
   },
   projectItemHeader: {
@@ -273,9 +219,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 8,
   },
-  projectItemDesc: {
-    lineHeight: 18,
-  },
+  projectItemDesc: {},
   projectItemFooter: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -284,8 +228,5 @@ const styles = StyleSheet.create({
   },
   projectItemSlug: {
     fontFamily: 'monospace',
-  },
-  projectsContainer: {
-    paddingVertical: 16,
   },
 });
