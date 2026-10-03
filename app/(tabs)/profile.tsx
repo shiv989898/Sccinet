@@ -402,9 +402,7 @@ export default function ProfileScreen() {
                 title="+ Create Project"
                 variant="claySecondary"
                 size="sm"
-                onPress={() => {
-                  Alert.alert('Create Project', 'Project creation will be available in Phase 2.');
-                }}
+                onPress={() => router.push('/projects/new')}
               />
             </View>
           </Card>
@@ -435,6 +433,7 @@ export default function ProfileScreen() {
               </Text>
             </TouchableOpacity>
           </View>
+
         </View>
       </AnimatedEntrance>
     </ScrollView>

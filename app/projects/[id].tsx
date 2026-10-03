@@ -75,11 +75,13 @@ export default function ProjectDetailScreen() {
             {
               backgroundColor: theme.clay.surface,
               borderColor: theme.clay.borderCard,
-              opacity: pressed ? 0.8 : 1,
-              transform: [{ scale: pressed ? 0.96 : 1 }],
+              opacity: pressed ? 0.85 : 1,
+              transform: pressed ? [{ scale: 0.96 }, { translateY: 0.5 }] : [],
               ...Platform.select({
                 web: {
-                  boxShadow: theme.clay.webCardShadow,
+                  boxShadow: pressed ? theme.clay.webChipShadow : theme.clay.webPillShadow,
+                  transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+                  cursor: 'pointer',
                 } as any,
                 default: theme.clay.shadowPill,
               }),
@@ -88,6 +90,7 @@ export default function ProjectDetailScreen() {
         >
           <Ionicons name="arrow-back" size={18} color={theme.colors.text} />
         </Pressable>
+
 
         <View style={styles.topBarTitleContainer}>
           <Text
@@ -222,8 +225,16 @@ export default function ProjectDetailScreen() {
                           {
                             backgroundColor: theme.clay.surfaceRecessed,
                             borderColor: theme.clay.borderCard,
-                            opacity: pressed ? 0.8 : 1,
-                            transform: [{ scale: pressed ? 0.98 : 1 }],
+                            opacity: pressed ? 0.85 : 1,
+                            transform: pressed ? [{ scale: 0.98 }, { translateY: 0.5 }] : [],
+                            ...Platform.select({
+                              web: {
+                                boxShadow: theme.clay.webChipShadow,
+                                transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+                                cursor: 'pointer',
+                              } as any,
+                              default: theme.clay.shadowChip,
+                            }),
                           },
                         ]}
                       >
@@ -262,8 +273,16 @@ export default function ProjectDetailScreen() {
                           {
                             backgroundColor: theme.clay.surfaceRecessed,
                             borderColor: theme.clay.borderCard,
-                            opacity: pressed ? 0.8 : 1,
-                            transform: [{ scale: pressed ? 0.98 : 1 }],
+                            opacity: pressed ? 0.85 : 1,
+                            transform: pressed ? [{ scale: 0.98 }, { translateY: 0.5 }] : [],
+                            ...Platform.select({
+                              web: {
+                                boxShadow: theme.clay.webChipShadow,
+                                transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+                                cursor: 'pointer',
+                              } as any,
+                              default: theme.clay.shadowChip,
+                            }),
                           },
                         ]}
                       >
@@ -307,6 +326,7 @@ export default function ProjectDetailScreen() {
                         color: theme.colors.text,
                         fontSize: theme.typography.sizes.md,
                         fontWeight: theme.typography.weights.semibold,
+                        letterSpacing: -0.2,
                       },
                     ]}
                   >
@@ -337,6 +357,12 @@ export default function ProjectDetailScreen() {
                           {
                             backgroundColor: theme.clay.surfaceChipSelected,
                             borderColor: theme.clay.borderChipSelected,
+                            ...Platform.select({
+                              web: {
+                                boxShadow: theme.clay.webChipSelectedShadow,
+                              } as any,
+                              default: theme.clay.shadowChip,
+                            }),
                           },
                         ]}
                       >
@@ -356,6 +382,7 @@ export default function ProjectDetailScreen() {
                     ))}
                   </View>
                 ) : (
+
                   <Text
                     style={[
                       styles.emptySectionText,

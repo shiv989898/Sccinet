@@ -1,11 +1,13 @@
 import React from 'react';
 import {
+  Platform,
   StyleProp,
   StyleSheet,
   Text,
   View,
   ViewStyle,
 } from 'react-native';
+
 import { useTheme } from '../../hooks/useTheme';
 import { Button } from './Button';
 

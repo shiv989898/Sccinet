@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Platform,
   StyleProp,
   StyleSheet,
   Text,
@@ -7,6 +8,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { Image } from 'expo-image';
+
 import { useTheme } from '../../hooks/useTheme';
 
 export type AvatarSize = 'sm' | 'md' | 'lg' | 'xl';

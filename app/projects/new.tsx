@@ -149,11 +149,13 @@ export default function CreateProjectScreen() {
               {
                 backgroundColor: theme.clay.surface,
                 borderColor: theme.clay.borderCard,
-                opacity: pressed ? 0.8 : 1,
-                transform: [{ scale: pressed ? 0.96 : 1 }],
+                opacity: pressed ? 0.85 : 1,
+                transform: pressed ? [{ scale: 0.96 }, { translateY: 0.5 }] : [],
                 ...Platform.select({
                   web: {
-                    boxShadow: theme.clay.webCardShadow,
+                    boxShadow: pressed ? theme.clay.webChipShadow : theme.clay.webPillShadow,
+                    transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+                    cursor: 'pointer',
                   } as any,
                   default: theme.clay.shadowPill,
                 }),
@@ -162,6 +164,7 @@ export default function CreateProjectScreen() {
           >
             <Ionicons name="arrow-back" size={18} color={theme.colors.text} />
           </Pressable>
+
 
           <View style={styles.topBarTitleContainer}>
             <Text
@@ -486,11 +489,12 @@ export default function CreateProjectScreen() {
                             {
                               backgroundColor: theme.clay.surfaceChipSelected,
                               borderColor: theme.clay.borderChipSelected,
-                              opacity: pressed ? 0.8 : 1,
+                              opacity: pressed ? 0.85 : 1,
                               transform: [{ scale: pressed ? 0.97 : 1 }],
                               ...Platform.select({
                                 web: {
-                                  boxShadow: theme.clay.webCardShadow,
+                                  boxShadow: theme.clay.webChipSelectedShadow,
+                                  transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
                                 } as any,
                                 default: theme.clay.shadowChip,
                               }),
@@ -530,6 +534,7 @@ export default function CreateProjectScreen() {
                         ...Platform.select({
                           web: {
                             boxShadow: theme.clay.webRecessedShadow,
+                            transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
                           } as any,
                         }),
                       },
@@ -590,8 +595,15 @@ export default function CreateProjectScreen() {
                             {
                               backgroundColor: theme.clay.surfaceChipSuggested,
                               borderColor: theme.clay.borderChipSuggested,
-                              opacity: pressed ? 0.8 : 1,
+                              opacity: pressed ? 0.85 : 1,
                               transform: [{ scale: pressed ? 0.97 : 1 }],
+                              ...Platform.select({
+                                web: {
+                                  boxShadow: theme.clay.webChipShadow,
+                                  transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+                                } as any,
+                                default: theme.clay.shadowChip,
+                              }),
                             },
                           ]}
                         >
@@ -601,6 +613,7 @@ export default function CreateProjectScreen() {
                             color={theme.clay.textChipSuggested}
                             style={{ marginRight: 3 }}
                           />
+
                           <Text
                             style={[
                               styles.chipTextSuggested,
