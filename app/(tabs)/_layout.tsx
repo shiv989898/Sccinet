@@ -12,32 +12,43 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: true,
         headerStyle: {
-          backgroundColor: theme.colors.surface,
+          backgroundColor: theme.clay.surface,
           borderBottomWidth: 1,
-          borderBottomColor: theme.colors.border,
+          borderBottomColor: theme.clay.borderCard,
         },
         headerTitleStyle: {
           color: theme.colors.text,
           fontSize: theme.typography.sizes.lg,
-          fontWeight: '700',
+          fontWeight: '600',
+          letterSpacing: -0.3,
         },
         headerShadowVisible: false,
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.textMuted,
         tabBarStyle: {
-          backgroundColor: theme.colors.surface,
+          backgroundColor: theme.clay.surface,
           borderTopWidth: 1,
-          borderTopColor: theme.colors.border,
+          borderTopColor: theme.clay.borderCard,
           height: Platform.OS === 'ios' ? 88 : 64,
           paddingBottom: Platform.OS === 'ios' ? 28 : 10,
           paddingTop: 8,
+          ...Platform.select({
+            web: {
+              boxShadow: theme.clay.webCardShadow,
+            } as any,
+            default: {
+              ...theme.clay.shadowPill,
+            },
+          }),
         },
         tabBarLabelStyle: {
-          fontSize: theme.typography.sizes.xs,
+          fontSize: theme.typography.sizes.micro,
           fontWeight: '600',
+          letterSpacing: 0.2,
         },
       }}
     >
+
       <Tabs.Screen
         name="index"
         options={{

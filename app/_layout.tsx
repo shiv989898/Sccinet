@@ -78,15 +78,30 @@ function RootNavigator() {
             fontWeight: '600',
           },
           headerShadowVisible: false,
+          animation: Platform.OS === 'web' ? 'fade' : 'slide_from_right',
+          animationDuration: 220,
+          gestureEnabled: true,
           contentStyle: {
             backgroundColor: theme.colors.background,
           },
         }}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="projects/new" options={{ headerShown: false }} />
-        <Stack.Screen name="projects/[id]" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false, animation: 'fade' }} />
+        <Stack.Screen
+          name="projects/new"
+          options={{
+            headerShown: false,
+            animation: Platform.OS === 'web' ? 'fade' : 'slide_from_bottom',
+          }}
+        />
+        <Stack.Screen
+          name="projects/[id]"
+          options={{
+            headerShown: false,
+            animation: Platform.OS === 'web' ? 'fade' : 'slide_from_right',
+          }}
+        />
         <Stack.Screen
           name="+not-found"
           options={{
@@ -95,6 +110,7 @@ function RootNavigator() {
           }}
         />
       </Stack>
+
     </>
   );
 }
