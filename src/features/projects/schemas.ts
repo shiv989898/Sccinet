@@ -46,6 +46,19 @@ export const projectMemberAddSchema = z.object({
   role_id: z.string().uuid('Invalid role ID').optional().nullable(),
 });
 
+export const projectMemberUpdateSchema = z.object({
+  role_id: z.string().uuid('Invalid role ID').optional().nullable(),
+});
+
+export const collaborationRequestCreateSchema = z.object({
+  role_id: z.string().uuid('Invalid role ID').optional().nullable(),
+  message: z.string().trim().max(500, 'Message cannot exceed 500 characters').optional().nullable(),
+});
+
+export const collaborationRequestStatusUpdateSchema = z.object({
+  status: z.enum(['ACCEPTED', 'REJECTED'] as const),
+});
+
 export function generateSlug(title: string): string {
   const sanitized = title
     .toLowerCase()
@@ -81,9 +94,16 @@ export const projectFormSchema = z.object({
   skillIds: z.array(z.string().uuid()).default([]),
 });
 
+export const projectEditFormSchema = projectFormSchema;
+
 export type ProjectCreateInput = z.infer<typeof projectCreateSchema>;
 export type ProjectUpdateInput = z.infer<typeof projectUpdateSchema>;
 export type ProjectRoleCreateInput = z.infer<typeof projectRoleCreateSchema>;
 export type ProjectRoleUpdateInput = z.infer<typeof projectRoleUpdateSchema>;
 export type ProjectMemberAddInput = z.infer<typeof projectMemberAddSchema>;
+export type ProjectMemberUpdateInput = z.infer<typeof projectMemberUpdateSchema>;
+export type CollaborationRequestCreateInput = z.infer<typeof collaborationRequestCreateSchema>;
+export type CollaborationRequestStatusUpdateInput = z.infer<typeof collaborationRequestStatusUpdateSchema>;
 export type ProjectFormInput = z.infer<typeof projectFormSchema>;
+export type ProjectEditFormInput = z.infer<typeof projectEditFormSchema>;
+

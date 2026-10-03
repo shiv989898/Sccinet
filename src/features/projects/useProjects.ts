@@ -16,6 +16,9 @@ export const projectQueryKeys = {
   details: () => [...projectQueryKeys.all, 'detail'] as const,
   detailById: (id: string) => [...projectQueryKeys.details(), 'id', id] as const,
   detailBySlug: (slug: string) => [...projectQueryKeys.details(), 'slug', slug] as const,
+  collaborationRequests: (projectId: string) =>
+    [...projectQueryKeys.detailById(projectId), 'collaborationRequests'] as const,
+  myRequests: () => [...projectQueryKeys.all, 'myRequests'] as const,
 };
 
 export function useProjects(filter?: { status?: ProjectStatus; ownerId?: string }) {
@@ -267,3 +270,125 @@ export function useRemoveProjectMember(projectId: string) {
     },
   });
 }
+
+export function useUpdateProjectMemberRole(projectId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ profileId, roleId }: { profileId: string; roleId: string | null }) => {
+      const { error } = await projectService.updateProjectMemberRole(projectId, profileId, roleId);
+      if (error) throw error;
+      return { profileId, roleId };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: projectQueryKeys.detailById(projectId) });
+    },
+  });
+}
+
+export function useUpdateProjectWithSkills(projectId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: ProjectUpdate & { skillIds?: string[] }) => {
+      const { data, error } = await projectService.updateProjectWithSkills(projectId, input);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (updated) => {
+      queryClient.invalidateQueries({ queryKey: projectQueryKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: projectQueryKeys.detailById(projectId) });
+      if (updated?.slug) {
+        queryClient.invalidateQueries({ queryKey: projectQueryKeys.detailBySlug(updated.slug) });
+      }
+    },
+  });
+}
+
+export function useProjectCollaborationRequests(projectId?: string) {
+  return useQuery({
+    queryKey: projectQueryKeys.collaborationRequests(projectId || ''),
+    queryFn: async () => {
+      if (!projectId) return [];
+      const { data, error } = await projectService.getProjectCollaborationRequests(projectId);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!projectId,
+  });
+}
+
+export function useMyCollaborationRequests() {
+  return useQuery({
+    queryKey: projectQueryKeys.myRequests(),
+    queryFn: async () => {
+      const { data, error } = await projectService.getMyCollaborationRequests();
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+export function useCreateCollaborationRequest(projectId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { roleId?: string | null; message?: string | null }) => {
+      const { data, error } = await projectService.createCollaborationRequest({
+        projectId,
+        roleId: input.roleId,
+        message: input.message,
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: projectQueryKeys.collaborationRequests(projectId) });
+      queryClient.invalidateQueries({ queryKey: projectQueryKeys.detailById(projectId) });
+      queryClient.invalidateQueries({ queryKey: projectQueryKeys.myRequests() });
+    },
+  });
+}
+
+export function useUpdateCollaborationRequestStatus(projectId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      requestId,
+      status,
+    }: {
+      requestId: string;
+      status: 'ACCEPTED' | 'REJECTED';
+    }) => {
+      const { data, error } = await projectService.updateCollaborationRequestStatus(requestId, status);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: projectQueryKeys.collaborationRequests(projectId) });
+      queryClient.invalidateQueries({ queryKey: projectQueryKeys.detailById(projectId) });
+      queryClient.invalidateQueries({ queryKey: projectQueryKeys.lists() });
+    },
+  });
+}
+
+export function useWithdrawCollaborationRequest(projectId?: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (requestId: string) => {
+      const { error } = await projectService.withdrawCollaborationRequest(requestId);
+      if (error) throw error;
+      return requestId;
+    },
+    onSuccess: () => {
+      if (projectId) {
+        queryClient.invalidateQueries({ queryKey: projectQueryKeys.collaborationRequests(projectId) });
+        queryClient.invalidateQueries({ queryKey: projectQueryKeys.detailById(projectId) });
+      }
+      queryClient.invalidateQueries({ queryKey: projectQueryKeys.myRequests() });
+    },
+  });
+}
+

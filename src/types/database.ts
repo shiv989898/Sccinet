@@ -289,6 +289,58 @@ export interface Database {
           },
         ];
       };
+      project_collaboration_requests: {
+        Row: {
+          id: string;
+          project_id: string;
+          user_id: string;
+          role_id: string | null;
+          message: string | null;
+          status: CollaborationRequestStatus;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          project_id: string;
+          user_id: string;
+          role_id?: string | null;
+          message?: string | null;
+          status?: CollaborationRequestStatus;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          project_id?: string;
+          user_id?: string;
+          role_id?: string | null;
+          message?: string | null;
+          status?: CollaborationRequestStatus;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'project_collaboration_requests_project_id_fkey';
+            columns: ['project_id'];
+            referencedRelation: 'projects';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'project_collaboration_requests_user_id_fkey';
+            columns: ['user_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'project_collaboration_requests_role_id_fkey';
+            columns: ['role_id'];
+            referencedRelation: 'project_roles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -300,14 +352,20 @@ export interface Database {
         Args: Record<PropertyKey, never>;
         Returns: unknown;
       };
+      handle_collaboration_request_status_change: {
+        Args: Record<PropertyKey, never>;
+        Returns: unknown;
+      };
     };
     Enums: {
       project_status: ProjectStatus;
+      collaboration_request_status: CollaborationRequestStatus;
     };
   };
 }
 
 export type ProjectStatus = 'ACTIVE' | 'COMPLETED' | 'ARCHIVED';
+export type CollaborationRequestStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED';
 
 export type Profile = Database['public']['Tables']['profiles']['Row'];
 export type ProfileUpdate = Database['public']['Tables']['profiles']['Update'];
@@ -326,10 +384,22 @@ export type ProjectRoleUpdate = Database['public']['Tables']['project_roles']['U
 export type ProjectRoleSkill = Database['public']['Tables']['project_role_skills']['Row'];
 export type ProjectMember = Database['public']['Tables']['project_members']['Row'];
 export type ProjectMemberInsert = Database['public']['Tables']['project_members']['Insert'];
+export type ProjectMemberUpdate = Database['public']['Tables']['project_members']['Update'];
+
+export type CollaborationRequest = Database['public']['Tables']['project_collaboration_requests']['Row'];
+export type CollaborationRequestInsert = Database['public']['Tables']['project_collaboration_requests']['Insert'];
+export type CollaborationRequestUpdate = Database['public']['Tables']['project_collaboration_requests']['Update'];
+
+export interface CollaborationRequestWithDetails extends CollaborationRequest {
+  user?: Profile;
+  role?: ProjectRole | null;
+  project?: Project;
+}
 
 export interface ProjectWithDetails extends Project {
   owner?: Profile;
   skills?: Skill[];
   roles?: (ProjectRole & { skills?: Skill[] })[];
   members?: (ProjectMember & { profile?: Profile; role?: ProjectRole | null })[];
+  collaboration_requests?: CollaborationRequestWithDetails[];
 }

@@ -10,6 +10,9 @@ import {
   ProjectStatus,
   Skill,
   Profile,
+  CollaborationRequest,
+  CollaborationRequestStatus,
+  CollaborationRequestWithDetails,
 } from '../../types/database';
 
 export const projectService = {
@@ -105,6 +108,11 @@ export const projectService = {
             joined_at,
             profile:profiles(*),
             role:project_roles(*)
+          ),
+          collaboration_requests:project_collaboration_requests(
+            *,
+            user:profiles(*),
+            role:project_roles(*)
           )
         `)
         .eq('id', id)
@@ -139,6 +147,11 @@ export const projectService = {
           profile: m.profile as unknown as Profile | undefined,
           role: m.role as unknown as ProjectRole | null | undefined,
         })),
+        collaboration_requests: (data.collaboration_requests || []).map((cr: any) => ({
+          ...cr,
+          user: cr.user as unknown as Profile | undefined,
+          role: cr.role as unknown as ProjectRole | null | undefined,
+        })),
       };
 
       return { data: projectWithDetails, error: null };
@@ -164,6 +177,11 @@ export const projectService = {
           members:project_members(
             joined_at,
             profile:profiles(*),
+            role:project_roles(*)
+          ),
+          collaboration_requests:project_collaboration_requests(
+            *,
+            user:profiles(*),
             role:project_roles(*)
           )
         `)
@@ -198,6 +216,11 @@ export const projectService = {
           profile: m.profile as unknown as Profile | undefined,
           role: m.role as unknown as ProjectRole | null | undefined,
         })),
+        collaboration_requests: (data.collaboration_requests || []).map((cr: any) => ({
+          ...cr,
+          user: cr.user as unknown as Profile | undefined,
+          role: cr.role as unknown as ProjectRole | null | undefined,
+        })),
       };
 
       return { data: projectWithDetails, error: null };
@@ -228,6 +251,50 @@ export const projectService = {
       return { data, error: null };
     } catch (err: any) {
       return { data: null, error: new Error(err.message || 'Failed to update project') };
+    }
+  },
+
+  async updateProjectWithSkills(
+    id: string,
+    input: ProjectUpdate & { skillIds?: string[] }
+  ): Promise<{ data: ProjectWithDetails | null; error: Error | null }> {
+    try {
+      const { skillIds, ...projectUpdates } = input;
+      const { data: updatedProject, error: updateError } = await this.updateProject(id, projectUpdates);
+      if (updateError || !updatedProject) {
+        return { data: null, error: updateError || new Error('Failed to update project') };
+      }
+
+      if (skillIds !== undefined) {
+        const { data: currentSkills } = await supabase
+          .from('project_skills')
+          .select('skill_id')
+          .eq('project_id', id);
+
+        const currentIds = (currentSkills || []).map((s: any) => s.skill_id);
+        const toAdd = skillIds.filter((sid) => !currentIds.includes(sid));
+        const toRemove = currentIds.filter((sid) => !skillIds.includes(sid));
+
+        if (toRemove.length > 0) {
+          await supabase
+            .from('project_skills')
+            .delete()
+            .eq('project_id', id)
+            .in('skill_id', toRemove);
+        }
+
+        if (toAdd.length > 0) {
+          const rows = toAdd.map((sid) => ({
+            project_id: id,
+            skill_id: sid,
+          }));
+          await supabase.from('project_skills').insert(rows);
+        }
+      }
+
+      return await this.getProjectById(id);
+    } catch (err: any) {
+      return { data: null, error: new Error(err.message || 'Failed to update project with skills') };
     }
   },
 
@@ -468,6 +535,172 @@ export const projectService = {
       return { error: null };
     } catch (err: any) {
       return { error: new Error(err.message || 'Failed to remove project member') };
+    }
+  },
+
+  async updateProjectMemberRole(
+    projectId: string,
+    profileId: string,
+    roleId: string | null
+  ): Promise<{ error: Error | null }> {
+    try {
+      const { error } = await supabase
+        .from('project_members')
+        .update({ role_id: roleId })
+        .eq('project_id', projectId)
+        .eq('profile_id', profileId);
+
+      if (error) {
+        return { error: new Error(error.message) };
+      }
+
+      return { error: null };
+    } catch (err: any) {
+      return { error: new Error(err.message || 'Failed to update member role') };
+    }
+  },
+
+  // Collaboration Requests
+  async createCollaborationRequest(input: {
+    projectId: string;
+    roleId?: string | null;
+    message?: string | null;
+  }): Promise<{ data: CollaborationRequest | null; error: Error | null }> {
+    try {
+      const { data: authData } = await supabase.auth.getUser();
+      if (!authData.user) {
+        return { data: null, error: new Error('User not authenticated') };
+      }
+
+      const { data, error } = await supabase
+        .from('project_collaboration_requests')
+        .insert({
+          project_id: input.projectId,
+          user_id: authData.user.id,
+          role_id: input.roleId || null,
+          message: input.message?.trim() || null,
+          status: 'PENDING',
+        })
+        .select()
+        .single();
+
+      if (error) {
+        return { data: null, error: new Error(error.message) };
+      }
+
+      return { data, error: null };
+    } catch (err: any) {
+      return { data: null, error: new Error(err.message || 'Failed to submit collaboration request') };
+    }
+  },
+
+  async updateCollaborationRequestStatus(
+    requestId: string,
+    status: 'ACCEPTED' | 'REJECTED'
+  ): Promise<{ data: CollaborationRequest | null; error: Error | null }> {
+    try {
+      const { data, error } = await supabase
+        .from('project_collaboration_requests')
+        .update({
+          status,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', requestId)
+        .select()
+        .single();
+
+      if (error) {
+        return { data: null, error: new Error(error.message) };
+      }
+
+      return { data, error: null };
+    } catch (err: any) {
+      return { data: null, error: new Error(err.message || 'Failed to update request status') };
+    }
+  },
+
+  async withdrawCollaborationRequest(
+    requestId: string
+  ): Promise<{ error: Error | null }> {
+    try {
+      const { error } = await supabase
+        .from('project_collaboration_requests')
+        .delete()
+        .eq('id', requestId);
+
+      if (error) {
+        return { error: new Error(error.message) };
+      }
+
+      return { error: null };
+    } catch (err: any) {
+      return { error: new Error(err.message || 'Failed to withdraw collaboration request') };
+    }
+  },
+
+  async getProjectCollaborationRequests(
+    projectId: string
+  ): Promise<{ data: CollaborationRequestWithDetails[]; error: Error | null }> {
+    try {
+      const { data, error } = await supabase
+        .from('project_collaboration_requests')
+        .select(`
+          *,
+          user:profiles(*),
+          role:project_roles(*)
+        `)
+        .eq('project_id', projectId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        return { data: [], error: new Error(error.message) };
+      }
+
+      const requests: CollaborationRequestWithDetails[] = (data || []).map((cr: any) => ({
+        ...cr,
+        user: cr.user as unknown as Profile | undefined,
+        role: cr.role as unknown as ProjectRole | null | undefined,
+      }));
+
+      return { data: requests, error: null };
+    } catch (err: any) {
+      return { data: [], error: new Error(err.message || 'Failed to fetch collaboration requests') };
+    }
+  },
+
+  async getMyCollaborationRequests(): Promise<{
+    data: CollaborationRequestWithDetails[];
+    error: Error | null;
+  }> {
+    try {
+      const { data: authData } = await supabase.auth.getUser();
+      if (!authData.user) {
+        return { data: [], error: new Error('User not authenticated') };
+      }
+
+      const { data, error } = await supabase
+        .from('project_collaboration_requests')
+        .select(`
+          *,
+          project:projects(*),
+          role:project_roles(*)
+        `)
+        .eq('user_id', authData.user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        return { data: [], error: new Error(error.message) };
+      }
+
+      const requests: CollaborationRequestWithDetails[] = (data || []).map((cr: any) => ({
+        ...cr,
+        project: cr.project as unknown as Project | undefined,
+        role: cr.role as unknown as ProjectRole | null | undefined,
+      }));
+
+      return { data: requests, error: null };
+    } catch (err: any) {
+      return { data: [], error: new Error(err.message || 'Failed to fetch my requests') };
     }
   },
 };
