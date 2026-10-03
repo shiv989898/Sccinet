@@ -1,11 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, Platform, View } from 'react-native';
 import { router, Stack, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useTheme } from '../src/hooks/useTheme';
 import { AuthProvider, useAuth } from '../src/features/auth/AuthContext';
+
+if (Platform.OS === 'web' && typeof document !== 'undefined') {
+  const styleId = 'sccinet-web-focus-reset';
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+      input, textarea, select, [contenteditable="true"] {
+        outline: none !important;
+        outline-style: none !important;
+        box-shadow: none !important;
+      }
+      input:focus, textarea:focus, select:focus, [contenteditable="true"]:focus {
+        outline: none !important;
+        outline-style: none !important;
+        box-shadow: none !important;
+      }
+      *:focus-visible {
+        outline: none !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+}
 
 function RootNavigator() {
   const theme = useTheme();

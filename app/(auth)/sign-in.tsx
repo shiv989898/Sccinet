@@ -37,33 +37,31 @@ export default function SignInScreen() {
   const switchMode = (newMode: 'signin' | 'signup') => {
     if (newMode === mode) return;
 
-    // Apple-level fluid spring for the segmented pill thumb
-    Animated.spring(tabAnim, {
-      toValue: newMode === 'signup' ? 1 : 0,
-      tension: 280,
-      friction: 24,
-      useNativeDriver: !isWeb,
-    }).start();
+    setMode(newMode);
+    setErrorMessage(null);
+    setFieldErrors({});
 
-    // Silky crossfade + micro drift for header and form content
+    // Native spring for segmented pill thumb on native
+    if (!isWeb) {
+      Animated.spring(tabAnim, {
+        toValue: newMode === 'signup' ? 1 : 0,
+        tension: 280,
+        friction: 24,
+        useNativeDriver: true,
+      }).start();
+    }
+
+    // Silky crossfade + micro drift for header title
     Animated.sequence([
+      Animated.timing(contentFadeAnim, {
+        toValue: 0.2,
+        duration: 80,
+        useNativeDriver: !isWeb,
+      }),
       Animated.parallel([
         Animated.timing(contentFadeAnim, {
-          toValue: 0.15,
-          duration: 90,
-          useNativeDriver: !isWeb,
-        }),
-        Animated.timing(contentSlideAnim, {
-          toValue: 4,
-          duration: 90,
-          useNativeDriver: !isWeb,
-        }),
-      ]),
-      Animated.parallel([
-        Animated.spring(contentFadeAnim, {
           toValue: 1,
-          tension: 220,
-          friction: 20,
+          duration: 160,
           useNativeDriver: !isWeb,
         }),
         Animated.spring(contentSlideAnim, {
@@ -74,12 +72,6 @@ export default function SignInScreen() {
         }),
       ]),
     ]).start();
-
-    setTimeout(() => {
-      setMode(newMode);
-      setErrorMessage(null);
-      setFieldErrors({});
-    }, 90);
   };
 
   const handleAuth = async () => {
@@ -262,34 +254,36 @@ export default function SignInScreen() {
                 ]}
               >
                 {/* Physical sliding clay thumb */}
-                {trackWidth > 0 && (
-                  <Animated.View
-                    style={[
-                      styles.slidingThumb,
-                      {
-                        width: (trackWidth - 6) / 2,
-                        backgroundColor: theme.clay.surfaceActivePill,
-                        borderColor: theme.clay.borderCard,
-                        transform: [
-                          {
-                            translateX: tabAnim.interpolate({
-                              inputRange: [0, 1],
-                              outputRange: [0, (trackWidth - 6) / 2],
-                            }),
-                          },
-                        ],
-                        ...Platform.select({
-                          web: {
-                            boxShadow: theme.clay.webPillShadow,
-                          } as any,
-                          default: {
-                            ...theme.clay.shadowPill,
-                          },
-                        }),
-                      },
-                    ]}
-                  />
-                )}
+                <Animated.View
+                  style={[
+                    styles.slidingThumb,
+                    {
+                      width: trackWidth > 0 ? (trackWidth - 6) / 2 : '48%',
+                      backgroundColor: theme.clay.surfaceActivePill,
+                      borderColor: theme.clay.borderCard,
+                      transform: [
+                        {
+                          translateX: isWeb
+                            ? (isSignUp ? (trackWidth > 0 ? (trackWidth - 6) / 2 : 185) : 0)
+                            : tabAnim.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: [0, trackWidth > 0 ? (trackWidth - 6) / 2 : 185],
+                              }),
+                        },
+                      ],
+                      ...Platform.select({
+                        web: {
+                          boxShadow: theme.clay.webPillShadow,
+                          transition:
+                            'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease',
+                        } as any,
+                        default: {
+                          ...theme.clay.shadowPill,
+                        },
+                      }),
+                    },
+                  ]}
+                />
 
                 <TouchableOpacity
                   activeOpacity={0.85}
@@ -300,11 +294,16 @@ export default function SignInScreen() {
                     style={[
                       styles.segmentText,
                       {
-                        color: !isSignUp ? theme.colors.primary : theme.colors.textSecondary,
-                        fontWeight: !isSignUp
-                          ? theme.typography.weights.semibold
-                          : theme.typography.weights.medium,
+                        color: !isSignUp
+                          ? (theme.isDark ? '#FFFFFF' : theme.colors.primary)
+                          : (theme.isDark ? '#94A3B8' : theme.colors.textSecondary),
+                        fontWeight: !isSignUp ? '600' : '500',
                         fontSize: theme.typography.sizes.sm,
+                        ...Platform.select({
+                          web: {
+                            transition: 'color 0.2s ease',
+                          } as any,
+                        }),
                       },
                     ]}
                   >
@@ -321,11 +320,16 @@ export default function SignInScreen() {
                     style={[
                       styles.segmentText,
                       {
-                        color: isSignUp ? theme.colors.primary : theme.colors.textSecondary,
-                        fontWeight: isSignUp
-                          ? theme.typography.weights.semibold
-                          : theme.typography.weights.medium,
+                        color: isSignUp
+                          ? (theme.isDark ? '#FFFFFF' : theme.colors.primary)
+                          : (theme.isDark ? '#94A3B8' : theme.colors.textSecondary),
+                        fontWeight: isSignUp ? '600' : '500',
                         fontSize: theme.typography.sizes.sm,
+                        ...Platform.select({
+                          web: {
+                            transition: 'color 0.2s ease',
+                          } as any,
+                        }),
                       },
                     ]}
                   >
@@ -352,17 +356,30 @@ export default function SignInScreen() {
                 </View>
               )}
 
-              {/* Form Fields with Apple Crossfade & Drift */}
-              <Animated.View
-                style={[
-                  styles.form,
-                  {
-                    opacity: contentFadeAnim,
-                    transform: [{ translateY: contentSlideAnim }],
-                  },
-                ]}
-              >
-                {isSignUp && (
+              {/* Form Fields with Apple-grade Liquid Accordion */}
+              <View style={styles.form}>
+                {/* Full Name smooth accordion unroll */}
+                <Animated.View
+                  style={[
+                    styles.expandableField,
+                    {
+                      maxHeight: isSignUp ? 96 : 0,
+                      opacity: isSignUp ? 1 : 0,
+                      marginBottom: isSignUp ? 14 : 0,
+                      transform: isSignUp
+                        ? [{ translateY: 0 }, { scale: 1 }]
+                        : [{ translateY: -10 }, { scale: 0.98 }],
+                      overflow: 'hidden',
+                      ...Platform.select({
+                        web: {
+                          transition:
+                            'max-height 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), margin-bottom 0.32s cubic-bezier(0.16, 1, 0.3, 1)',
+                          pointerEvents: isSignUp ? 'auto' : 'none',
+                        } as any,
+                      }),
+                    },
+                  ]}
+                >
                   <Input
                     label="Full Name"
                     placeholder="e.g. Alex Rivera"
@@ -379,28 +396,32 @@ export default function SignInScreen() {
                       />
                     }
                   />
-                )}
+                </Animated.View>
 
-                <Input
-                  label="Email address"
-                  placeholder="name@work.com"
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  error={fieldErrors.email}
-                  leftAccessory={
-                    <Ionicons
-                      name="mail-outline"
-                      size={18}
-                      color={theme.colors.textMuted}
-                      style={styles.inputIcon}
-                    />
-                  }
-                />
+                {/* Email Address */}
+                <View style={styles.fieldWrapper}>
+                  <Input
+                    label="Email address"
+                    placeholder="name@work.com"
+                    value={email}
+                    onChangeText={setEmail}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    error={fieldErrors.email}
+                    leftAccessory={
+                      <Ionicons
+                        name="mail-outline"
+                        size={18}
+                        color={theme.colors.textMuted}
+                        style={styles.inputIcon}
+                      />
+                    }
+                  />
+                </View>
 
-                <View style={styles.passwordWrapper}>
+                {/* Password */}
+                <View style={[styles.fieldWrapper, !isSignUp && { marginBottom: 6 }]}>
                   <Input
                     label="Password"
                     placeholder="••••••••••••"
@@ -432,23 +453,40 @@ export default function SignInScreen() {
                   />
                 </View>
 
-                {!isSignUp && (
-                  <View style={styles.forgotRow}>
-                    <TouchableOpacity activeOpacity={0.7}>
-                      <Text
-                        style={[
-                          styles.forgotText,
-                          {
-                            color: theme.colors.primary,
-                            fontSize: theme.typography.sizes.xs,
-                          },
-                        ]}
-                      >
-                        Forgot password?
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
+                {/* Forgot Password Accordion */}
+                <Animated.View
+                  style={[
+                    styles.forgotRow,
+                    {
+                      maxHeight: !isSignUp ? 32 : 0,
+                      opacity: !isSignUp ? 1 : 0,
+                      transform: !isSignUp ? [{ translateY: 0 }] : [{ translateY: -6 }],
+                      marginBottom: !isSignUp ? 12 : 0,
+                      overflow: 'hidden',
+                      ...Platform.select({
+                        web: {
+                          transition:
+                            'max-height 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), margin-bottom 0.28s cubic-bezier(0.16, 1, 0.3, 1)',
+                          pointerEvents: !isSignUp ? 'auto' : 'none',
+                        } as any,
+                      }),
+                    },
+                  ]}
+                >
+                  <TouchableOpacity activeOpacity={0.7}>
+                    <Text
+                      style={[
+                        styles.forgotText,
+                        {
+                          color: theme.colors.primary,
+                          fontSize: theme.typography.sizes.xs,
+                        },
+                      ]}
+                    >
+                      Forgot password?
+                    </Text>
+                  </TouchableOpacity>
+                </Animated.View>
 
                 {/* Primary Action Button */}
                 <View style={styles.actionContainer}>
@@ -460,7 +498,7 @@ export default function SignInScreen() {
                     onPress={handleAuth}
                   />
                 </View>
-              </Animated.View>
+              </View>
 
               {/* Subtle Divider */}
               <View style={styles.dividerRow}>
@@ -683,15 +721,23 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   form: {
-    gap: 14,
+    width: '100%',
+  },
+  expandableField: {
+    width: '100%',
+  },
+  fieldWrapper: {
+    width: '100%',
   },
   inputIcon: {
     marginRight: 10,
   },
-  passwordWrapper: {},
+  passwordWrapper: {
+    width: '100%',
+  },
   forgotRow: {
     alignItems: 'flex-end',
-    marginTop: -4,
+    width: '100%',
   },
   forgotText: {
     fontWeight: '500',

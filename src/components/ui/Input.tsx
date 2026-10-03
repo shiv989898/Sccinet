@@ -115,6 +115,10 @@ export function Input({
               color: theme.colors.text,
               fontSize: theme.typography.sizes.md,
             },
+            Platform.OS === 'web' && ({
+              outlineStyle: 'none',
+              outlineWidth: 0,
+            } as any),
             inputStyle,
           ]}
           onFocus={handleFocus}
@@ -170,6 +174,12 @@ const styles = StyleSheet.create({
     flex: 1,
     height: '100%',
     padding: 0,
+    ...Platform.select({
+      web: {
+        outlineStyle: 'none',
+        outlineWidth: 0,
+      } as any,
+    }),
   },
   accessory: {
     justifyContent: 'center',
