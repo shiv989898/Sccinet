@@ -1,58 +1,50 @@
 import { createClient } from '@supabase/supabase-js';
+import { execSync } from 'child_process';
 
 const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://mkrthwgtydbjneuzhcli.supabase.co';
 const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rcnRod2d0eWRiam5ldXpoY2xpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwMzA0MzYsImV4cCI6MjEwNjYwNjQzNn0.kMAIrfGUpWGwnQy6cGFOXeryyNcs9rgj5y2t7uJzi_4';
 
 async function runE2E() {
-  console.log('--- STARTING PHASE 3 E2E COLLABORATION VERIFICATION ---');
+  console.log('==================================================');
+  console.log('PHASE 3 E2E COLLABORATION VERIFICATION');
+  console.log('==================================================');
 
   const clientAnon = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  const timestamp = Date.now().toString().slice(-6);
-  const ownerEmail = `sccinet.owner.${timestamp}@test.com`;
-  const ownerPass = 'Pass12345!Secure';
-  const ownerFullName = `Owner ${timestamp}`;
+  const ownerEmail = 'sccinet.owner.test@gmail.com';
+  const collabEmail = 'sccinet.collab.test@gmail.com';
+  const outsiderEmail = 'sccinet.outsider.test@gmail.com';
+  const password = 'Pass12345!Secure';
 
-  const collaboratorEmail = `sccinet.collab.${timestamp}@test.com`;
-  const collabPass = 'Pass12345!Secure';
-  const collabFullName = `Collab ${timestamp}`;
-
-  const outsiderEmail = `sccinet.outsider.${timestamp}@test.com`;
-  const outsiderPass = 'Pass12345!Secure';
-  const outsiderFullName = `Outsider ${timestamp}`;
-
-  console.log('1. Setting up 3 isolated test accounts...');
-  // Owner
+  console.log('1. Signing in with provisioned test accounts...');
+  // Owner client
   const ownerClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  const { data: ownerAuth, error: ownerAuthErr } = await ownerClient.auth.signUp({
+  const { data: ownerAuth, error: ownerAuthErr } = await ownerClient.auth.signInWithPassword({
     email: ownerEmail,
-    password: ownerPass,
-    options: { data: { full_name: ownerFullName } },
+    password,
   });
-  if (ownerAuthErr) throw new Error(`Owner sign up failed: ${ownerAuthErr.message}`);
-  const ownerId = ownerAuth.user!.id;
+  if (ownerAuthErr) throw new Error(`Owner sign in failed: ${ownerAuthErr.message}`);
+  const ownerId = ownerAuth.user.id;
 
-  // Collaborator
+  // Collaborator client
   const collabClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  const { data: collabAuth, error: collabAuthErr } = await collabClient.auth.signUp({
-    email: collaboratorEmail,
-    password: collabPass,
-    options: { data: { full_name: collabFullName } },
+  const { data: collabAuth, error: collabAuthErr } = await collabClient.auth.signInWithPassword({
+    email: collabEmail,
+    password,
   });
-  if (collabAuthErr) throw new Error(`Collab sign up failed: ${collabAuthErr.message}`);
-  const collabId = collabAuth.user!.id;
+  if (collabAuthErr) throw new Error(`Collab sign in failed: ${collabAuthErr.message}`);
+  const collabId = collabAuth.user.id;
 
-  // Outsider (attacker)
+  // Outsider client
   const outsiderClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  const { data: outsiderAuth, error: outsiderAuthErr } = await outsiderClient.auth.signUp({
+  const { data: outsiderAuth, error: outsiderAuthErr } = await outsiderClient.auth.signInWithPassword({
     email: outsiderEmail,
-    password: outsiderPass,
-    options: { data: { full_name: outsiderFullName } },
+    password,
   });
-  if (outsiderAuthErr) throw new Error(`Outsider sign up failed: ${outsiderAuthErr.message}`);
-  const outsiderId = outsiderAuth.user!.id;
+  if (outsiderAuthErr) throw new Error(`Outsider sign in failed: ${outsiderAuthErr.message}`);
+  const outsiderId = outsiderAuth.user.id;
 
-  console.log(`✓ Accounts created: Owner=${ownerId}, Collab=${collabId}, Outsider=${outsiderId}`);
+  console.log(`✓ Authenticated: Owner=${ownerId}, Collab=${collabId}, Outsider=${outsiderId}`);
 
   // Fetch available global skills for testing
   const { data: globalSkills } = await ownerClient.from('skills').select('id, name').limit(3);
@@ -63,15 +55,16 @@ async function runE2E() {
   const skill2 = globalSkills[1].id;
 
   // Create Project as Owner
-  console.log('2. Creating Project as Owner...');
-  const projectSlug = `phase3-test-${timestamp}`;
+  console.log('\n2. Creating Project as Owner...');
+  const timestamp = Date.now().toString().slice(-4);
+  const projectSlug = `mesh-engine-${timestamp}`;
   const { data: project, error: projErr } = await ownerClient
     .from('projects')
     .insert({
       owner_id: ownerId,
       title: `Mesh Network Engine ${timestamp}`,
       slug: projectSlug,
-      description: 'Initial project description for collaboration test.',
+      description: 'Initial project description for collaboration testing.',
       status: 'ACTIVE',
       repository_url: 'https://github.com/sccinet/mesh',
       live_url: 'https://mesh.sccinet.dev',
@@ -79,7 +72,7 @@ async function runE2E() {
     .select()
     .single();
 
-  if (projErr) throw new Error(`Project creation failed: ${projErr.message}`);
+  if (projErr || !project) throw new Error(`Project creation failed: ${projErr?.message}`);
   console.log(`✓ Project created: id=${project.id}, slug=${project.slug}`);
 
   // Check owner membership trigger
@@ -90,7 +83,7 @@ async function runE2E() {
     .eq('profile_id', ownerId)
     .single();
 
-  if (!ownerMember) throw new Error('Owner automatic membership trigger failed!');
+  if (!ownerMember) throw new Error('Automatic project owner membership trigger failed!');
   console.log('✓ Automatic project owner membership trigger confirmed');
 
   // Attach skills as Owner
@@ -101,7 +94,7 @@ async function runE2E() {
   console.log('✓ Project skills attached');
 
   // TEST 1: Owner edits project
-  console.log('TEST 1: Owner edits project...');
+  console.log('\nTEST 1: Owner edits project...');
   const updatedTitle = `Mesh Network Engine v2 ${timestamp}`;
   const updatedDesc = 'Updated description by verified project owner.';
   const { data: editResult, error: editErr } = await ownerClient
@@ -119,11 +112,11 @@ async function runE2E() {
   if (editErr || editResult.title !== updatedTitle || editResult.status !== 'COMPLETED') {
     throw new Error(`Owner edit project failed: ${editErr?.message}`);
   }
-  console.log('✓ TEST 1 PASSED: Owner edited project successfully');
+  console.log('✓ TEST 1 PASSED: Owner edited project successfully (title, desc, status, live_url)');
 
   // TEST 2: Non-owner cannot edit project (RLS)
-  console.log('TEST 2: Verifying non-owner cannot edit project...');
-  const { data: hackerEdit, error: hackerEditErr } = await outsiderClient
+  console.log('\nTEST 2: Verifying non-owner cannot edit project (RLS)...');
+  const { data: hackerEdit } = await outsiderClient
     .from('projects')
     .update({ title: 'HACKED BY OUTSIDER' })
     .eq('id', project.id)
@@ -135,7 +128,7 @@ async function runE2E() {
   console.log('✓ TEST 2 PASSED: Non-owner update blocked by RLS');
 
   // TEST 3: Owner creates role
-  console.log('TEST 3: Owner creates project role...');
+  console.log('\nTEST 3: Owner creates project role...');
   const { data: role, error: roleErr } = await ownerClient
     .from('project_roles')
     .insert({
@@ -154,10 +147,10 @@ async function runE2E() {
     .from('project_role_skills')
     .insert({ role_id: role.id, skill_id: skill1 });
   if (roleSkillErr) throw new Error(`Role skill attach failed: ${roleSkillErr.message}`);
-  console.log('✓ Role skill attached');
+  console.log('✓ Role skill attached to role');
 
   // TEST 4: Owner edits role
-  console.log('TEST 4: Owner edits role...');
+  console.log('\nTEST 4: Owner edits role...');
   const { data: editedRole, error: editRoleErr } = await ownerClient
     .from('project_roles')
     .update({ title: 'Principal Protocol Architect' })
@@ -171,7 +164,7 @@ async function runE2E() {
   console.log('✓ TEST 4 PASSED: Role edited successfully');
 
   // TEST 5: Owner creates and deletes a role
-  console.log('TEST 5: Owner creates and deletes a temporary role...');
+  console.log('\nTEST 5: Owner creates and deletes a temporary role...');
   const { data: tempRole } = await ownerClient
     .from('project_roles')
     .insert({ project_id: project.id, title: 'Temporary QA Lead' })
@@ -187,7 +180,7 @@ async function runE2E() {
   console.log('✓ TEST 5 PASSED: Role deleted successfully');
 
   // TEST 6: Owner manages members (direct add, update role, remove)
-  console.log('TEST 6: Owner manages members directly...');
+  console.log('\nTEST 6: Owner manages members directly...');
   // Direct add collaborator
   const { error: addMemErr } = await ownerClient.from('project_members').insert({
     project_id: project.id,
@@ -204,7 +197,7 @@ async function runE2E() {
     .eq('project_id', project.id)
     .eq('profile_id', collabId);
   if (updateMemErr) throw new Error(`Update member role failed: ${updateMemErr.message}`);
-  console.log('✓ Member role assigned to role');
+  console.log('✓ Member assigned to role');
 
   // Remove member to reset for collaboration request testing
   const { error: removeMemErr } = await ownerClient
@@ -217,7 +210,7 @@ async function runE2E() {
   console.log('✓ TEST 6 PASSED: Owner member management verified');
 
   // TEST 7: User sends collaboration request
-  console.log('TEST 7: User sends collaboration request...');
+  console.log('\nTEST 7: User sends collaboration request...');
   const requestNote = 'I would love to contribute to consensus distributed protocols.';
   const { data: collabRequest, error: reqErr } = await collabClient
     .from('project_collaboration_requests')
@@ -237,7 +230,7 @@ async function runE2E() {
   console.log(`✓ TEST 7 PASSED: Collaboration request created: id=${collabRequest.id}`);
 
   // TEST 10: Duplicate requests are prevented
-  console.log('TEST 10: Verifying duplicate pending requests are prevented...');
+  console.log('\nTEST 10: Verifying duplicate pending requests are prevented...');
   const { error: dupErr } = await collabClient
     .from('project_collaboration_requests')
     .insert({
@@ -254,8 +247,8 @@ async function runE2E() {
   console.log(`✓ TEST 10 PASSED: Duplicate request rejected as expected (${dupErr.message})`);
 
   // TEST 11: Unauthorized request mutation fails (attacker tries to accept)
-  console.log('TEST 11: Verifying unauthorized request mutation fails...');
-  const { data: hackedRequest, error: hackReqErr } = await outsiderClient
+  console.log('\nTEST 11: Verifying unauthorized request mutation fails...');
+  const { data: hackedRequest } = await outsiderClient
     .from('project_collaboration_requests')
     .update({ status: 'ACCEPTED' })
     .eq('id', collabRequest.id)
@@ -267,7 +260,7 @@ async function runE2E() {
   console.log('✓ TEST 11 PASSED: Unauthorized request update blocked by RLS');
 
   // TEST 9: Owner rejects request
-  console.log('TEST 9: Owner rejects request...');
+  console.log('\nTEST 9: Owner rejects request...');
   const { data: rejectedReq, error: rejectErr } = await ownerClient
     .from('project_collaboration_requests')
     .update({ status: 'REJECTED' })
@@ -281,7 +274,7 @@ async function runE2E() {
   console.log('✓ TEST 9 PASSED: Request rejected successfully');
 
   // Now create a new request to test acceptance & automated membership
-  console.log('Creating fresh collaboration request for acceptance testing...');
+  console.log('\nCreating fresh collaboration request for acceptance testing...');
   const { data: freshRequest, error: freshReqErr } = await collabClient
     .from('project_collaboration_requests')
     .insert({
@@ -297,7 +290,7 @@ async function runE2E() {
   if (freshReqErr) throw new Error(`Fresh request creation failed: ${freshReqErr.message}`);
 
   // TEST 8 & 12: Owner accepts request & Automated membership is verified
-  console.log('TEST 8 & 12: Owner accepts request & verifies automated membership trigger...');
+  console.log('\nTEST 8 & 12: Owner accepts request & verifies automated membership trigger...');
   const { data: acceptedReq, error: acceptErr } = await ownerClient
     .from('project_collaboration_requests')
     .update({ status: 'ACCEPTED' })
@@ -324,7 +317,7 @@ async function runE2E() {
   console.log(`✓ TEST 12 PASSED: Collaborator is now a verified project member: role_id=${verifiedMember.role_id}`);
 
   // TEST 13: Project Detail reflects the updated state
-  console.log('TEST 13: Verifying Project Detail reflects updated state...');
+  console.log('\nTEST 13: Verifying Project Detail reflects updated state...');
   const { data: detailData, error: detailErr } = await clientAnon
     .from('projects')
     .select(`
@@ -356,7 +349,7 @@ async function runE2E() {
   console.log('✓ TEST 13 PASSED: Project Detail reflects updated title, status, roles, and members');
 
   // TEST 14: Workspace reflects project updates
-  console.log('TEST 14: Verifying Workspace reflects project updates...');
+  console.log('\nTEST 14: Verifying Workspace reflects project updates...');
   const { data: workspaceProjects, error: wsErr } = await ownerClient
     .from('projects')
     .select('*')
@@ -372,24 +365,20 @@ async function runE2E() {
   console.log('✓ TEST 14 PASSED: Workspace reflects updated project data');
 
   // CLEANUP: Clean all temporary test data
-  console.log('--- CLEANUP: Removing temporary test data ---');
-  // Deleting project cascades to project_skills, project_roles, project_role_skills, project_members, project_collaboration_requests
+  console.log('\n--- CLEANUP: Removing temporary test data ---');
   await ownerClient.from('projects').delete().eq('id', project.id);
   console.log('✓ Project and cascade relationships deleted');
 
-  // Delete test users via Supabase auth (calling rpc or cleaning profiles)
-  // Let's delete profiles
-  await ownerClient.from('profiles').delete().eq('id', ownerId);
-  await collabClient.from('profiles').delete().eq('id', collabId);
-  await outsiderClient.from('profiles').delete().eq('id', outsiderId);
-  console.log('✓ Test profiles cleaned up');
+  // Execute database cleanup for test accounts
+  execSync('npx supabase db query --linked "DELETE FROM auth.users WHERE email IN (\'sccinet.owner.test@gmail.com\', \'sccinet.collab.test@gmail.com\', \'sccinet.outsider.test@gmail.com\');"', { stdio: 'inherit' });
+  console.log('✓ Test user accounts cleaned from auth.users and public.profiles');
 
-  console.log('==================================================');
+  console.log('\n==================================================');
   console.log('ALL 14 E2E TESTS PASSED WITH 100% SECURITY & ACCURACY!');
   console.log('==================================================');
 }
 
 runE2E().catch((err) => {
-  console.error('❌ E2E TEST FAILED:', err);
+  console.error('\n❌ E2E TEST FAILED:', err);
   process.exit(1);
 });
