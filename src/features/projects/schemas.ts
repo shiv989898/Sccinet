@@ -1,0 +1,53 @@
+import { z } from 'zod';
+import { ProjectStatus } from '../../types/database';
+
+const optionalUrl = z
+  .string()
+  .trim()
+  .url('Must be a valid URL (e.g. https://example.com)')
+  .optional()
+  .nullable()
+  .or(z.literal(''));
+
+export const projectCreateSchema = z.object({
+  title: z
+    .string()
+    .trim()
+    .min(2, 'Project title must be at least 2 characters')
+    .max(100, 'Project title cannot exceed 100 characters'),
+  slug: z
+    .string()
+    .trim()
+    .min(2, 'Slug must be at least 2 characters')
+    .max(80, 'Slug cannot exceed 80 characters')
+    .regex(/^[a-z0-9_-]+$/, 'Slug can only contain lowercase letters, numbers, hyphens, and underscores'),
+  description: z.string().trim().max(1000, 'Description cannot exceed 1000 characters').optional().nullable(),
+  cover_image_url: optionalUrl,
+  repository_url: optionalUrl,
+  live_url: optionalUrl,
+  status: z.enum(['ACTIVE', 'COMPLETED', 'ARCHIVED'] as const satisfies readonly [ProjectStatus, ...ProjectStatus[]]).default('ACTIVE'),
+});
+
+export const projectUpdateSchema = projectCreateSchema.partial();
+
+export const projectRoleCreateSchema = z.object({
+  title: z
+    .string()
+    .trim()
+    .min(2, 'Role title must be at least 2 characters')
+    .max(80, 'Role title cannot exceed 80 characters'),
+  description: z.string().trim().max(500, 'Description cannot exceed 500 characters').optional().nullable(),
+});
+
+export const projectRoleUpdateSchema = projectRoleCreateSchema.partial();
+
+export const projectMemberAddSchema = z.object({
+  profile_id: z.string().uuid('Invalid profile ID'),
+  role_id: z.string().uuid('Invalid role ID').optional().nullable(),
+});
+
+export type ProjectCreateInput = z.infer<typeof projectCreateSchema>;
+export type ProjectUpdateInput = z.infer<typeof projectUpdateSchema>;
+export type ProjectRoleCreateInput = z.infer<typeof projectRoleCreateSchema>;
+export type ProjectRoleUpdateInput = z.infer<typeof projectRoleUpdateSchema>;
+export type ProjectMemberAddInput = z.infer<typeof projectMemberAddSchema>;
