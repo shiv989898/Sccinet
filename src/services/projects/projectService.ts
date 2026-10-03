@@ -75,7 +75,10 @@ export const projectService = {
         await Promise.allSettled(skillInserts);
       }
 
-      return { data: createdProject, error: null };
+      // Fetch complete project with skills and details
+      const { data: fullProject } = await this.getProjectById(createdProject.id);
+
+      return { data: fullProject || (createdProject as any), error: null };
     } catch (err: any) {
       return {
         data: null,

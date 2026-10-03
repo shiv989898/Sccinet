@@ -86,7 +86,7 @@ export function useCreateProjectWithSkills() {
       return data;
     },
     onSuccess: (newProject) => {
-      queryClient.invalidateQueries({ queryKey: projectQueryKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: projectQueryKeys.all });
       if (newProject) {
         queryClient.setQueryData(projectQueryKeys.detailById(newProject.id), newProject);
         queryClient.setQueryData(projectQueryKeys.detailBySlug(newProject.slug), newProject);
