@@ -39,9 +39,11 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@supabase/cli-windows-x64": "^2.119.0",
     "@types/react": "~19.2.2",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~57.0.2",
+    "supabase": "^2.119.0",
     "typescript": "~6.0.3"
   },
   "scripts": {

@@ -149,35 +149,45 @@ BEGIN
 
     candidate_username := base_username;
 
-    -- Collision resolution loop: safely handle collisions while preserving 3-30 char & allowed-character rules
-    WHILE EXISTS (SELECT 1 FROM public.profiles WHERE username = candidate_username) LOOP
-        collision_count := collision_count + 1;
+    -- Concurrency-safe insertion loop: relies on profiles.username UNIQUE constraint as the final source of truth
+    LOOP
+        BEGIN
+            INSERT INTO public.profiles (id, username, full_name)
+            VALUES (NEW.id, candidate_username, derived_full_name)
+            ON CONFLICT (id) DO NOTHING;
 
-        IF collision_count = 1 THEN
-            -- First attempt: append 4 characters from the user's UUID
-            suffix := '_' || substr(clean_uuid, 1, 4);
-        ELSIF collision_count = 2 THEN
-            -- Second attempt: append 6 characters from the user's UUID
-            suffix := '_' || substr(clean_uuid, 1, 6);
-        ELSE
-            -- Subsequent attempts: append a pseudo-random 4-digit number
-            suffix := '_' || floor(random() * 9000 + 1000)::text;
-        END IF;
-
-        -- Truncate base so that char_length(candidate_username) <= 30
-        max_base_len := 30 - char_length(suffix);
-        candidate_username := substr(base_username, 1, max_base_len) || suffix;
-
-        -- Circuit breaker to prevent infinite loop
-        IF collision_count > 50 THEN
-            candidate_username := 'user_' || substr(replace(gen_random_uuid()::text, '-', ''), 1, 12);
+            -- Successfully inserted or user ID already had a profile
             EXIT;
-        END IF;
-    END LOOP;
+        EXCEPTION
+            WHEN unique_violation THEN
+                -- Caught concurrent collision on profiles.username
+                collision_count := collision_count + 1;
 
-    INSERT INTO public.profiles (id, username, full_name)
-    VALUES (NEW.id, candidate_username, derived_full_name)
-    ON CONFLICT (id) DO NOTHING;
+                IF collision_count = 1 THEN
+                    -- First attempt: append 4 characters from the user's UUID
+                    suffix := '_' || substr(clean_uuid, 1, 4);
+                ELSIF collision_count = 2 THEN
+                    -- Second attempt: append 6 characters from the user's UUID
+                    suffix := '_' || substr(clean_uuid, 1, 6);
+                ELSE
+                    -- Subsequent attempts: append a pseudo-random 4-digit number
+                    suffix := '_' || floor(random() * 9000 + 1000)::text;
+                END IF;
+
+                -- Truncate base so that char_length(candidate_username) <= 30
+                max_base_len := 30 - char_length(suffix);
+                candidate_username := substr(base_username, 1, max_base_len) || suffix;
+
+                -- Circuit breaker: fallback to random UUID snippet if repeated collisions occur
+                IF collision_count > 50 THEN
+                    candidate_username := 'user_' || substr(replace(gen_random_uuid()::text, '-', ''), 1, 12);
+                END IF;
+
+                IF collision_count > 55 THEN
+                    EXIT;
+                END IF;
+        END;
+    END LOOP;
 
     RETURN NEW;
 END;
