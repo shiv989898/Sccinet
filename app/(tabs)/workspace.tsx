@@ -1,17 +1,25 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
 import { Card, Badge, Button, EmptyState } from '../../src/components/ui';
+import { useAuth } from '../../src/features/auth/AuthContext';
+import { useProjects } from '../../src/features/projects';
 
 export default function WorkspaceScreen() {
   const theme = useTheme();
+  const { user } = useAuth();
+
+  const { data: userProjects = [], isLoading: isLoadingProjects } = useProjects(
+    user ? { ownerId: user.id } : undefined
+  );
 
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
       contentContainerStyle={[styles.content, { padding: theme.spacing.lg }]}
+      showsVerticalScrollIndicator={false}
     >
       {/* Workspace Quick Actions */}
       <View style={styles.actionRow}>
@@ -87,16 +95,107 @@ export default function WorkspaceScreen() {
         </Text>
       </Card>
 
-      {/* Projects Section with EmptyState */}
-      <Card variant="default" style={styles.projectsContainer}>
-        <EmptyState
-          icon={<Ionicons name="folder-open-outline" size={32} color={theme.colors.primary} />}
-          title="No Active Projects Yet"
-          description="Create your first project to start recruiting collaborators and sharing milestones."
-          actionTitle="Create a Project"
-          onActionPress={() => router.push('/projects/new')}
-        />
-      </Card>
+      {/* Projects Section */}
+      {isLoadingProjects ? (
+        <View style={styles.loadingBox}>
+          <ActivityIndicator size="small" color={theme.colors.primary} />
+        </View>
+      ) : userProjects.length > 0 ? (
+        <View style={styles.projectsSection}>
+          <View style={styles.projectsSectionHeader}>
+            <Text
+              style={[
+                styles.projectsHeading,
+                {
+                  color: theme.colors.text,
+                  fontSize: theme.typography.sizes.md,
+                  fontWeight: theme.typography.weights.semibold,
+                },
+              ]}
+            >
+              My Projects ({userProjects.length})
+            </Text>
+          </View>
+
+          <View style={styles.projectsList}>
+            {userProjects.map((proj) => (
+              <Card
+                key={proj.id}
+                variant="clay"
+                padding="md"
+                style={styles.projectItemCard}
+                onPress={() =>
+                  router.push({
+                    pathname: '/projects/[id]',
+                    params: { id: proj.id },
+                  })
+                }
+              >
+                <View style={styles.projectItemHeader}>
+                  <Text
+                    style={[
+                      styles.projectItemTitle,
+                      {
+                        color: theme.colors.text,
+                        fontSize: theme.typography.sizes.sm,
+                        fontWeight: theme.typography.weights.semibold,
+                      },
+                    ]}
+                    numberOfLines={1}
+                  >
+                    {proj.title}
+                  </Text>
+                  <Badge
+                    label={proj.status}
+                    variant={proj.status === 'ACTIVE' ? 'success' : 'default'}
+                    size="sm"
+                  />
+                </View>
+
+                {proj.description ? (
+                  <Text
+                    style={[
+                      styles.projectItemDesc,
+                      {
+                        color: theme.colors.textSecondary,
+                        fontSize: theme.typography.sizes.xs,
+                      },
+                    ]}
+                    numberOfLines={2}
+                  >
+                    {proj.description}
+                  </Text>
+                ) : null}
+
+                <View style={styles.projectItemFooter}>
+                  <Text
+                    style={[
+                      styles.projectItemSlug,
+                      {
+                        color: theme.colors.textMuted,
+                        fontSize: 11,
+                      },
+                    ]}
+                  >
+                    /{proj.slug}
+                  </Text>
+                  <Ionicons name="chevron-forward" size={14} color={theme.colors.textMuted} />
+                </View>
+              </Card>
+            ))}
+          </View>
+        </View>
+      ) : (
+        <Card variant="default" style={styles.projectsContainer}>
+          <EmptyState
+            icon={<Ionicons name="folder-open-outline" size={32} color={theme.colors.primary} />}
+            title="No Active Projects Yet"
+            description="Create your first project to start recruiting collaborators and sharing milestones."
+            actionTitle="Create a Project"
+            onActionPress={() => router.push('/projects/new')}
+          />
+        </Card>
+      )}
     </ScrollView>
   );
 }
@@ -130,6 +229,47 @@ const styles = StyleSheet.create({
   },
   requestsTitle: {},
   requestsNotice: {},
+  loadingBox: {
+    paddingVertical: 24,
+    alignItems: 'center',
+  },
+  projectsSection: {
+    gap: 10,
+  },
+  projectsSectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  projectsHeading: {},
+  projectsList: {
+    gap: 10,
+  },
+  projectItemCard: {
+    borderRadius: 16,
+    gap: 6,
+  },
+  projectItemHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  projectItemTitle: {
+    flex: 1,
+    marginRight: 8,
+  },
+  projectItemDesc: {
+    lineHeight: 18,
+  },
+  projectItemFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 4,
+  },
+  projectItemSlug: {
+    fontFamily: 'monospace',
+  },
   projectsContainer: {
     paddingVertical: 16,
   },

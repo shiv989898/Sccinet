@@ -95,7 +95,7 @@ export const projectService = {
         .from('projects')
         .select(`
           *,
-          owner:profiles(*),
+          owner:profiles!projects_owner_id_fkey(*),
           project_skills(skills(*)),
           roles:project_roles(
             *,
@@ -155,7 +155,7 @@ export const projectService = {
         .from('projects')
         .select(`
           *,
-          owner:profiles(*),
+          owner:profiles!projects_owner_id_fkey(*),
           project_skills(skills(*)),
           roles:project_roles(
             *,
