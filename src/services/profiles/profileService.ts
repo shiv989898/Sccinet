@@ -20,6 +20,24 @@ export const profileService = {
     }
   },
 
+  async getProfileByUsername(username: string): Promise<{ data: Profile | null; error: Error | null }> {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('username', username.trim().toLowerCase())
+        .maybeSingle();
+
+      if (error) {
+        return { data: null, error: new Error(error.message) };
+      }
+
+      return { data, error: null };
+    } catch (err: any) {
+      return { data: null, error: new Error(err.message || 'Failed to fetch profile by username') };
+    }
+  },
+
   async getCurrentProfile(): Promise<{ data: Profile | null; error: Error | null }> {
     try {
       const { data: authData } = await supabase.auth.getUser();

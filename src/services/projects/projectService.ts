@@ -11,7 +11,6 @@ import {
   Skill,
   Profile,
   CollaborationRequest,
-  CollaborationRequestStatus,
   CollaborationRequestWithDetails,
 } from '../../types/database';
 
