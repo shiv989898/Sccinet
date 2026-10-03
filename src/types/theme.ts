@@ -1,5 +1,5 @@
 import { ViewStyle } from 'react-native';
-import { spacing, borderRadius, typography, dimensions } from '../theme/tokens';
+import { spacing, borderRadius, typography, dimensions, motion } from '../theme/tokens';
 
 export type ColorScheme = 'light' | 'dark';
 
@@ -45,11 +45,16 @@ export interface ClayTheme {
   textChipSelected: string;
   textChipSuggested: string;
   shadowCard: ViewStyle;
+  shadowCardPressed: ViewStyle;
   shadowButton: ViewStyle;
+  shadowButtonPressed: ViewStyle;
   shadowPill: ViewStyle;
   shadowChip: ViewStyle;
   webCardShadow: string;
+  webCardHoverShadow: string;
+  webCardPressedShadow: string;
   webRecessedShadow: string;
+  webRecessedFocusedShadow: string;
   webRecessedTrackShadow: string;
   webButtonShadow: string;
   webButtonPressedShadow: string;
@@ -67,5 +72,7 @@ export interface Theme {
   borderRadius: typeof borderRadius;
   typography: typeof typography;
   dimensions: typeof dimensions;
+  motion: typeof motion;
   isDark: boolean;
 }
+
