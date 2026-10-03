@@ -1,19 +1,23 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Link, Stack } from 'expo-router';
+import { StyleSheet, View } from 'react-native';
+import { router, Stack } from 'expo-router';
 import { useTheme } from '../src/hooks/useTheme';
+import { EmptyState } from '../src/components/ui';
 
 export default function NotFoundScreen() {
   const theme = useTheme();
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Oops!' }} />
+      <Stack.Screen options={{ title: 'Page Not Found', headerShown: false }} />
       <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <Text style={[styles.title, { color: theme.colors.text }]}>This screen does not exist.</Text>
-        <Link href="/" style={styles.link}>
-          <Text style={[styles.linkText, { color: theme.colors.primary }]}>Go to home screen!</Text>
-        </Link>
+        <EmptyState
+          icon="alert-circle-outline"
+          title="Screen not found"
+          description="The link you followed may be broken or the screen may have been moved."
+          actionLabel="Return to Workspace"
+          onAction={() => router.replace('/(tabs)/workspace')}
+        />
       </View>
     </>
   );
@@ -24,17 +28,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  link: {
-    marginTop: 15,
-    paddingVertical: 15,
-  },
-  linkText: {
-    fontSize: 14,
+    padding: 24,
   },
 });
+
