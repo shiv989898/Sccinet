@@ -52,7 +52,9 @@ export function SkeletonLoader({
           width,
           height,
           borderRadius: radius ?? theme.borderRadius.md,
-          backgroundColor: theme.colors.surfaceSubtle,
+          backgroundColor: theme.clay.surfaceRecessed,
+          borderWidth: 1,
+          borderColor: theme.clay.borderCard,
           opacity: opacityAnim,
         },
         style,
@@ -60,3 +62,4 @@ export function SkeletonLoader({
     />
   );
 }
+

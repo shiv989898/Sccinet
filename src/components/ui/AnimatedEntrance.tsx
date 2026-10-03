@@ -12,13 +12,13 @@ export interface AnimatedEntranceProps {
 export function AnimatedEntrance({
   children,
   delay = 0,
-  duration = 320,
-  offsetY = 12,
+  duration = 240,
+  offsetY = 10,
   style,
 }: AnimatedEntranceProps) {
   const [opacityAnim] = useState(() => new Animated.Value(0));
   const [translateYAnim] = useState(() => new Animated.Value(offsetY));
-  const [scaleAnim] = useState(() => new Animated.Value(0.988));
+  const [scaleAnim] = useState(() => new Animated.Value(0.99));
 
   useEffect(() => {
     const isWeb = Platform.OS === 'web';
@@ -31,14 +31,14 @@ export function AnimatedEntrance({
         }),
         Animated.spring(translateYAnim, {
           toValue: 0,
-          tension: 180,
-          friction: 18,
+          tension: 240,
+          friction: 22,
           useNativeDriver: !isWeb,
         }),
         Animated.spring(scaleAnim, {
           toValue: 1,
-          tension: 180,
-          friction: 18,
+          tension: 240,
+          friction: 22,
           useNativeDriver: !isWeb,
         }),
       ]).start();
@@ -46,6 +46,7 @@ export function AnimatedEntrance({
 
     return () => clearTimeout(timer);
   }, [delay, duration, opacityAnim, translateYAnim, scaleAnim]);
+
 
   return (
     <Animated.View

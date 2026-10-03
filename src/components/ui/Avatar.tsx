@@ -58,9 +58,17 @@ export function Avatar({ url, name, size = 'md', style }: AvatarProps) {
           width: dimension,
           height: dimension,
           borderRadius: dimension / 2,
-          backgroundColor: theme.colors.surfaceSubtle,
-          borderColor: theme.colors.border,
-          borderWidth: 1,
+          backgroundColor: theme.clay.surfaceRecessed,
+          borderColor: theme.clay.borderCard,
+          borderWidth: 1.5,
+          ...Platform.select({
+            web: {
+              boxShadow: theme.clay.webChipShadow,
+            } as any,
+            default: {
+              ...theme.clay.shadowChip,
+            },
+          }),
         },
         style,
       ]}
@@ -79,6 +87,7 @@ export function Avatar({ url, name, size = 'md', style }: AvatarProps) {
             color: theme.colors.textSecondary,
             fontSize: dimension * 0.38,
             fontWeight: theme.typography.weights.semibold,
+            letterSpacing: -0.2,
           }}
         >
           {getInitials(name)}
@@ -87,6 +96,7 @@ export function Avatar({ url, name, size = 'md', style }: AvatarProps) {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

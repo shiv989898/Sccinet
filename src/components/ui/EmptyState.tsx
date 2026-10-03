@@ -35,9 +35,16 @@ export function EmptyState({
           style={[
             styles.iconWrapper,
             {
-              backgroundColor: theme.colors.surfaceSubtle,
-              borderRadius: theme.borderRadius.full,
+              backgroundColor: theme.clay.surfaceRecessed,
+              borderColor: theme.clay.borderCard,
+              borderWidth: 1,
+              borderRadius: 24,
               marginBottom: theme.spacing.lg,
+              ...Platform.select({
+                web: {
+                  boxShadow: theme.clay.webRecessedShadow,
+                } as any,
+              }),
             },
           ]}
         >
@@ -52,6 +59,7 @@ export function EmptyState({
             color: theme.colors.text,
             fontSize: theme.typography.sizes.lg,
             fontWeight: theme.typography.weights.semibold,
+            letterSpacing: -0.2,
             marginBottom: description ? theme.spacing.xs : 0,
           },
         ]}
@@ -66,6 +74,7 @@ export function EmptyState({
             {
               color: theme.colors.textSecondary,
               fontSize: theme.typography.sizes.sm,
+              lineHeight: 22,
               marginBottom: actionTitle ? theme.spacing.xl : 0,
             },
           ]}
@@ -78,12 +87,14 @@ export function EmptyState({
         <Button
           title={actionTitle}
           onPress={onActionPress}
+          variant="clayPrimary"
           size="sm"
           style={styles.actionButton}
         />
       )}
     </View>
   );
+
 }
 
 const styles = StyleSheet.create({
