@@ -1,9 +1,9 @@
 import React from 'react';
-import { ActivityIndicator, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
-import { Card, Badge, Button, EmptyState, AnimatedEntrance } from '../../src/components/ui';
+import { Card, Badge, Button, EmptyState, AnimatedEntrance, SkeletonLoader } from '../../src/components/ui';
 import { useAuth } from '../../src/features/auth/AuthContext';
 import { useProjects } from '../../src/features/projects';
 
@@ -21,9 +21,9 @@ export default function WorkspaceScreen() {
       contentContainerStyle={[styles.content, { padding: theme.spacing.lg }]}
       showsVerticalScrollIndicator={false}
     >
-      <AnimatedEntrance duration={240}>
-        <View style={styles.innerStack}>
-          {/* Header */}
+      <View style={styles.innerStack}>
+        {/* Header */}
+        <AnimatedEntrance staggerIndex={0}>
           <View style={styles.headerRow}>
             <View>
               <Text
@@ -61,46 +61,37 @@ export default function WorkspaceScreen() {
               onPress={() => router.push('/projects/new')}
             />
           </View>
+        </AnimatedEntrance>
 
-          {/* Projects */}
-          {isLoadingProjects ? (
-            <View style={styles.loadingBox}>
-              <ActivityIndicator size="small" color={theme.colors.primary} />
-            </View>
-          ) : userProjects.length > 0 ? (
-            <View style={styles.projectsList}>
-              {userProjects.map((proj) => (
-                <Pressable
-                  key={proj.id}
+        {/* Projects / Loading Skeleton / Empty State */}
+        {isLoadingProjects ? (
+          <View style={styles.projectsList}>
+            {[1, 2].map((i) => (
+              <Card key={i} variant="clay" padding="md">
+                <View style={{ gap: 10 }}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <SkeletonLoader width={140} height={18} borderRadius={6} />
+                    <SkeletonLoader width={60} height={18} borderRadius={12} />
+                  </View>
+                  <SkeletonLoader width="85%" height={14} borderRadius={4} />
+                  <SkeletonLoader width={100} height={12} borderRadius={4} />
+                </View>
+              </Card>
+            ))}
+          </View>
+        ) : userProjects.length > 0 ? (
+          <View style={styles.projectsList}>
+            {userProjects.map((proj, idx) => (
+              <AnimatedEntrance key={proj.id} staggerIndex={1 + Math.min(idx, 5)}>
+                <Card
+                  variant="clay"
+                  padding="md"
                   onPress={() =>
                     router.push({
                       pathname: '/projects/[id]',
                       params: { id: proj.id },
                     })
                   }
-                  style={({ pressed }) => [
-                    styles.projectCard,
-                    {
-                      backgroundColor: theme.clay.surface,
-                      borderColor: theme.clay.borderCard,
-                      borderWidth: 1,
-                      borderRadius: theme.borderRadius.card,
-                      opacity: pressed ? 0.92 : 1,
-                      transform: pressed ? [{ scale: 0.992 }, { translateY: 1 }] : [],
-                      ...Platform.select({
-                        web: {
-                          boxShadow: pressed
-                            ? theme.clay.webCardPressedShadow
-                            : theme.clay.webCardShadow,
-                          transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
-                          cursor: 'pointer',
-                        } as any,
-                        default: pressed
-                          ? theme.clay.shadowCardPressed
-                          : theme.clay.shadowCard,
-                      }),
-                    },
-                  ]}
                 >
                   <View style={styles.projectCardInner}>
                     <View style={styles.projectItemHeader}>
@@ -156,10 +147,12 @@ export default function WorkspaceScreen() {
                       <Ionicons name="chevron-forward" size={14} color={theme.colors.textMuted} />
                     </View>
                   </View>
-                </Pressable>
-              ))}
-            </View>
-          ) : (
+                </Card>
+              </AnimatedEntrance>
+            ))}
+          </View>
+        ) : (
+          <AnimatedEntrance staggerIndex={1}>
             <Card variant="clay" padding="lg">
               <EmptyState
                 icon={<Ionicons name="folder-open-outline" size={30} color={theme.colors.primary} />}
@@ -169,9 +162,9 @@ export default function WorkspaceScreen() {
                 onActionPress={() => router.push('/projects/new')}
               />
             </Card>
-          )}
-        </View>
-      </AnimatedEntrance>
+          </AnimatedEntrance>
+        )}
+      </View>
     </ScrollView>
   );
 }
@@ -196,18 +189,10 @@ const styles = StyleSheet.create({
   pageSubtitle: {
     marginTop: 2,
   },
-  loadingBox: {
-    paddingVertical: 32,
-    alignItems: 'center',
-  },
   projectsList: {
-    gap: 10,
-  },
-  projectCard: {
-    overflow: 'hidden',
+    gap: 12,
   },
   projectCardInner: {
-    padding: 16,
     gap: 6,
   },
   projectItemHeader: {
