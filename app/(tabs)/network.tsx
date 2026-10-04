@@ -13,9 +13,9 @@ export default function NetworkScreen() {
       contentContainerStyle={[styles.content, { padding: theme.spacing.lg }]}
       showsVerticalScrollIndicator={false}
     >
-      <AnimatedEntrance duration={240}>
-        <View style={styles.innerStack}>
-          {/* Page Header */}
+      <View style={styles.innerStack}>
+        {/* Page Header */}
+        <AnimatedEntrance staggerIndex={0}>
           <View style={styles.pageHeader}>
             <Text
               style={[
@@ -43,8 +43,10 @@ export default function NetworkScreen() {
               Builders and collaborators you know
             </Text>
           </View>
+        </AnimatedEntrance>
 
-          {/* Empty State */}
+        {/* Empty State */}
+        <AnimatedEntrance staggerIndex={1}>
           <Card variant="clay" padding="lg">
             <EmptyState
               icon={<Ionicons name="people-outline" size={30} color={theme.colors.primary} />}
@@ -52,8 +54,8 @@ export default function NetworkScreen() {
               description="Connect with other builders to see them here. Collaborate on projects to grow your professional network."
             />
           </Card>
-        </View>
-      </AnimatedEntrance>
+        </AnimatedEntrance>
+      </View>
     </ScrollView>
   );
 }
