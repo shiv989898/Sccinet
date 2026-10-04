@@ -1,27 +1,63 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Animated, Platform, StyleProp, ViewStyle } from 'react-native';
+import { motionTokens, useReducedMotion } from '../../theme/motion';
 
 export interface AnimatedEntranceProps {
   children: React.ReactNode;
+  staggerIndex?: number;
   delay?: number;
   duration?: number;
   offsetY?: number;
+  distance?: number;
+  direction?: 'up' | 'down' | 'none';
   style?: StyleProp<ViewStyle>;
 }
 
 export function AnimatedEntrance({
   children,
-  delay = 0,
-  duration = 240,
-  offsetY = 10,
+  staggerIndex,
+  delay: explicitDelay,
+  duration = motionTokens.duration.normal,
+  offsetY,
+  distance,
+  direction = 'up',
   style,
 }: AnimatedEntranceProps) {
-  const [opacityAnim] = useState(() => new Animated.Value(0));
-  const [translateYAnim] = useState(() => new Animated.Value(offsetY));
-  const [scaleAnim] = useState(() => new Animated.Value(0.99));
+  const isWeb = Platform.OS === 'web';
+  const reducedMotion = useReducedMotion();
+
+  // Calculate actual delay based on stagger hierarchy or explicit delay
+  const computedDelay =
+    explicitDelay !== undefined
+      ? explicitDelay
+      : staggerIndex !== undefined
+      ? staggerIndex * motionTokens.duration.stagger
+      : 0;
+
+  // Translation distance: subtle 8px default
+  const travelDistance =
+    offsetY !== undefined
+      ? offsetY
+      : distance !== undefined
+      ? distance
+      : motionTokens.distance.normal;
+
+  const initialY = direction === 'up' ? travelDistance : direction === 'down' ? -travelDistance : 0;
+
+  const opacityAnim = useRef(new Animated.Value(reducedMotion ? 1 : 0)).current;
+  const translateYAnim = useRef(new Animated.Value(reducedMotion ? 0 : initialY)).current;
+  const scaleAnim = useRef(
+    new Animated.Value(reducedMotion ? 1 : motionTokens.scale.entranceStart)
+  ).current;
 
   useEffect(() => {
-    const isWeb = Platform.OS === 'web';
+    if (reducedMotion) {
+      opacityAnim.setValue(1);
+      translateYAnim.setValue(0);
+      scaleAnim.setValue(1);
+      return;
+    }
+
     const timer = setTimeout(() => {
       Animated.parallel([
         Animated.timing(opacityAnim, {
@@ -31,22 +67,21 @@ export function AnimatedEntrance({
         }),
         Animated.spring(translateYAnim, {
           toValue: 0,
-          tension: 240,
-          friction: 22,
+          tension: motionTokens.spring.gentle.tension,
+          friction: motionTokens.spring.gentle.friction,
           useNativeDriver: !isWeb,
         }),
         Animated.spring(scaleAnim, {
           toValue: 1,
-          tension: 240,
-          friction: 22,
+          tension: motionTokens.spring.gentle.tension,
+          friction: motionTokens.spring.gentle.friction,
           useNativeDriver: !isWeb,
         }),
       ]).start();
-    }, delay);
+    }, computedDelay);
 
     return () => clearTimeout(timer);
-  }, [delay, duration, opacityAnim, translateYAnim, scaleAnim]);
-
+  }, [computedDelay, duration, isWeb, opacityAnim, reducedMotion, scaleAnim, translateYAnim]);
 
   return (
     <Animated.View

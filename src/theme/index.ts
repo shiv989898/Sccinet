@@ -68,3 +68,4 @@ export const getTheme = (scheme: ColorScheme): Theme => ({
 
 
 export * from './tokens';
+export * from './motion';

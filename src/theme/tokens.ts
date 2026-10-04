@@ -219,13 +219,27 @@ export const clayTokens = {
   },
 } as const;
 
+export { motionTokens } from './motion';
 export const motion = {
   duration: {
-    instant: 100,
-    fast: 160,
-    normal: 240,
-    deliberate: 320,
-    slow: 480,
+    instant: 80,
+    fast: 150,
+    normal: 220,
+    deliberate: 300,
+    slow: 450,
+    stagger: 40,
+  },
+  distance: {
+    subtle: 4,
+    normal: 8,
+    card: 12,
+    sheet: 24,
+  },
+  scale: {
+    pressedButton: 0.975,
+    pressedCard: 0.988,
+    pressedChip: 0.96,
+    entranceStart: 0.99,
   },
   easing: {
     standard: 'cubic-bezier(0.16, 1, 0.3, 1)',
@@ -234,8 +248,8 @@ export const motion = {
     subtle: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
   },
   spring: {
-    tactile: { tension: 280, friction: 22 },
-    gentle: { tension: 180, friction: 18 },
+    tactile: { tension: 300, friction: 20 },
+    gentle: { tension: 190, friction: 18 },
     snappy: { tension: 320, friction: 24 },
   },
 } as const;
