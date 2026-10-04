@@ -44,11 +44,11 @@ export function AnimatedEntrance({
 
   const initialY = direction === 'up' ? travelDistance : direction === 'down' ? -travelDistance : 0;
 
-  const opacityAnim = useRef(new Animated.Value(reducedMotion ? 1 : 0)).current;
-  const translateYAnim = useRef(new Animated.Value(reducedMotion ? 0 : initialY)).current;
-  const scaleAnim = useRef(
-    new Animated.Value(reducedMotion ? 1 : motionTokens.scale.entranceStart)
-  ).current;
+  const [opacityAnim] = useState(() => new Animated.Value(reducedMotion ? 1 : 0));
+  const [translateYAnim] = useState(() => new Animated.Value(reducedMotion ? 0 : initialY));
+  const [scaleAnim] = useState(
+    () => new Animated.Value(reducedMotion ? 1 : motionTokens.scale.entranceStart)
+  );
 
   useEffect(() => {
     if (reducedMotion) {
