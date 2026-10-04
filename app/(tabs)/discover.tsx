@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
-import { Card, Input, Button, AnimatedEntrance } from '../../src/components/ui';
+import { Card, Input, AnimatedEntrance, SegmentedControl } from '../../src/components/ui';
 
 export default function DiscoverScreen() {
   const theme = useTheme();
@@ -15,9 +15,9 @@ export default function DiscoverScreen() {
       contentContainerStyle={[styles.content, { padding: theme.spacing.lg }]}
       showsVerticalScrollIndicator={false}
     >
-      <AnimatedEntrance duration={240}>
-        <View style={styles.innerStack}>
-          {/* Page Header */}
+      <View style={styles.innerStack}>
+        {/* Page Header */}
+        <AnimatedEntrance staggerIndex={0}>
           <View style={styles.pageHeader}>
             <Text
               style={[
@@ -45,8 +45,10 @@ export default function DiscoverScreen() {
               Find projects and collaborators
             </Text>
           </View>
+        </AnimatedEntrance>
 
-          {/* Search Bar */}
+        {/* Search Bar */}
+        <AnimatedEntrance staggerIndex={1}>
           <Input
             placeholder="Search projects, skills, or people..."
             value={searchQuery}
@@ -60,38 +62,22 @@ export default function DiscoverScreen() {
               />
             }
           />
+        </AnimatedEntrance>
 
-          {/* Segmented Control */}
-          <View
-            style={[
-              styles.segmentContainer,
-              {
-                backgroundColor: theme.clay.surfaceRecessed,
-                borderColor: theme.clay.borderCard,
-                borderWidth: 1,
-                borderRadius: 14,
-                padding: 4,
-                gap: 4,
-              },
+        {/* Segmented Control */}
+        <AnimatedEntrance staggerIndex={2}>
+          <SegmentedControl<'projects' | 'people'>
+            options={[
+              { label: 'Projects', value: 'projects' },
+              { label: 'People', value: 'people' },
             ]}
-          >
-            <Button
-              title="Projects"
-              size="sm"
-              variant={activeTab === 'projects' ? 'clayPrimary' : 'ghost'}
-              onPress={() => setActiveTab('projects')}
-              style={{ flex: 1 }}
-            />
-            <Button
-              title="People"
-              size="sm"
-              variant={activeTab === 'people' ? 'clayPrimary' : 'ghost'}
-              onPress={() => setActiveTab('people')}
-              style={{ flex: 1 }}
-            />
-          </View>
+            value={activeTab}
+            onChange={setActiveTab}
+          />
+        </AnimatedEntrance>
 
-          {/* Empty State */}
+        {/* Empty State */}
+        <AnimatedEntrance staggerIndex={3} key={activeTab}>
           <Card variant="clay" padding="lg">
             <View style={styles.emptyContent}>
               <View
@@ -138,8 +124,8 @@ export default function DiscoverScreen() {
               </Text>
             </View>
           </Card>
-        </View>
-      </AnimatedEntrance>
+        </AnimatedEntrance>
+      </View>
     </ScrollView>
   );
 }
@@ -159,12 +145,9 @@ const styles = StyleSheet.create({
   },
   pageTitle: {},
   pageSubtitle: {},
-  segmentContainer: {
-    flexDirection: 'row',
-  },
   emptyContent: {
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 12,
   },
   emptyIconWrap: {
     width: 56,
