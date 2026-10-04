@@ -93,6 +93,7 @@ function RootNavigator() {
           options={{
             headerShown: false,
             animation: Platform.OS === 'web' ? 'fade' : 'slide_from_bottom',
+            animationDuration: 220,
           }}
         />
         <Stack.Screen
@@ -100,6 +101,15 @@ function RootNavigator() {
           options={{
             headerShown: false,
             animation: Platform.OS === 'web' ? 'fade' : 'slide_from_right',
+            animationDuration: 220,
+          }}
+        />
+        <Stack.Screen
+          name="projects/edit"
+          options={{
+            headerShown: false,
+            animation: Platform.OS === 'web' ? 'fade' : 'slide_from_bottom',
+            animationDuration: 220,
           }}
         />
         <Stack.Screen

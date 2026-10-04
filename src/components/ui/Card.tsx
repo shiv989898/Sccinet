@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
+  Animated,
+  GestureResponderEvent,
   Platform,
   Pressable,
   PressableProps,
@@ -8,6 +10,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
+import { motionTokens } from '../../theme/motion';
 
 export type CardVariant = 'clay' | 'elevated' | 'outlined' | 'default';
 
@@ -25,9 +28,51 @@ export function Card({
   style,
   onPress,
   padding = 'md',
+  onPressIn,
+  onPressOut,
   ...props
 }: CardProps) {
   const theme = useTheme();
+  const isWeb = Platform.OS === 'web';
+
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const translateYAnim = useRef(new Animated.Value(0)).current;
+
+  const handlePressIn = (e: GestureResponderEvent) => {
+    Animated.parallel([
+      Animated.spring(scaleAnim, {
+        toValue: motionTokens.scale.pressedCard,
+        tension: motionTokens.spring.tactile.tension,
+        friction: motionTokens.spring.tactile.friction,
+        useNativeDriver: !isWeb,
+      }),
+      Animated.spring(translateYAnim, {
+        toValue: motionTokens.pressedTranslateY,
+        tension: motionTokens.spring.tactile.tension,
+        friction: motionTokens.spring.tactile.friction,
+        useNativeDriver: !isWeb,
+      }),
+    ]).start();
+    onPressIn?.(e);
+  };
+
+  const handlePressOut = (e: GestureResponderEvent) => {
+    Animated.parallel([
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        tension: motionTokens.spring.tactile.tension,
+        friction: motionTokens.spring.tactile.friction,
+        useNativeDriver: !isWeb,
+      }),
+      Animated.spring(translateYAnim, {
+        toValue: 0,
+        tension: motionTokens.spring.tactile.tension,
+        friction: motionTokens.spring.tactile.friction,
+        useNativeDriver: !isWeb,
+      }),
+    ]).start();
+    onPressOut?.(e);
+  };
 
   const getPadding = () => {
     switch (padding) {
@@ -60,7 +105,7 @@ export function Card({
                 ? theme.clay.webCardPressedShadow
                 : theme.clay.webCardShadow,
               transition:
-                'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
               cursor: onPress ? 'pointer' : 'default',
             } as any,
             default: {
@@ -80,7 +125,7 @@ export function Card({
                 ? theme.clay.webCardPressedShadow
                 : theme.clay.webCardHoverShadow,
               transition:
-                'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
               cursor: onPress ? 'pointer' : 'default',
             } as any,
             default: {
@@ -96,7 +141,7 @@ export function Card({
           borderRadius: theme.borderRadius.card,
           ...Platform.select({
             web: {
-              transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+              transition: 'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
               cursor: onPress ? 'pointer' : 'default',
             } as any,
           }),
@@ -106,21 +151,39 @@ export function Card({
 
   if (onPress) {
     return (
-      <Pressable
-        accessibilityRole="button"
-        onPress={onPress}
-        style={({ pressed }) => [
-          {
-            padding: getPadding(),
-            transform: pressed ? [{ scale: 0.988 }, { translateY: 1 }] : [],
-          },
-          getVariantStyle(pressed),
-          style,
-        ]}
-        {...props}
+      <Animated.View
+        style={
+          isWeb
+            ? undefined
+            : {
+                transform: [{ scale: scaleAnim }, { translateY: translateYAnim }],
+              }
+        }
       >
-        {children}
-      </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          onPress={onPress}
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          style={({ pressed }) => [
+            {
+              padding: getPadding(),
+              transform:
+                isWeb && pressed
+                  ? [
+                      { scale: motionTokens.scale.pressedCard },
+                      { translateY: motionTokens.pressedTranslateY },
+                    ]
+                  : [],
+            },
+            getVariantStyle(pressed),
+            style,
+          ]}
+          {...props}
+        >
+          {children}
+        </Pressable>
+      </Animated.View>
     );
   }
 
@@ -138,4 +201,3 @@ export function Card({
     </View>
   );
 }
-

@@ -14,9 +14,9 @@ export default function FeedScreen() {
       contentContainerStyle={[styles.content, { padding: theme.spacing.lg }]}
       showsVerticalScrollIndicator={false}
     >
-      <AnimatedEntrance duration={240}>
-        <View style={styles.innerStack}>
-          {/* Page Header */}
+      <View style={styles.innerStack}>
+        {/* Page Header */}
+        <AnimatedEntrance staggerIndex={0}>
           <View style={styles.pageHeader}>
             <Text
               style={[
@@ -44,8 +44,10 @@ export default function FeedScreen() {
               Project updates from your network
             </Text>
           </View>
+        </AnimatedEntrance>
 
-          {/* Empty State */}
+        {/* Empty State */}
+        <AnimatedEntrance staggerIndex={1}>
           <Card variant="clay" padding="lg" style={styles.emptyCard}>
             <View style={styles.emptyContent}>
               <View
@@ -94,8 +96,8 @@ export default function FeedScreen() {
               />
             </View>
           </Card>
-        </View>
-      </AnimatedEntrance>
+        </AnimatedEntrance>
+      </View>
     </ScrollView>
   );
 }

@@ -6,3 +6,4 @@ export * from './Avatar';
 export * from './SkeletonLoader';
 export * from './EmptyState';
 export * from './AnimatedEntrance';
+export * from './SegmentedControl';

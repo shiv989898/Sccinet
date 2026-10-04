@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
+  Animated,
   Platform,
   StyleProp,
   StyleSheet,
@@ -11,6 +12,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
+import { motionTokens } from '../../theme/motion';
 
 export interface InputProps extends TextInputProps {
   label?: string;
@@ -39,7 +41,36 @@ export function Input({
   ...props
 }: InputProps) {
   const theme = useTheme();
+  const isWeb = Platform.OS === 'web';
   const [isFocused, setIsFocused] = useState(false);
+
+  // Smooth error transition animations
+  const errorAnim = useRef(new Animated.Value(error ? 1 : 0)).current;
+  const errorTranslateY = useRef(new Animated.Value(error ? 0 : -4)).current;
+
+  useEffect(() => {
+    if (error) {
+      Animated.parallel([
+        Animated.timing(errorAnim, {
+          toValue: 1,
+          duration: motionTokens.duration.fast,
+          useNativeDriver: !isWeb,
+        }),
+        Animated.spring(errorTranslateY, {
+          toValue: 0,
+          tension: motionTokens.spring.snappy.tension,
+          friction: motionTokens.spring.snappy.friction,
+          useNativeDriver: !isWeb,
+        }),
+      ]).start();
+    } else {
+      Animated.timing(errorAnim, {
+        toValue: 0,
+        duration: motionTokens.duration.instant,
+        useNativeDriver: !isWeb,
+      }).start();
+    }
+  }, [error, errorAnim, errorTranslateY, isWeb]);
 
   const handleFocus = (e: any) => {
     setIsFocused(true);
@@ -53,7 +84,7 @@ export function Input({
 
   const getBorderColor = () => {
     if (error) return theme.colors.error;
-    if (isFocused) return theme.isDark ? 'rgba(59, 130, 246, 0.5)' : 'rgba(37, 99, 235, 0.4)';
+    if (isFocused) return theme.isDark ? 'rgba(59, 130, 246, 0.6)' : 'rgba(37, 99, 235, 0.45)';
     return theme.clay.borderCard;
   };
 
@@ -87,6 +118,7 @@ export function Input({
           {
             backgroundColor: getBackgroundColor(),
             borderColor: getBorderColor(),
+            borderWidth: isFocused ? 1.5 : 1,
             borderRadius: 14,
             height: props.multiline ? undefined : theme.dimensions.inputHeight,
             minHeight: props.multiline ? 88 : theme.dimensions.inputHeight,
@@ -100,7 +132,7 @@ export function Input({
                   : variant === 'clay'
                   ? theme.clay.webRecessedShadow
                   : undefined,
-                transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+                transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
               } as any,
             }),
           },
@@ -132,18 +164,26 @@ export function Input({
       </View>
 
       {error ? (
-        <Text
-          style={[
-            styles.helperText,
-            {
-              color: theme.colors.error,
-              fontSize: theme.typography.sizes.xs,
-              marginTop: 4,
-            },
-          ]}
+        <Animated.View
+          style={{
+            opacity: errorAnim,
+            transform: [{ translateY: errorTranslateY }],
+          }}
         >
-          {error}
-        </Text>
+          <Text
+            style={[
+              styles.helperText,
+              {
+                color: theme.colors.error,
+                fontSize: theme.typography.sizes.xs,
+                marginTop: 4,
+                fontWeight: theme.typography.weights.medium,
+              },
+            ]}
+          >
+            {error}
+          </Text>
+        </Animated.View>
       ) : hint ? (
         <Text
           style={[
@@ -160,7 +200,6 @@ export function Input({
       ) : null}
     </View>
   );
-
 }
 
 const styles = StyleSheet.create({
@@ -171,7 +210,6 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
   },
   input: {
     flex: 1,

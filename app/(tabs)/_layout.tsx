@@ -1,8 +1,51 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Platform } from 'react-native';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Platform } from 'react-native';
 import { useTheme } from '../../src/hooks/useTheme';
+import { motionTokens } from '../../src/theme/motion';
+
+function AnimatedTabIcon({
+  name,
+  outlineName,
+  color,
+  focused,
+  size = 22,
+}: {
+  name: any;
+  outlineName: any;
+  color: string;
+  focused: boolean;
+  size?: number;
+}) {
+  const isWeb = Platform.OS === 'web';
+  const scaleAnim = useRef(new Animated.Value(focused ? 1 : 0.92)).current;
+
+  useEffect(() => {
+    Animated.spring(scaleAnim, {
+      toValue: focused ? 1 : 0.92,
+      tension: motionTokens.spring.snappy.tension,
+      friction: motionTokens.spring.snappy.friction,
+      useNativeDriver: !isWeb,
+    }).start();
+  }, [focused, scaleAnim, isWeb]);
+
+  return (
+    <Animated.View
+      style={{
+        transform: [{ scale: scaleAnim }],
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Ionicons
+        name={focused ? name : outlineName}
+        size={size}
+        color={color}
+      />
+    </Animated.View>
+  );
+}
 
 export default function TabLayout() {
   const theme = useTheme();
@@ -23,6 +66,7 @@ export default function TabLayout() {
           letterSpacing: -0.3,
         },
         headerShadowVisible: false,
+        tabBarHideOnKeyboard: true,
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.textMuted,
         tabBarStyle: {
@@ -35,6 +79,7 @@ export default function TabLayout() {
           ...Platform.select({
             web: {
               boxShadow: theme.clay.webCardShadow,
+              transition: 'background-color 0.2s ease, border-color 0.2s ease',
             } as any,
             default: {
               ...theme.clay.shadowPill,
@@ -48,7 +93,6 @@ export default function TabLayout() {
         },
       }}
     >
-
       <Tabs.Screen
         name="index"
         options={{
@@ -56,10 +100,12 @@ export default function TabLayout() {
           tabBarLabel: 'Feed',
           headerTitle: 'Sccinet',
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? 'sparkles' : 'sparkles-outline'}
-              size={22}
+            <AnimatedTabIcon
+              name="sparkles"
+              outlineName="sparkles-outline"
               color={color}
+              focused={focused}
+              size={22}
             />
           ),
         }}
@@ -71,10 +117,12 @@ export default function TabLayout() {
           tabBarLabel: 'Discover',
           headerTitle: 'Discover',
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? 'compass' : 'compass-outline'}
-              size={23}
+            <AnimatedTabIcon
+              name="compass"
+              outlineName="compass-outline"
               color={color}
+              focused={focused}
+              size={23}
             />
           ),
         }}
@@ -86,10 +134,12 @@ export default function TabLayout() {
           tabBarLabel: 'Workspace',
           headerTitle: 'My Workspace',
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? 'briefcase' : 'briefcase-outline'}
-              size={22}
+            <AnimatedTabIcon
+              name="briefcase"
+              outlineName="briefcase-outline"
               color={color}
+              focused={focused}
+              size={22}
             />
           ),
         }}
@@ -101,10 +151,12 @@ export default function TabLayout() {
           tabBarLabel: 'Network',
           headerTitle: 'Network',
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? 'people' : 'people-outline'}
-              size={23}
+            <AnimatedTabIcon
+              name="people"
+              outlineName="people-outline"
               color={color}
+              focused={focused}
+              size={23}
             />
           ),
         }}
@@ -116,10 +168,12 @@ export default function TabLayout() {
           tabBarLabel: 'Profile',
           headerTitle: 'Profile',
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? 'person' : 'person-outline'}
-              size={22}
+            <AnimatedTabIcon
+              name="person"
+              outlineName="person-outline"
               color={color}
+              focused={focused}
+              size={22}
             />
           ),
         }}
