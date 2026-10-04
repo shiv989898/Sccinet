@@ -67,5 +67,17 @@ export const getTheme = (scheme: ColorScheme): Theme => ({
 });
 
 
-export * from './tokens';
-export * from './motion';
+export {
+  palette,
+  clayTokens,
+  spacing,
+  borderRadius,
+  typography,
+  dimensions,
+  motion,
+} from './tokens';
+export {
+  motionTokens,
+  useReducedMotion,
+  isNativeDriverSupported,
+} from './motion';
