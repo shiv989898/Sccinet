@@ -35,8 +35,8 @@ export function Card({
   const theme = useTheme();
   const isWeb = Platform.OS === 'web';
 
-  const scaleAnim = useRef(new Animated.Value(1)).current;
-  const translateYAnim = useRef(new Animated.Value(0)).current;
+  const [scaleAnim] = React.useState(() => new Animated.Value(1));
+  const [translateYAnim] = React.useState(() => new Animated.Value(0));
 
   const handlePressIn = (e: GestureResponderEvent) => {
     Animated.parallel([

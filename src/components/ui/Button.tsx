@@ -56,8 +56,8 @@ export function Button({
   const isDisabled = disabled || loading;
 
   // Native tactile press animation
-  const scaleAnim = useRef(new Animated.Value(1)).current;
-  const translateYAnim = useRef(new Animated.Value(0)).current;
+  const [scaleAnim] = React.useState(() => new Animated.Value(1));
+  const [translateYAnim] = React.useState(() => new Animated.Value(0));
 
   const handlePressIn = (e: GestureResponderEvent) => {
     if (!isDisabled) {

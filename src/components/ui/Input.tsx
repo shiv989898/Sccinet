@@ -45,8 +45,8 @@ export function Input({
   const [isFocused, setIsFocused] = useState(false);
 
   // Smooth error transition animations
-  const errorAnim = useRef(new Animated.Value(error ? 1 : 0)).current;
-  const errorTranslateY = useRef(new Animated.Value(error ? 0 : -4)).current;
+  const [errorAnim] = useState(() => new Animated.Value(error ? 1 : 0));
+  const [errorTranslateY] = useState(() => new Animated.Value(error ? 0 : -4));
 
   useEffect(() => {
     if (error) {
