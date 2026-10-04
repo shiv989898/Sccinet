@@ -43,7 +43,7 @@ export function SegmentedControl<T extends string = string>({
     options.findIndex((opt) => opt.value === value)
   );
 
-  const translateX = useRef(new Animated.Value(0)).current;
+  const [translateX] = useState(() => new Animated.Value(0));
 
   const itemWidth =
     containerWidth > 0 && options.length > 0

@@ -19,7 +19,7 @@ function AnimatedTabIcon({
   size?: number;
 }) {
   const isWeb = Platform.OS === 'web';
-  const scaleAnim = useRef(new Animated.Value(focused ? 1 : 0.92)).current;
+  const [scaleAnim] = React.useState(() => new Animated.Value(focused ? 1 : 0.92));
 
   useEffect(() => {
     Animated.spring(scaleAnim, {
