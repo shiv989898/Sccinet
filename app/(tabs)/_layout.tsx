@@ -14,7 +14,7 @@ function AnimatedTabIcon({
 }: {
   name: any;
   outlineName: any;
-  color: string;
+  color: any;
   focused: boolean;
   size?: number;
 }) {

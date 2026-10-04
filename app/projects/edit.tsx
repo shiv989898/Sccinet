@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Animated,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -14,7 +15,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
-import { AnimatedEntrance, Button, Card, Input } from '../../src/components/ui';
+import { AnimatedEntrance, Button, Card, Input, SegmentedControl, SkeletonLoader } from '../../src/components/ui';
 import { useAvailableSkills } from '../../src/features/profiles/useProfile';
 import { useAuth } from '../../src/features/auth/AuthContext';
 import {
@@ -34,10 +35,25 @@ const STATUS_OPTIONS: { label: string; value: ProjectStatus }[] = [
 export default function EditProjectScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const theme = useTheme();
+  const isWeb = Platform.OS === 'web';
   const { user } = useAuth();
   const [skillSearch, setSkillSearch] = useState('');
   const [generalError, setGeneralError] = useState<string | null>(null);
+  const [errorAnim] = useState(() => new Animated.Value(0));
   const [isSuccess, setIsSuccess] = useState(false);
+
+  useEffect(() => {
+    if (generalError) {
+      Animated.spring(errorAnim, {
+        toValue: 1,
+        tension: 320,
+        friction: 24,
+        useNativeDriver: !isWeb,
+      }).start();
+    } else {
+      errorAnim.setValue(0);
+    }
+  }, [generalError, errorAnim, isWeb]);
 
   const { data: project, isLoading: isLoadingProject, error: projectError } = useProject(id);
   const { data: allSkills = [], isLoading: isLoadingSkills } = useAvailableSkills();
@@ -134,11 +150,17 @@ export default function EditProjectScreen() {
 
   if (isLoadingProject) {
     return (
-      <View style={[styles.container, styles.centerFlex, { backgroundColor: theme.colors.background }]}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-        <Text style={[styles.loadingText, { color: theme.colors.textMuted }]}>
-          Loading project...
-        </Text>
+      <View style={[styles.container, { backgroundColor: theme.colors.background, padding: 16 }]}>
+        <View style={{ gap: 16, maxWidth: 480, width: '100%', alignSelf: 'center', marginTop: 40 }}>
+          <Card variant="clay" padding="lg">
+            <View style={{ gap: 14 }}>
+              <SkeletonLoader width={140} height={22} borderRadius={6} />
+              <SkeletonLoader width="100%" height={44} borderRadius={10} />
+              <SkeletonLoader width="100%" height={80} borderRadius={10} />
+              <SkeletonLoader width="100%" height={44} borderRadius={10} />
+            </View>
+          </Card>
+        </View>
       </View>
     );
   }
@@ -199,49 +221,51 @@ export default function EditProjectScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Top Bar */}
-        <View style={styles.topBar}>
-          <Pressable
-            onPress={() => router.back()}
-            style={({ pressed }) => [
-              styles.backButton,
-              {
-                backgroundColor: theme.clay.surface,
-                borderColor: theme.clay.borderCard,
-                opacity: pressed ? 0.85 : 1,
-                transform: pressed ? [{ scale: 0.96 }, { translateY: 0.5 }] : [],
-                ...Platform.select({
-                  web: {
-                    boxShadow: pressed ? theme.clay.webChipShadow : theme.clay.webPillShadow,
-                    transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
-                    cursor: 'pointer',
-                  } as any,
-                  default: theme.clay.shadowPill,
-                }),
-              },
-            ]}
-          >
-            <Ionicons name="arrow-back" size={18} color={theme.colors.text} />
-          </Pressable>
-
-          <View style={styles.topBarTitleContainer}>
-            <Text
-              style={[
-                styles.topBarTitle,
+        <AnimatedEntrance staggerIndex={0}>
+          <View style={styles.topBar}>
+            <Pressable
+              onPress={() => router.back()}
+              style={({ pressed }) => [
+                styles.backButton,
                 {
-                  color: theme.colors.text,
-                  fontSize: theme.typography.sizes.md,
-                  fontWeight: theme.typography.weights.semibold,
+                  backgroundColor: theme.clay.surface,
+                  borderColor: theme.clay.borderCard,
+                  opacity: pressed ? 0.85 : 1,
+                  transform: pressed ? [{ scale: 0.96 }, { translateY: 0.5 }] : [],
+                  ...Platform.select({
+                    web: {
+                      boxShadow: pressed ? theme.clay.webChipShadow : theme.clay.webPillShadow,
+                      transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+                      cursor: 'pointer',
+                    } as any,
+                    default: theme.clay.shadowPill,
+                  }),
                 },
               ]}
             >
-              Edit Project
-            </Text>
+              <Ionicons name="arrow-back" size={18} color={theme.colors.text} />
+            </Pressable>
+
+            <View style={styles.topBarTitleContainer}>
+              <Text
+                style={[
+                  styles.topBarTitle,
+                  {
+                    color: theme.colors.text,
+                    fontSize: theme.typography.sizes.md,
+                    fontWeight: theme.typography.weights.semibold,
+                  },
+                ]}
+              >
+                Edit Project
+              </Text>
+            </View>
+
+            <View style={styles.topBarRightSlot} />
           </View>
+        </AnimatedEntrance>
 
-          <View style={styles.topBarRightSlot} />
-        </View>
-
-        <AnimatedEntrance duration={280}>
+        <AnimatedEntrance staggerIndex={1}>
           <View style={styles.centerContainer}>
             {/* Header info */}
             <View style={styles.header}>
@@ -289,20 +313,34 @@ export default function EditProjectScreen() {
             </View>
 
             {generalError && (
-              <View
-                style={[
-                  styles.errorBanner,
-                  {
-                    backgroundColor: theme.colors.errorMuted,
-                    borderColor: theme.colors.error,
-                  },
-                ]}
+              <Animated.View
+                style={{
+                  opacity: errorAnim,
+                  transform: [
+                    {
+                      translateY: errorAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [-6, 0],
+                      }),
+                    },
+                  ],
+                }}
               >
-                <Ionicons name="alert-circle" size={18} color={theme.colors.error} />
-                <Text style={[styles.errorBannerText, { color: theme.colors.error }]}>
-                  {generalError}
-                </Text>
-              </View>
+                <View
+                  style={[
+                    styles.errorBanner,
+                    {
+                      backgroundColor: theme.colors.errorMuted,
+                      borderColor: theme.colors.error,
+                    },
+                  ]}
+                >
+                  <Ionicons name="alert-circle" size={18} color={theme.colors.error} />
+                  <Text style={[styles.errorBannerText, { color: theme.colors.error }]}>
+                    {generalError}
+                  </Text>
+                </View>
+              </Animated.View>
             )}
 
             {isSuccess && (
@@ -365,64 +403,12 @@ export default function EditProjectScreen() {
                 >
                   Project Status
                 </Text>
-                <View
-                  style={[
-                    styles.statusPillsRow,
-                    {
-                      backgroundColor: theme.clay.surfaceTrack,
-                      borderColor: theme.clay.borderRecessed,
-                      ...Platform.select({
-                        web: {
-                          boxShadow: theme.clay.webRecessedTrackShadow,
-                        } as any,
-                      }),
-                    },
-                  ]}
-                >
-                  {STATUS_OPTIONS.map((opt) => {
-                    const isSelected = selectedStatus === opt.value;
-                    return (
-                      <Pressable
-                        key={opt.value}
-                        onPress={() => setValue('status', opt.value, { shouldValidate: true })}
-                        style={({ pressed }) => [
-                          styles.statusPillItem,
-                          isSelected && [
-                            styles.statusPillItemSelected,
-                            {
-                              backgroundColor: theme.clay.surfaceActivePill,
-                              borderColor: theme.clay.borderCard,
-                              ...Platform.select({
-                                web: {
-                                  boxShadow: theme.clay.webPillShadow,
-                                } as any,
-                                default: theme.clay.shadowPill,
-                              }),
-                            },
-                          ],
-                          pressed && { opacity: 0.85 },
-                        ]}
-                      >
-                        <Text
-                          style={[
-                            styles.statusPillText,
-                            {
-                              color: isSelected
-                                ? theme.isDark
-                                  ? '#FFFFFF'
-                                  : theme.colors.primary
-                                : theme.colors.textSecondary,
-                              fontWeight: isSelected ? '600' : '500',
-                              fontSize: theme.typography.sizes.xs,
-                            },
-                          ]}
-                        >
-                          {opt.label}
-                        </Text>
-                      </Pressable>
-                    );
-                  })}
-                </View>
+                <SegmentedControl<ProjectStatus>
+                  options={STATUS_OPTIONS}
+                  value={selectedStatus}
+                  onChange={(val) => setValue('status', val, { shouldValidate: true })}
+                  size="sm"
+                />
               </View>
 
               {/* Description Input */}

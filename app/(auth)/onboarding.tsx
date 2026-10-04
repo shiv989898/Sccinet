@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  Animated,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -25,6 +26,7 @@ import { Card, Button, Input, AnimatedEntrance } from '../../src/components/ui';
 
 export default function OnboardingScreen() {
   const theme = useTheme();
+  const isWeb = Platform.OS === 'web';
   const { user } = useAuth();
   const { data: profile } = useCurrentProfile();
   const { mutateAsync: updateProfile, isPending: isUpdating } = useUpdateProfile();
@@ -41,6 +43,20 @@ export default function OnboardingScreen() {
   const [skillSearch, setSkillSearch] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState<string | null>(null);
+  const [errorAnim] = useState(() => new Animated.Value(0));
+
+  useEffect(() => {
+    if (generalError) {
+      Animated.spring(errorAnim, {
+        toValue: 1,
+        tension: 320,
+        friction: 24,
+        useNativeDriver: !isWeb,
+      }).start();
+    } else {
+      errorAnim.setValue(0);
+    }
+  }, [generalError, errorAnim, isWeb]);
 
   useEffect(() => {
     if (!profile && !user) return;
@@ -129,106 +145,124 @@ export default function OnboardingScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Top Minimal Bar */}
-        <View style={styles.topBar}>
-          <View style={styles.brandRow}>
-            <View
-              style={[
-                styles.brandLogoSmall,
-                {
-                  backgroundColor: theme.colors.primary,
-                },
-              ]}
-            >
-              <Ionicons name="shield-checkmark" size={14} color="#FFFFFF" />
+        <AnimatedEntrance staggerIndex={0}>
+          <View style={styles.topBar}>
+            <View style={styles.brandRow}>
+              <View
+                style={[
+                  styles.brandLogoSmall,
+                  {
+                    backgroundColor: theme.colors.primary,
+                  },
+                ]}
+              >
+                <Ionicons name="shield-checkmark" size={14} color="#FFFFFF" />
+              </View>
+              <Text
+                style={[
+                  styles.brandTitle,
+                  { color: theme.colors.text, fontSize: theme.typography.sizes.lg },
+                ]}
+              >
+                Sccinet
+              </Text>
             </View>
-            <Text
-              style={[
-                styles.brandTitle,
-                { color: theme.colors.text, fontSize: theme.typography.sizes.lg },
-              ]}
-            >
-              Sccinet
-            </Text>
           </View>
-        </View>
+        </AnimatedEntrance>
 
         {/* Main Content Area */}
-        <AnimatedEntrance duration={280}>
-          <View style={styles.centerContainer}>
-            {/* Header */}
-          <View style={styles.header}>
-            <View
-              style={[
-                styles.avatarContainer,
-                {
-                  backgroundColor: theme.clay.surface,
-                  borderColor: theme.clay.borderCard,
-                  ...Platform.select({
-                    web: {
-                      boxShadow: theme.clay.webCardShadow,
-                    } as any,
-                    default: {
-                      ...theme.clay.shadowCard,
-                    },
-                  }),
-                },
-              ]}
-            >
+        <View style={styles.centerContainer}>
+          {/* Header */}
+          <AnimatedEntrance staggerIndex={1}>
+            <View style={styles.header}>
               <View
                 style={[
-                  styles.avatarInner,
+                  styles.avatarContainer,
                   {
-                    backgroundColor: theme.colors.primaryMuted,
+                    backgroundColor: theme.clay.surface,
+                    borderColor: theme.clay.borderCard,
+                    ...Platform.select({
+                      web: {
+                        boxShadow: theme.clay.webCardShadow,
+                      } as any,
+                      default: {
+                        ...theme.clay.shadowCard,
+                      },
+                    }),
                   },
                 ]}
               >
-                <Ionicons name="person" size={26} color={theme.colors.primary} />
+                <View
+                  style={[
+                    styles.avatarInner,
+                    {
+                      backgroundColor: theme.colors.primaryMuted,
+                    },
+                  ]}
+                >
+                  <Ionicons name="person" size={26} color={theme.colors.primary} />
+                </View>
               </View>
-            </View>
 
-            <Text
-              style={[
-                styles.title,
-                {
-                  color: theme.colors.text,
-                  fontSize: theme.typography.sizes.xxl,
-                  fontWeight: theme.typography.weights.semibold,
-                },
-              ]}
-            >
-              Set up your profile
-            </Text>
-            <Text
-              style={[
-                styles.subtitle,
-                {
-                  color: theme.colors.textSecondary,
-                  fontSize: theme.typography.sizes.sm,
-                },
-              ]}
-            >
-              Tell the community what you build
-            </Text>
-          </View>
+              <Text
+                style={[
+                  styles.title,
+                  {
+                    color: theme.colors.text,
+                    fontSize: theme.typography.sizes.xxl,
+                    fontWeight: theme.typography.weights.semibold,
+                  },
+                ]}
+              >
+                Set up your profile
+              </Text>
+              <Text
+                style={[
+                  styles.subtitle,
+                  {
+                    color: theme.colors.textSecondary,
+                    fontSize: theme.typography.sizes.sm,
+                  },
+                ]}
+              >
+                Tell the community what you build
+              </Text>
+            </View>
+          </AnimatedEntrance>
 
           {/* Form Card */}
-          <Card variant="clay" padding="xl" style={styles.formCard}>
-            {generalError && (
-              <View
-                style={[
-                  styles.errorBanner,
-                  {
-                    backgroundColor: theme.colors.errorMuted,
-                    borderColor: theme.colors.error,
-                  },
-                ]}
-              >
-                <Ionicons name="alert-circle" size={16} color={theme.colors.error} />
-                <Text style={[styles.errorText, { color: theme.colors.error }]}>
-                  {generalError}
-                </Text>
-              </View>
-            )}
+          <AnimatedEntrance staggerIndex={2}>
+            <Card variant="clay" padding="xl" style={styles.formCard}>
+              {generalError && (
+                <Animated.View
+                  style={{
+                    opacity: errorAnim,
+                    transform: [
+                      {
+                        translateY: errorAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [-6, 0],
+                        }),
+                      },
+                    ],
+                  }}
+                >
+                  <View
+                    style={[
+                      styles.errorBanner,
+                      {
+                        backgroundColor: theme.colors.errorMuted,
+                        borderColor: theme.colors.error,
+                      },
+                    ]}
+                  >
+                    <Ionicons name="alert-circle" size={16} color={theme.colors.error} />
+                    <Text style={[styles.errorText, { color: theme.colors.error }]}>
+                      {generalError}
+                    </Text>
+                  </View>
+                </Animated.View>
+              )}
 
             <View style={styles.fieldGroup}>
               {/* Full Name */}
@@ -379,7 +413,7 @@ export default function OnboardingScreen() {
                     },
                   ]}
                 >
-                  Core Skills &amp; Tech
+                  Core Skills & Tech
                 </Text>
                 <Text
                   style={[
@@ -561,8 +595,8 @@ export default function OnboardingScreen() {
               </TouchableOpacity>
             </View>
           </Card>
+          </AnimatedEntrance>
         </View>
-      </AnimatedEntrance>
 
         {/* Minimal Footer */}
         <View style={styles.footer}>

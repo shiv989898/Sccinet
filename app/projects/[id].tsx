@@ -14,7 +14,7 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
-import { AnimatedEntrance, Avatar, Badge, Button, Card, Input } from '../../src/components/ui';
+import { AnimatedEntrance, Avatar, Badge, Button, Card, Input, SkeletonLoader } from '../../src/components/ui';
 import { BadgeVariant } from '../../src/components/ui/Badge';
 import { useAuth } from '../../src/features/auth/AuthContext';
 import { useAvailableSkills } from '../../src/features/profiles/useProfile';
@@ -344,106 +344,128 @@ export default function ProjectDetailScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       {/* Top Bar */}
-      <View style={styles.topBar}>
-        <Pressable
-          onPress={() => {
-            if (router.canGoBack()) {
-              router.back();
-            } else {
-              router.replace('/(tabs)/workspace');
-            }
-          }}
-          style={({ pressed }) => [
-            styles.backButton,
-            {
-              backgroundColor: theme.clay.surface,
-              borderColor: theme.clay.borderCard,
-              opacity: pressed ? 0.85 : 1,
-              transform: pressed ? [{ scale: 0.96 }, { translateY: 0.5 }] : [],
-              ...Platform.select({
-                web: {
-                  boxShadow: pressed ? theme.clay.webChipShadow : theme.clay.webPillShadow,
-                  transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
-                  cursor: 'pointer',
-                } as any,
-                default: theme.clay.shadowPill,
-              }),
-            },
-          ]}
-        >
-          <Ionicons name="arrow-back" size={18} color={theme.colors.text} />
-        </Pressable>
-
-        <View style={styles.topBarTitleContainer}>
-          <Text
-            style={[
-              styles.topBarTitle,
-              {
-                color: theme.colors.text,
-                fontSize: theme.typography.sizes.md,
-                fontWeight: theme.typography.weights.semibold,
-              },
-            ]}
-          >
-            Project Details
-          </Text>
-        </View>
-
-        {isOwner ? (
+      <AnimatedEntrance staggerIndex={0}>
+        <View style={styles.topBar}>
           <Pressable
-            onPress={() =>
-              router.push({
-                pathname: '/projects/edit',
-                params: { id: id! },
-              })
-            }
+            onPress={() => {
+              if (router.canGoBack()) {
+                router.back();
+              } else {
+                router.replace('/(tabs)/workspace');
+              }
+            }}
             style={({ pressed }) => [
-              styles.editButtonPill,
+              styles.backButton,
               {
                 backgroundColor: theme.clay.surface,
                 borderColor: theme.clay.borderCard,
                 opacity: pressed ? 0.85 : 1,
-                transform: pressed ? [{ scale: 0.96 }] : [],
+                transform: pressed ? [{ scale: 0.96 }, { translateY: 0.5 }] : [],
                 ...Platform.select({
                   web: {
-                    boxShadow: theme.clay.webChipShadow,
+                    boxShadow: pressed ? theme.clay.webChipShadow : theme.clay.webPillShadow,
+                    transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
                     cursor: 'pointer',
                   } as any,
-                  default: theme.clay.shadowChip,
+                  default: theme.clay.shadowPill,
                 }),
               },
             ]}
           >
-            <Ionicons name="pencil" size={14} color={theme.colors.primary} />
+            <Ionicons name="arrow-back" size={18} color={theme.colors.text} />
+          </Pressable>
+
+          <View style={styles.topBarTitleContainer}>
             <Text
               style={[
-                styles.editButtonText,
-                { color: theme.colors.primary, fontSize: theme.typography.sizes.xs },
+                styles.topBarTitle,
+                {
+                  color: theme.colors.text,
+                  fontSize: theme.typography.sizes.md,
+                  fontWeight: theme.typography.weights.semibold,
+                },
               ]}
             >
-              Edit
+              Project Details
             </Text>
-          </Pressable>
-        ) : (
-          <View style={styles.topBarRightSlot} />
-        )}
-      </View>
+          </View>
+
+          {isOwner ? (
+            <Pressable
+              onPress={() =>
+                router.push({
+                  pathname: '/projects/edit',
+                  params: { id: id! },
+                })
+              }
+              style={({ pressed }) => [
+                styles.editButtonPill,
+                {
+                  backgroundColor: theme.clay.surface,
+                  borderColor: theme.clay.borderCard,
+                  opacity: pressed ? 0.85 : 1,
+                  transform: pressed ? [{ scale: 0.96 }] : [],
+                  ...Platform.select({
+                    web: {
+                      boxShadow: theme.clay.webChipShadow,
+                      cursor: 'pointer',
+                    } as any,
+                    default: theme.clay.shadowChip,
+                  }),
+                },
+              ]}
+            >
+              <Ionicons name="pencil" size={14} color={theme.colors.primary} />
+              <Text
+                style={[
+                  styles.editButtonText,
+                  { color: theme.colors.primary, fontSize: theme.typography.sizes.xs },
+                ]}
+              >
+                Edit
+              </Text>
+            </Pressable>
+          ) : (
+            <View style={styles.topBarRightSlot} />
+          )}
+        </View>
+      </AnimatedEntrance>
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         {isLoading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={theme.colors.primary} />
-            <Text
-              style={[
-                styles.loadingText,
-                { color: theme.colors.textMuted, fontSize: theme.typography.sizes.sm },
-              ]}
-            >
-              Loading project details...
-            </Text>
+          <View style={[styles.centerContainer, { gap: 16 }]}>
+            <Card variant="clay" padding="lg">
+              <View style={{ gap: 12 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <SkeletonLoader width={65} height={20} borderRadius={10} />
+                  <SkeletonLoader width={120} height={14} borderRadius={4} />
+                </View>
+                <SkeletonLoader width="70%" height={26} borderRadius={6} />
+                <SkeletonLoader width="95%" height={15} borderRadius={4} />
+                <SkeletonLoader width="80%" height={15} borderRadius={4} />
+              </View>
+            </Card>
+
+            <Card variant="clay" padding="lg">
+              <View style={{ gap: 12 }}>
+                <SkeletonLoader width={80} height={18} borderRadius={6} />
+                <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+                  <SkeletonLoader width={70} height={24} borderRadius={12} />
+                  <SkeletonLoader width={90} height={24} borderRadius={12} />
+                  <SkeletonLoader width={60} height={24} borderRadius={12} />
+                </View>
+              </View>
+            </Card>
+
+            <Card variant="clay" padding="lg">
+              <View style={{ gap: 12 }}>
+                <SkeletonLoader width={100} height={18} borderRadius={6} />
+                <SkeletonLoader width="100%" height={40} borderRadius={10} />
+              </View>
+            </Card>
           </View>
         ) : error || !project ? (
           <View style={styles.errorContainer}>

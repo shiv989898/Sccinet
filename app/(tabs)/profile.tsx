@@ -61,61 +61,62 @@ export default function ProfileScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Top Minimal Header */}
-        <View style={styles.topBar}>
-          <View style={styles.brandRow}>
-            <View
+        <AnimatedEntrance staggerIndex={0}>
+          <View style={styles.topBar}>
+            <View style={styles.brandRow}>
+              <View
+                style={[
+                  styles.brandLogoSmall,
+                  {
+                    backgroundColor: theme.colors.primary,
+                  },
+                ]}
+              >
+                <Ionicons name="shield-checkmark" size={14} color="#FFFFFF" />
+              </View>
+              <Text
+                style={[
+                  styles.brandTitle,
+                  { color: theme.colors.text, fontSize: theme.typography.sizes.lg },
+                ]}
+              >
+                Sccinet
+              </Text>
+            </View>
+
+            {/* Discreet theme toggle */}
+            <TouchableOpacity
+              onPress={() => setPreference(preference === 'dark' ? 'light' : 'dark')}
+              activeOpacity={0.8}
+              accessibilityLabel="Toggle appearance"
               style={[
-                styles.brandLogoSmall,
+                styles.themeSwitchButton,
                 {
-                  backgroundColor: theme.colors.primary,
+                  backgroundColor: theme.clay.surface,
+                  borderColor: theme.clay.borderCard,
+                  ...Platform.select({
+                    web: {
+                      boxShadow: theme.clay.webChipShadow,
+                    } as any,
+                    default: {
+                      ...theme.clay.shadowChip,
+                    },
+                  }),
                 },
               ]}
             >
-              <Ionicons name="shield-checkmark" size={14} color="#FFFFFF" />
-            </View>
-            <Text
-              style={[
-                styles.brandTitle,
-                { color: theme.colors.text, fontSize: theme.typography.sizes.lg },
-              ]}
-            >
-              Sccinet
-            </Text>
+              <Ionicons
+                name={preference === 'dark' ? 'sunny-outline' : 'moon-outline'}
+                size={16}
+                color={theme.colors.textSecondary}
+              />
+            </TouchableOpacity>
           </View>
+        </AnimatedEntrance>
 
-          {/* Discreet theme toggle */}
-          <TouchableOpacity
-            onPress={() => setPreference(preference === 'dark' ? 'light' : 'dark')}
-            activeOpacity={0.8}
-            accessibilityLabel="Toggle appearance"
-            style={[
-              styles.themeSwitchButton,
-              {
-                backgroundColor: theme.clay.surface,
-                borderColor: theme.clay.borderCard,
-                ...Platform.select({
-                  web: {
-                    boxShadow: theme.clay.webChipShadow,
-                  } as any,
-                  default: {
-                    ...theme.clay.shadowChip,
-                  },
-                }),
-              },
-            ]}
-          >
-            <Ionicons
-              name={preference === 'dark' ? 'sunny-outline' : 'moon-outline'}
-              size={16}
-              color={theme.colors.textSecondary}
-            />
-          </TouchableOpacity>
-        </View>
-
-        <AnimatedEntrance duration={280}>
-          <View style={styles.centerContainer}>
-            {/* Profile Identity Card */}
+        <View style={styles.centerContainer}>
+          {/* Profile Identity Card */}
+          <AnimatedEntrance staggerIndex={1}>
             <Card variant="clay" padding="xl" style={styles.identityCard}>
             <View style={styles.avatarRow}>
               <View
@@ -228,9 +229,11 @@ export default function ProfileScreen() {
               />
             </View>
           </Card>
+          </AnimatedEntrance>
 
           {/* Skills Section */}
-          <Card variant="clay" padding="lg" style={styles.sectionCard}>
+          <AnimatedEntrance staggerIndex={2}>
+            <Card variant="clay" padding="lg" style={styles.sectionCard}>
             <View style={styles.sectionHeader}>
               <View style={styles.sectionHeaderTitle}>
                 <Ionicons
@@ -323,9 +326,11 @@ export default function ProfileScreen() {
               </View>
             )}
           </Card>
+          </AnimatedEntrance>
 
           {/* Projects Section */}
-          <Card variant="clay" padding="lg" style={styles.sectionCard}>
+          <AnimatedEntrance staggerIndex={3}>
+            <Card variant="clay" padding="lg" style={styles.sectionCard}>
             <View style={styles.sectionHeader}>
               <View style={styles.sectionHeaderTitle}>
                 <Ionicons
@@ -406,9 +411,11 @@ export default function ProfileScreen() {
               />
             </View>
           </Card>
+          </AnimatedEntrance>
 
           {/* Bottom Sign Out Button */}
-          <View style={styles.signOutWrapper}>
+          <AnimatedEntrance staggerIndex={4}>
+            <View style={styles.signOutWrapper}>
             <TouchableOpacity
               onPress={handleSignOut}
               activeOpacity={0.7}
@@ -433,10 +440,10 @@ export default function ProfileScreen() {
               </Text>
             </TouchableOpacity>
           </View>
+          </AnimatedEntrance>
 
         </View>
-      </AnimatedEntrance>
-    </ScrollView>
+      </ScrollView>
     </View>
   );
 }

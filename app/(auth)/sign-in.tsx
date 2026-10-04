@@ -31,8 +31,22 @@ export default function SignInScreen() {
   const [tabAnim] = useState(() => new Animated.Value(mode === 'signup' ? 1 : 0));
   const [contentFadeAnim] = useState(() => new Animated.Value(1));
   const [contentSlideAnim] = useState(() => new Animated.Value(0));
+  const [errorAnim] = useState(() => new Animated.Value(0));
   const [trackWidth, setTrackWidth] = useState(0);
   const isSignUp = mode === 'signup';
+
+  React.useEffect(() => {
+    if (errorMessage) {
+      Animated.spring(errorAnim, {
+        toValue: 1,
+        tension: 320,
+        friction: 24,
+        useNativeDriver: !isWeb,
+      }).start();
+    } else {
+      errorAnim.setValue(0);
+    }
+  }, [errorMessage, errorAnim, isWeb]);
 
   const switchMode = (newMode: 'signin' | 'signup') => {
     if (newMode === mode) return;
@@ -340,20 +354,34 @@ export default function SignInScreen() {
 
               {/* Error Message */}
               {errorMessage && (
-                <View
-                  style={[
-                    styles.errorBanner,
-                    {
-                      backgroundColor: theme.colors.errorMuted,
-                      borderColor: theme.colors.error,
-                    },
-                  ]}
+                <Animated.View
+                  style={{
+                    opacity: errorAnim,
+                    transform: [
+                      {
+                        translateY: errorAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [-6, 0],
+                        }),
+                      },
+                    ],
+                  }}
                 >
-                  <Ionicons name="alert-circle" size={16} color={theme.colors.error} />
-                  <Text style={[styles.errorText, { color: theme.colors.error }]}>
-                    {errorMessage}
-                  </Text>
-                </View>
+                  <View
+                    style={[
+                      styles.errorBanner,
+                      {
+                        backgroundColor: theme.colors.errorMuted,
+                        borderColor: theme.colors.error,
+                      },
+                    ]}
+                  >
+                    <Ionicons name="alert-circle" size={16} color={theme.colors.error} />
+                    <Text style={[styles.errorText, { color: theme.colors.error }]}>
+                      {errorMessage}
+                    </Text>
+                  </View>
+                </Animated.View>
               )}
 
               {/* Form Fields with Apple-grade Liquid Accordion */}
