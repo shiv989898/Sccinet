@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   ActivityIndicator,
+  Animated,
+  GestureResponderEvent,
   Platform,
   Pressable,
   PressableProps,
@@ -12,6 +14,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
+import { motionTokens } from '../../theme/motion';
 
 export type ButtonVariant =
   | 'primary'
@@ -44,11 +47,55 @@ export function Button({
   rightIcon,
   style,
   textStyle,
+  onPressIn,
+  onPressOut,
   ...props
 }: ButtonProps) {
   const theme = useTheme();
-
+  const isWeb = Platform.OS === 'web';
   const isDisabled = disabled || loading;
+
+  // Native tactile press animation
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const translateYAnim = useRef(new Animated.Value(0)).current;
+
+  const handlePressIn = (e: GestureResponderEvent) => {
+    if (!isDisabled) {
+      Animated.parallel([
+        Animated.spring(scaleAnim, {
+          toValue: motionTokens.scale.pressedButton,
+          tension: motionTokens.spring.tactile.tension,
+          friction: motionTokens.spring.tactile.friction,
+          useNativeDriver: !isWeb,
+        }),
+        Animated.spring(translateYAnim, {
+          toValue: motionTokens.pressedTranslateY,
+          tension: motionTokens.spring.tactile.tension,
+          friction: motionTokens.spring.tactile.friction,
+          useNativeDriver: !isWeb,
+        }),
+      ]).start();
+    }
+    onPressIn?.(e);
+  };
+
+  const handlePressOut = (e: GestureResponderEvent) => {
+    Animated.parallel([
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        tension: motionTokens.spring.tactile.tension,
+        friction: motionTokens.spring.tactile.friction,
+        useNativeDriver: !isWeb,
+      }),
+      Animated.spring(translateYAnim, {
+        toValue: 0,
+        tension: motionTokens.spring.tactile.tension,
+        friction: motionTokens.spring.tactile.friction,
+        useNativeDriver: !isWeb,
+      }),
+    ]).start();
+    onPressOut?.(e);
+  };
 
   const getHeight = () => {
     switch (size) {
@@ -94,15 +141,17 @@ export function Button({
           borderWidth: 1,
           borderColor: 'rgba(255, 255, 255, 0.18)',
           borderRadius: size === 'sm' ? theme.borderRadius.md : theme.borderRadius.lg,
-          transform: pressed ? [{ scale: 0.985 }, { translateY: 1 }] : [],
           ...Platform.select({
             web: {
               boxShadow: pressed
                 ? theme.clay.webButtonPressedShadow
                 : theme.clay.webButtonShadow,
               transition:
-                'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.18s ease',
+                'transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease',
               cursor: isDisabled ? 'not-allowed' : 'pointer',
+              transform: pressed
+                ? `scale(${motionTokens.scale.pressedButton}) translateY(${motionTokens.pressedTranslateY}px)`
+                : 'none',
             } as any,
             default: {
               ...(pressed ? theme.clay.shadowButtonPressed : theme.clay.shadowButton),
@@ -117,15 +166,17 @@ export function Button({
           borderWidth: 1,
           borderColor: theme.clay.borderCard,
           borderRadius: size === 'sm' ? theme.borderRadius.md : theme.borderRadius.lg,
-          transform: pressed ? [{ scale: 0.985 }, { translateY: 1 }] : [],
           ...Platform.select({
             web: {
               boxShadow: pressed
                 ? theme.clay.webSecondaryButtonPressedShadow
                 : theme.clay.webSecondaryButtonShadow,
               transition:
-                'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.18s ease',
+                'transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease',
               cursor: isDisabled ? 'not-allowed' : 'pointer',
+              transform: pressed
+                ? `scale(${motionTokens.scale.pressedButton}) translateY(${motionTokens.pressedTranslateY}px)`
+                : 'none',
             } as any,
             default: {
               ...theme.clay.shadowPill,
@@ -139,11 +190,11 @@ export function Button({
           borderWidth: 1,
           borderColor: theme.colors.borderSubtle,
           borderRadius: size === 'sm' ? theme.borderRadius.md : theme.borderRadius.lg,
-          transform: pressed ? [{ scale: 0.985 }] : [],
           ...Platform.select({
             web: {
-              transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+              transition: 'all 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
               cursor: isDisabled ? 'not-allowed' : 'pointer',
+              transform: pressed ? `scale(${motionTokens.scale.pressedButton})` : 'none',
             } as any,
           }),
         };
@@ -152,11 +203,11 @@ export function Button({
           ...base,
           backgroundColor: pressed ? theme.colors.primaryMuted : 'transparent',
           borderRadius: size === 'sm' ? theme.borderRadius.md : theme.borderRadius.lg,
-          transform: pressed ? [{ scale: 0.985 }] : [],
           ...Platform.select({
             web: {
-              transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+              transition: 'all 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
               cursor: isDisabled ? 'not-allowed' : 'pointer',
+              transform: pressed ? `scale(${motionTokens.scale.pressedButton})` : 'none',
             } as any,
           }),
         };
@@ -167,15 +218,17 @@ export function Button({
           borderWidth: 1,
           borderColor: 'rgba(255, 255, 255, 0.18)',
           borderRadius: size === 'sm' ? theme.borderRadius.md : theme.borderRadius.lg,
-          transform: pressed ? [{ scale: 0.985 }, { translateY: 1 }] : [],
           ...Platform.select({
             web: {
               boxShadow: pressed
                 ? '0 2px 6px -1px rgba(239, 68, 68, 0.25), inset 0 1px 1px 0 rgba(255, 255, 255, 0.2)'
                 : '0 6px 16px -3px rgba(239, 68, 68, 0.25), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.3)',
               transition:
-                'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+                'transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
               cursor: isDisabled ? 'not-allowed' : 'pointer',
+              transform: pressed
+                ? `scale(${motionTokens.scale.pressedButton}) translateY(${motionTokens.pressedTranslateY}px)`
+                : 'none',
             } as any,
             default: {
               ...(pressed ? theme.clay.shadowButtonPressed : theme.clay.shadowButton),
@@ -186,7 +239,6 @@ export function Button({
         return {
           ...base,
           backgroundColor: theme.colors.primary,
-          transform: pressed ? [{ scale: 0.985 }] : [],
         };
     }
   };
@@ -208,41 +260,52 @@ export function Button({
     }
   };
 
-
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityState={{ disabled: isDisabled, busy: loading }}
-      disabled={isDisabled}
-      style={({ pressed }) => [getContainerStyle(pressed), style]}
-      {...props}
+    <Animated.View
+      style={
+        isWeb
+          ? undefined
+          : {
+              transform: [{ scale: scaleAnim }, { translateY: translateYAnim }],
+            }
+      }
     >
-      {loading ? (
-        <ActivityIndicator
-          size="small"
-          color={getTextColor()}
-          style={styles.spinner}
-        />
-      ) : (
-        <>
-          {leftIcon && <View style={styles.leftIcon}>{leftIcon}</View>}
-          <Text
-            style={[
-              styles.text,
-              {
-                color: getTextColor(),
-                fontSize: getFontSize(),
-                fontWeight: theme.typography.weights.semibold,
-              },
-              textStyle,
-            ]}
-          >
-            {title}
-          </Text>
-          {rightIcon && <View style={styles.rightIcon}>{rightIcon}</View>}
-        </>
-      )}
-    </Pressable>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityState={{ disabled: isDisabled, busy: loading }}
+        disabled={isDisabled}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        style={({ pressed }) => [getContainerStyle(pressed), style]}
+        {...props}
+      >
+        {loading ? (
+          <ActivityIndicator
+            size="small"
+            color={getTextColor()}
+            style={styles.spinner}
+          />
+        ) : (
+          <>
+            {leftIcon && <View style={styles.leftIcon}>{leftIcon}</View>}
+            <Text
+              style={[
+                styles.text,
+                {
+                  color: getTextColor(),
+                  fontSize: getFontSize(),
+                  fontWeight: theme.typography.weights.semibold,
+                },
+                textStyle,
+              ]}
+            >
+              {title}
+            </Text>
+            {rightIcon && <View style={styles.rightIcon}>{rightIcon}</View>}
+          </>
+        )}
+      </Pressable>
+    </Animated.View>
   );
 }
 
