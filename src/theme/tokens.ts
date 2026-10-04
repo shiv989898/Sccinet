@@ -219,7 +219,6 @@ export const clayTokens = {
   },
 } as const;
 
-export { motionTokens } from './motion';
 export const motion = {
   duration: {
     instant: 80,
