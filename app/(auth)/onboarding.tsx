@@ -178,32 +178,54 @@ export default function OnboardingScreen() {
           {/* Header */}
           <AnimatedEntrance staggerIndex={0}>
             <View style={styles.header}>
-              <View
-                style={[
-                  styles.avatarContainer,
-                  {
-                    backgroundColor: theme.clay.surface,
-                    borderColor: theme.clay.borderCard,
-                    ...Platform.select({
-                      web: {
-                        boxShadow: theme.clay.webCardShadow,
-                      } as any,
-                      default: {
-                        ...theme.clay.shadowCard,
-                      },
-                    }),
-                  },
-                ]}
-              >
+              <View style={styles.avatarOuterWrapper}>
                 <View
                   style={[
-                    styles.avatarInner,
+                    styles.avatarContainer,
                     {
-                      backgroundColor: theme.colors.primaryMuted,
+                      backgroundColor: theme.clay.surface,
+                      borderColor: theme.clay.borderCard,
+                      ...Platform.select({
+                        web: {
+                          boxShadow: theme.clay.webCardShadow,
+                        } as any,
+                        default: {
+                          ...theme.clay.shadowCard,
+                        },
+                      }),
                     },
                   ]}
                 >
-                  <Ionicons name="person" size={26} color={theme.colors.primary} />
+                  <View
+                    style={[
+                      styles.avatarInner,
+                      {
+                        backgroundColor: theme.colors.primaryMuted,
+                      },
+                    ]}
+                  >
+                    <Ionicons name="person" size={28} color={theme.colors.primary} />
+                  </View>
+                </View>
+
+                {/* Tactile Camera Edit Badge from Stitch */}
+                <View
+                  style={[
+                    styles.avatarCameraBadge,
+                    {
+                      backgroundColor: theme.colors.primary,
+                      ...Platform.select({
+                        web: {
+                          boxShadow: theme.clay.webButtonShadow,
+                        } as any,
+                        default: {
+                          ...theme.clay.shadowButton,
+                        },
+                      }),
+                    },
+                  ]}
+                >
+                  <Ionicons name="camera" size={13} color="#FFFFFF" />
                 </View>
               </View>
 
@@ -664,19 +686,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
+  avatarOuterWrapper: {
+    position: 'relative',
+    marginBottom: 12,
+  },
   avatarContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 68,
+    height: 68,
+    borderRadius: 34,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12,
+  },
+  avatarCameraBadge: {
+    position: 'absolute',
+    bottom: 0,
+    right: -2,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   avatarInner: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     alignItems: 'center',
     justifyContent: 'center',
   },

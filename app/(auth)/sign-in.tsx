@@ -714,6 +714,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  protocolLabel: {
+    textTransform: 'uppercase',
+  },
   title: {
     letterSpacing: -0.3,
     marginBottom: 6,
