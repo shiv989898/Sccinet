@@ -204,25 +204,16 @@ export default function SignInScreen() {
                       borderColor: theme.clay.borderCard,
                       ...Platform.select({
                         web: {
-                          boxShadow: theme.clay.webChipShadow,
+                          boxShadow: theme.clay.webCardShadow,
                         } as any,
                         default: {
-                          ...theme.clay.shadowChip,
+                          ...theme.clay.shadowCard,
                         },
                       }),
                     },
                   ]}
                 >
-                  <View
-                    style={[
-                      styles.logoInner,
-                      {
-                        backgroundColor: theme.colors.primary,
-                      },
-                    ]}
-                  >
-                    <Ionicons name="shield-checkmark" size={18} color="#FFFFFF" />
-                  </View>
+                  <Ionicons name="terminal-outline" size={26} color={theme.colors.primary} />
                 </View>
 
                 <Animated.View
@@ -232,6 +223,20 @@ export default function SignInScreen() {
                     alignItems: 'center',
                   }}
                 >
+                  <Text
+                    style={[
+                      styles.protocolLabel,
+                      {
+                        color: theme.isDark ? '#4CD7F6' : theme.colors.primary,
+                        fontSize: theme.typography.sizes.micro,
+                        fontWeight: theme.typography.weights.semibold,
+                        letterSpacing: 1.2,
+                        marginBottom: 4,
+                      },
+                    ]}
+                  >
+                    SCCINET PROTOCOL
+                  </Text>
                   <Text
                     style={[
                       styles.title,
@@ -254,8 +259,8 @@ export default function SignInScreen() {
                     ]}
                   >
                     {isSignUp
-                      ? 'Start building and collaborating'
-                      : 'Sign in to your builder workspace'}
+                      ? 'Tell the community what you build'
+                      : 'Sign in to continue to your workspace'}
                   </Text>
                 </Animated.View>
               </View>
@@ -532,6 +537,7 @@ export default function SignInScreen() {
                     variant="clayPrimary"
                     size="lg"
                     loading={loading}
+                    rightIcon={<Ionicons name="arrow-forward" size={16} color="#FFFFFF" />}
                     onPress={handleAuth}
                   />
                 </View>
@@ -625,7 +631,7 @@ export default function SignInScreen() {
           </View>
         </AnimatedEntrance>
 
-        {/* Minimal Quiet Footer */}
+        {/* Minimal Quiet Footer from Stitch */}
         <View style={styles.footer}>
           <Text
             style={[
@@ -636,7 +642,7 @@ export default function SignInScreen() {
               },
             ]}
           >
-            Sccinet • Professional Network for Builders
+            Terms of Service • Privacy Policy • Security
           </Text>
         </View>
       </ScrollView>
