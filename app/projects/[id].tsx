@@ -502,7 +502,7 @@ export default function ProjectDetailScreen() {
             </Card>
           </View>
         ) : (
-          <AnimatedEntrance duration={180} distance={motionTokens.distance.subtle}>
+          <AnimatedEntrance duration={180}>
             <View style={styles.centerContainer}>
               {/* 1. Project Identity Card */}
               <Card variant="clay" padding="lg" style={styles.sectionCard}>

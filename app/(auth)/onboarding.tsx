@@ -23,10 +23,12 @@ import {
   useRemoveSkill,
 } from '../../src/features/profiles/useProfile';
 import { Card, Button, Input, AnimatedEntrance } from '../../src/components/ui';
+import { motionTokens, useReducedMotion } from '../../src/theme/motion';
 
 export default function OnboardingScreen() {
   const theme = useTheme();
   const isWeb = Platform.OS === 'web';
+  const reducedMotion = useReducedMotion();
   const { user } = useAuth();
   const { data: profile } = useCurrentProfile();
   const { mutateAsync: updateProfile, isPending: isUpdating } = useUpdateProfile();
@@ -47,16 +49,19 @@ export default function OnboardingScreen() {
 
   useEffect(() => {
     if (generalError) {
-      Animated.spring(errorAnim, {
+      if (reducedMotion) {
+        errorAnim.setValue(1);
+        return;
+      }
+      Animated.timing(errorAnim, {
         toValue: 1,
-        tension: 320,
-        friction: 24,
+        duration: motionTokens.duration.fast,
         useNativeDriver: !isWeb,
       }).start();
     } else {
       errorAnim.setValue(0);
     }
-  }, [generalError, errorAnim, isWeb]);
+  }, [generalError, errorAnim, isWeb, reducedMotion]);
 
   useEffect(() => {
     if (!profile && !user) return;
@@ -144,36 +149,34 @@ export default function OnboardingScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* Top Minimal Bar */}
-        <AnimatedEntrance staggerIndex={0}>
-          <View style={styles.topBar}>
-            <View style={styles.brandRow}>
-              <View
-                style={[
-                  styles.brandLogoSmall,
-                  {
-                    backgroundColor: theme.colors.primary,
-                  },
-                ]}
-              >
-                <Ionicons name="shield-checkmark" size={14} color="#FFFFFF" />
-              </View>
-              <Text
-                style={[
-                  styles.brandTitle,
-                  { color: theme.colors.text, fontSize: theme.typography.sizes.lg },
-                ]}
-              >
-                Sccinet
-              </Text>
+        {/* Top Minimal Bar - Anchored and immediate */}
+        <View style={styles.topBar}>
+          <View style={styles.brandRow}>
+            <View
+              style={[
+                styles.brandLogoSmall,
+                {
+                  backgroundColor: theme.colors.primary,
+                },
+              ]}
+            >
+              <Ionicons name="shield-checkmark" size={14} color="#FFFFFF" />
             </View>
+            <Text
+              style={[
+                styles.brandTitle,
+                { color: theme.colors.text, fontSize: theme.typography.sizes.lg },
+              ]}
+            >
+              Sccinet
+            </Text>
           </View>
-        </AnimatedEntrance>
+        </View>
 
         {/* Main Content Area */}
         <View style={styles.centerContainer}>
           {/* Header */}
-          <AnimatedEntrance staggerIndex={1}>
+          <AnimatedEntrance staggerIndex={0}>
             <View style={styles.header}>
               <View
                 style={[
@@ -231,7 +234,7 @@ export default function OnboardingScreen() {
           </AnimatedEntrance>
 
           {/* Form Card */}
-          <AnimatedEntrance staggerIndex={2}>
+          <AnimatedEntrance staggerIndex={1}>
             <Card variant="clay" padding="xl" style={styles.formCard}>
               {generalError && (
                 <Animated.View
@@ -241,7 +244,7 @@ export default function OnboardingScreen() {
                       {
                         translateY: errorAnim.interpolate({
                           inputRange: [0, 1],
-                          outputRange: [-6, 0],
+                          outputRange: [-4, 0],
                         }),
                       },
                     ],

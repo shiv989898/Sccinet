@@ -79,7 +79,7 @@ function RootNavigator() {
           },
           headerShadowVisible: false,
           animation: Platform.OS === 'web' ? 'fade' : 'slide_from_right',
-          animationDuration: 220,
+          animationDuration: 200,
           gestureEnabled: true,
           contentStyle: {
             backgroundColor: theme.colors.background,

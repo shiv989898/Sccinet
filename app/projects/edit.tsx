@@ -16,6 +16,7 @@ import { Controller, useForm, useWatch } from 'react-hook-form';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
 import { AnimatedEntrance, Button, Card, Input, SegmentedControl, SkeletonLoader } from '../../src/components/ui';
+import { motionTokens, useReducedMotion } from '../../src/theme/motion';
 import { useAvailableSkills } from '../../src/features/profiles/useProfile';
 import { useAuth } from '../../src/features/auth/AuthContext';
 import {
@@ -36,6 +37,7 @@ export default function EditProjectScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const theme = useTheme();
   const isWeb = Platform.OS === 'web';
+  const reducedMotion = useReducedMotion();
   const { user } = useAuth();
   const [skillSearch, setSkillSearch] = useState('');
   const [generalError, setGeneralError] = useState<string | null>(null);
@@ -44,16 +46,19 @@ export default function EditProjectScreen() {
 
   useEffect(() => {
     if (generalError) {
-      Animated.spring(errorAnim, {
+      if (reducedMotion) {
+        errorAnim.setValue(1);
+        return;
+      }
+      Animated.timing(errorAnim, {
         toValue: 1,
-        tension: 320,
-        friction: 24,
+        duration: motionTokens.duration.fast,
         useNativeDriver: !isWeb,
       }).start();
     } else {
       errorAnim.setValue(0);
     }
-  }, [generalError, errorAnim, isWeb]);
+  }, [generalError, errorAnim, isWeb, reducedMotion]);
 
   const { data: project, isLoading: isLoadingProject, error: projectError } = useProject(id);
   const { data: allSkills = [], isLoading: isLoadingSkills } = useAvailableSkills();
@@ -220,52 +225,50 @@ export default function EditProjectScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* Top Bar */}
-        <AnimatedEntrance staggerIndex={0}>
-          <View style={styles.topBar}>
-            <Pressable
-              onPress={() => router.back()}
-              style={({ pressed }) => [
-                styles.backButton,
+        {/* Top Bar - Anchored and immediately interactive */}
+        <View style={styles.topBar}>
+          <Pressable
+            onPress={() => router.back()}
+            style={({ pressed }) => [
+              styles.backButton,
+              {
+                backgroundColor: theme.clay.surface,
+                borderColor: theme.clay.borderCard,
+                opacity: pressed ? 0.85 : 1,
+                transform: pressed ? [{ scale: 0.96 }, { translateY: 0.5 }] : [],
+                ...Platform.select({
+                  web: {
+                    boxShadow: pressed ? theme.clay.webChipShadow : theme.clay.webPillShadow,
+                    transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+                    cursor: 'pointer',
+                  } as any,
+                  default: theme.clay.shadowPill,
+                }),
+              },
+            ]}
+          >
+            <Ionicons name="arrow-back" size={18} color={theme.colors.text} />
+          </Pressable>
+
+          <View style={styles.topBarTitleContainer}>
+            <Text
+              style={[
+                styles.topBarTitle,
                 {
-                  backgroundColor: theme.clay.surface,
-                  borderColor: theme.clay.borderCard,
-                  opacity: pressed ? 0.85 : 1,
-                  transform: pressed ? [{ scale: 0.96 }, { translateY: 0.5 }] : [],
-                  ...Platform.select({
-                    web: {
-                      boxShadow: pressed ? theme.clay.webChipShadow : theme.clay.webPillShadow,
-                      transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
-                      cursor: 'pointer',
-                    } as any,
-                    default: theme.clay.shadowPill,
-                  }),
+                  color: theme.colors.text,
+                  fontSize: theme.typography.sizes.md,
+                  fontWeight: theme.typography.weights.semibold,
                 },
               ]}
             >
-              <Ionicons name="arrow-back" size={18} color={theme.colors.text} />
-            </Pressable>
-
-            <View style={styles.topBarTitleContainer}>
-              <Text
-                style={[
-                  styles.topBarTitle,
-                  {
-                    color: theme.colors.text,
-                    fontSize: theme.typography.sizes.md,
-                    fontWeight: theme.typography.weights.semibold,
-                  },
-                ]}
-              >
-                Edit Project
-              </Text>
-            </View>
-
-            <View style={styles.topBarRightSlot} />
+              Edit Project
+            </Text>
           </View>
-        </AnimatedEntrance>
 
-        <AnimatedEntrance staggerIndex={1}>
+          <View style={styles.topBarRightSlot} />
+        </View>
+
+        <AnimatedEntrance duration={180}>
           <View style={styles.centerContainer}>
             {/* Header info */}
             <View style={styles.header}>
