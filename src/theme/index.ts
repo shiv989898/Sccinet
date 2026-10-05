@@ -29,8 +29,8 @@ export const lightColors: ThemeColors = {
 };
 
 export const darkColors: ThemeColors = {
-  primary: palette.primaryLight,
-  primaryLight: palette.primary,
+  primary: palette.primary,
+  primaryLight: palette.primaryLight,
   primaryDark: palette.primaryDark,
   primaryMuted: palette.primaryMuted,
   background: palette.dark.background,
