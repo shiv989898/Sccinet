@@ -15,9 +15,11 @@ import { useTheme } from '../../src/hooks/useTheme';
 import { authService } from '../../src/services/auth/authService';
 import { signInSchema, signUpSchema } from '../../src/features/auth/schemas';
 import { Card, Button, Input, AnimatedEntrance } from '../../src/components/ui';
+import { motionTokens, useReducedMotion } from '../../src/theme/motion';
 
 export default function SignInScreen() {
   const theme = useTheme();
+  const reducedMotion = useReducedMotion();
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -37,16 +39,19 @@ export default function SignInScreen() {
 
   React.useEffect(() => {
     if (errorMessage) {
-      Animated.spring(errorAnim, {
+      if (reducedMotion) {
+        errorAnim.setValue(1);
+        return;
+      }
+      Animated.timing(errorAnim, {
         toValue: 1,
-        tension: 320,
-        friction: 24,
+        duration: motionTokens.duration.fast,
         useNativeDriver: !isWeb,
       }).start();
     } else {
       errorAnim.setValue(0);
     }
-  }, [errorMessage, errorAnim, isWeb]);
+  }, [errorMessage, errorAnim, isWeb, reducedMotion]);
 
   const switchMode = (newMode: 'signin' | 'signup') => {
     if (newMode === mode) return;
@@ -55,14 +60,18 @@ export default function SignInScreen() {
     setErrorMessage(null);
     setFieldErrors({});
 
-    // Native spring for segmented pill thumb on native
+    // Critically damped spring for segmented pill thumb on native
     if (!isWeb) {
-      Animated.spring(tabAnim, {
-        toValue: newMode === 'signup' ? 1 : 0,
-        tension: 280,
-        friction: 24,
-        useNativeDriver: true,
-      }).start();
+      if (reducedMotion) {
+        tabAnim.setValue(newMode === 'signup' ? 1 : 0);
+      } else {
+        Animated.spring(tabAnim, {
+          toValue: newMode === 'signup' ? 1 : 0,
+          tension: motionTokens.spring.snappy.tension,
+          friction: motionTokens.spring.snappy.friction,
+          useNativeDriver: true,
+        }).start();
+      }
     }
 
     // Silky crossfade + micro drift for header title
