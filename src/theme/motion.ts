@@ -7,48 +7,49 @@ import { AccessibilityInfo, Platform } from 'react-native';
  */
 
 export const motionTokens = {
-  // Timings (ms) - Short and crisp; no cartoon-like slow animations
+  // Timings (ms) - Restrained, fast, and responsive for real devices
   duration: {
     instant: 80,
-    fast: 150,       // Tactile press, toggle switch, micro-transitions
-    normal: 220,     // Screen enter, card expansion, tab switch
-    deliberate: 300, // Modal presentation, sheet reveal, prominent state transition
-    stagger: 40,     // Standard stagger interval between hierarchical elements
+    fast: 140,       // Tactile press, toggle switch, micro-transitions
+    normal: 200,     // Screen enter, card expansion, tab switch
+    deliberate: 260, // Modal presentation, sheet reveal, prominent state transition
+    stagger: 25,     // Restrained stagger interval between hierarchical elements
   },
 
   // Distance of movement (px) - Restrained travel distances
   distance: {
-    subtle: 4,       // Micro elevation / focus shift
-    normal: 8,       // Standard entrance translate
-    card: 12,        // Prominent card entrance
-    sheet: 24,       // Slide from bottom / sheet reveal
+    subtle: 3,       // Micro elevation / focus shift
+    normal: 6,       // Standard entrance translate (calm, subtle)
+    card: 8,         // Prominent card entrance
+    sheet: 20,       // Slide from bottom / sheet reveal
   },
 
   // Scale factors for tactile responses
   scale: {
-    pressedButton: 0.975, // Physical compression on button press
-    pressedCard: 0.988,   // Subtle physical depression on card press
-    pressedChip: 0.96,    // Tactile pill / chip tap
-    pressedTab: 0.92,     // Tab bar icon tap
-    entranceStart: 0.99,  // Subtle scale-up on screen entrance
+    pressedButton: 0.98, // Physical compression on button press (calm, restrained)
+    pressedCard: 0.99,   // Subtle physical depression on card press
+    pressedChip: 0.97,   // Tactile pill / chip tap
+    pressedTab: 0.96,    // Tab bar icon micro-nudge
+    entranceStart: 1.0,  // Pure opacity + subtle translate for entrances, zero text scale flutter
   },
 
   // TranslateY on press (px) - physically depresses the clay surface
   pressedTranslateY: 1,
 
   // Spring Physics configurations (for Animated.spring)
+  // Tuned for real devices: critically damped, NO bounce, zero oscillation
   spring: {
     tactile: {
-      tension: 300,
-      friction: 20,
+      tension: 320,
+      friction: 28, // Fast return, crisp tactile feedback with zero rubbery overshoot
     },
     gentle: {
-      tension: 190,
-      friction: 18,
+      tension: 180,
+      friction: 26, // Damping ratio ~0.97, critically damped, smooth settling, ZERO bounce
     },
     snappy: {
-      tension: 320,
-      friction: 24,
+      tension: 340,
+      friction: 34, // Damping ratio ~0.92, swift glide for segmented controls & indicators, zero overshoot
     },
   },
 

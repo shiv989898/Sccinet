@@ -14,7 +14,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
-import { motionTokens } from '../../theme/motion';
+import { motionTokens, useReducedMotion } from '../../theme/motion';
 
 export type ButtonVariant =
   | 'primary'
@@ -53,6 +53,7 @@ export function Button({
 }: ButtonProps) {
   const theme = useTheme();
   const isWeb = Platform.OS === 'web';
+  const reducedMotion = useReducedMotion();
   const isDisabled = disabled || loading;
 
   // Native tactile press animation
@@ -60,7 +61,7 @@ export function Button({
   const [translateYAnim] = React.useState(() => new Animated.Value(0));
 
   const handlePressIn = (e: GestureResponderEvent) => {
-    if (!isDisabled) {
+    if (!isDisabled && !reducedMotion) {
       Animated.parallel([
         Animated.spring(scaleAnim, {
           toValue: motionTokens.scale.pressedButton,
@@ -80,20 +81,22 @@ export function Button({
   };
 
   const handlePressOut = (e: GestureResponderEvent) => {
-    Animated.parallel([
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        tension: motionTokens.spring.tactile.tension,
-        friction: motionTokens.spring.tactile.friction,
-        useNativeDriver: !isWeb,
-      }),
-      Animated.spring(translateYAnim, {
-        toValue: 0,
-        tension: motionTokens.spring.tactile.tension,
-        friction: motionTokens.spring.tactile.friction,
-        useNativeDriver: !isWeb,
-      }),
-    ]).start();
+    if (!reducedMotion) {
+      Animated.parallel([
+        Animated.spring(scaleAnim, {
+          toValue: 1,
+          tension: motionTokens.spring.tactile.tension,
+          friction: motionTokens.spring.tactile.friction,
+          useNativeDriver: !isWeb,
+        }),
+        Animated.spring(translateYAnim, {
+          toValue: 0,
+          tension: motionTokens.spring.tactile.tension,
+          friction: motionTokens.spring.tactile.friction,
+          useNativeDriver: !isWeb,
+        }),
+      ]).start();
+    }
     onPressOut?.(e);
   };
 

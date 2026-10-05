@@ -61,62 +61,61 @@ export default function ProfileScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <AnimatedEntrance staggerIndex={0}>
-          <View style={styles.topBar}>
-            <View style={styles.brandRow}>
-              <View
-                style={[
-                  styles.brandLogoSmall,
-                  {
-                    backgroundColor: theme.colors.primary,
-                  },
-                ]}
-              >
-                <Ionicons name="shield-checkmark" size={14} color="#FFFFFF" />
-              </View>
-              <Text
-                style={[
-                  styles.brandTitle,
-                  { color: theme.colors.text, fontSize: theme.typography.sizes.lg },
-                ]}
-              >
-                Sccinet
-              </Text>
-            </View>
-
-            {/* Discreet theme toggle */}
-            <TouchableOpacity
-              onPress={() => setPreference(preference === 'dark' ? 'light' : 'dark')}
-              activeOpacity={0.8}
-              accessibilityLabel="Toggle appearance"
+        {/* Top Bar - Anchored and immediately interactive */}
+        <View style={styles.topBar}>
+          <View style={styles.brandRow}>
+            <View
               style={[
-                styles.themeSwitchButton,
+                styles.brandLogoSmall,
                 {
-                  backgroundColor: theme.clay.surface,
-                  borderColor: theme.clay.borderCard,
-                  ...Platform.select({
-                    web: {
-                      boxShadow: theme.clay.webChipShadow,
-                    } as any,
-                    default: {
-                      ...theme.clay.shadowChip,
-                    },
-                  }),
+                  backgroundColor: theme.colors.primary,
                 },
               ]}
             >
-              <Ionicons
-                name={preference === 'dark' ? 'sunny-outline' : 'moon-outline'}
-                size={16}
-                color={theme.colors.textSecondary}
-              />
-            </TouchableOpacity>
+              <Ionicons name="shield-checkmark" size={14} color="#FFFFFF" />
+            </View>
+            <Text
+              style={[
+                styles.brandTitle,
+                { color: theme.colors.text, fontSize: theme.typography.sizes.lg },
+              ]}
+            >
+              Sccinet
+            </Text>
           </View>
-        </AnimatedEntrance>
+
+          {/* Discreet theme toggle */}
+          <TouchableOpacity
+            onPress={() => setPreference(preference === 'dark' ? 'light' : 'dark')}
+            activeOpacity={0.8}
+            accessibilityLabel="Toggle appearance"
+            style={[
+              styles.themeSwitchButton,
+              {
+                backgroundColor: theme.clay.surface,
+                borderColor: theme.clay.borderCard,
+                ...Platform.select({
+                  web: {
+                    boxShadow: theme.clay.webChipShadow,
+                  } as any,
+                  default: {
+                    ...theme.clay.shadowChip,
+                  },
+                }),
+              },
+            ]}
+          >
+            <Ionicons
+              name={preference === 'dark' ? 'sunny-outline' : 'moon-outline'}
+              size={16}
+              color={theme.colors.textSecondary}
+            />
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.centerContainer}>
-          {/* Profile Identity Card */}
-          <AnimatedEntrance staggerIndex={1}>
+          {/* Profile Identity Card - Primary */}
+          <AnimatedEntrance staggerIndex={0}>
             <Card variant="clay" padding="xl" style={styles.identityCard}>
             <View style={styles.avatarRow}>
               <View
@@ -232,7 +231,7 @@ export default function ProfileScreen() {
           </AnimatedEntrance>
 
           {/* Skills Section */}
-          <AnimatedEntrance staggerIndex={2}>
+          <AnimatedEntrance staggerIndex={1}>
             <Card variant="clay" padding="lg" style={styles.sectionCard}>
             <View style={styles.sectionHeader}>
               <View style={styles.sectionHeaderTitle}>
@@ -329,7 +328,7 @@ export default function ProfileScreen() {
           </AnimatedEntrance>
 
           {/* Projects Section */}
-          <AnimatedEntrance staggerIndex={3}>
+          <AnimatedEntrance staggerIndex={1}>
             <Card variant="clay" padding="lg" style={styles.sectionCard}>
             <View style={styles.sectionHeader}>
               <View style={styles.sectionHeaderTitle}>
@@ -414,7 +413,7 @@ export default function ProfileScreen() {
           </AnimatedEntrance>
 
           {/* Bottom Sign Out Button */}
-          <AnimatedEntrance staggerIndex={4}>
+          <AnimatedEntrance staggerIndex={1}>
             <View style={styles.signOutWrapper}>
             <TouchableOpacity
               onPress={handleSignOut}

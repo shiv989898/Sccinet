@@ -22,46 +22,44 @@ export default function WorkspaceScreen() {
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.innerStack}>
-        {/* Header */}
-        <AnimatedEntrance staggerIndex={0}>
-          <View style={styles.headerRow}>
-            <View>
-              <Text
-                style={[
-                  styles.pageTitle,
-                  {
-                    color: theme.colors.text,
-                    fontSize: theme.typography.sizes.xxl,
-                    fontWeight: theme.typography.weights.bold,
-                    letterSpacing: -0.5,
-                  },
-                ]}
-              >
-                Workspace
-              </Text>
-              <Text
-                style={[
-                  styles.pageSubtitle,
-                  {
-                    color: theme.colors.textMuted,
-                    fontSize: theme.typography.sizes.sm,
-                    marginTop: 2,
-                  },
-                ]}
-              >
-                Manage your active projects
-              </Text>
-            </View>
-
-            <Button
-              title="New Project"
-              size="sm"
-              variant="clayPrimary"
-              leftIcon={<Ionicons name="add" size={16} color="#FFFFFF" />}
-              onPress={() => router.push('/projects/new')}
-            />
+        {/* Header - Anchored and immediately interactive */}
+        <View style={styles.headerRow}>
+          <View>
+            <Text
+              style={[
+                styles.pageTitle,
+                {
+                  color: theme.colors.text,
+                  fontSize: theme.typography.sizes.xxl,
+                  fontWeight: theme.typography.weights.bold,
+                  letterSpacing: -0.5,
+                },
+              ]}
+            >
+              Workspace
+            </Text>
+            <Text
+              style={[
+                styles.pageSubtitle,
+                {
+                  color: theme.colors.textMuted,
+                  fontSize: theme.typography.sizes.sm,
+                  marginTop: 2,
+                },
+              ]}
+            >
+              Manage your active projects
+            </Text>
           </View>
-        </AnimatedEntrance>
+
+          <Button
+            title="New Project"
+            size="sm"
+            variant="clayPrimary"
+            leftIcon={<Ionicons name="add" size={16} color="#FFFFFF" />}
+            onPress={() => router.push('/projects/new')}
+          />
+        </View>
 
         {/* Projects / Loading Skeleton / Empty State */}
         {isLoadingProjects ? (
@@ -80,10 +78,11 @@ export default function WorkspaceScreen() {
             ))}
           </View>
         ) : userProjects.length > 0 ? (
-          <View style={styles.projectsList}>
-            {userProjects.map((proj, idx) => (
-              <AnimatedEntrance key={proj.id} staggerIndex={1 + Math.min(idx, 5)}>
+          <AnimatedEntrance duration={180}>
+            <View style={styles.projectsList}>
+              {userProjects.map((proj) => (
                 <Card
+                  key={proj.id}
                   variant="clay"
                   padding="md"
                   onPress={() =>
@@ -148,11 +147,11 @@ export default function WorkspaceScreen() {
                     </View>
                   </View>
                 </Card>
-              </AnimatedEntrance>
-            ))}
-          </View>
+              ))}
+            </View>
+          </AnimatedEntrance>
         ) : (
-          <AnimatedEntrance staggerIndex={1}>
+          <AnimatedEntrance duration={180}>
             <Card variant="clay" padding="lg">
               <EmptyState
                 icon={<Ionicons name="folder-open-outline" size={30} color={theme.colors.primary} />}

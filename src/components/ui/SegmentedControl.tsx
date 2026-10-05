@@ -11,7 +11,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
-import { motionTokens } from '../../theme/motion';
+import { motionTokens, useReducedMotion } from '../../theme/motion';
 
 export interface SegmentedControlOption<T extends string = string> {
   label: string;
@@ -36,6 +36,7 @@ export function SegmentedControl<T extends string = string>({
 }: SegmentedControlProps<T>) {
   const theme = useTheme();
   const isWeb = Platform.OS === 'web';
+  const reducedMotion = useReducedMotion();
   const [containerWidth, setContainerWidth] = useState(0);
 
   const selectedIndex = Math.max(
@@ -52,6 +53,10 @@ export function SegmentedControl<T extends string = string>({
 
   useEffect(() => {
     if (itemWidth > 0) {
+      if (reducedMotion) {
+        translateX.setValue(selectedIndex * itemWidth);
+        return;
+      }
       Animated.spring(translateX, {
         toValue: selectedIndex * itemWidth,
         tension: motionTokens.spring.snappy.tension,
@@ -59,7 +64,7 @@ export function SegmentedControl<T extends string = string>({
         useNativeDriver: !isWeb,
       }).start();
     }
-  }, [selectedIndex, itemWidth, translateX, isWeb]);
+  }, [selectedIndex, itemWidth, translateX, isWeb, reducedMotion]);
 
   const handleLayout = (e: LayoutChangeEvent) => {
     const width = e.nativeEvent.layout.width;

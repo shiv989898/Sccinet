@@ -3,7 +3,7 @@ import { Animated, Platform } from 'react-native';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
-import { motionTokens } from '../../src/theme/motion';
+import { motionTokens, useReducedMotion } from '../../src/theme/motion';
 
 function AnimatedTabIcon({
   name,
@@ -19,16 +19,28 @@ function AnimatedTabIcon({
   size?: number;
 }) {
   const isWeb = Platform.OS === 'web';
-  const [scaleAnim] = React.useState(() => new Animated.Value(focused ? 1 : 0.92));
+  const reducedMotion = useReducedMotion();
+  const [scaleAnim] = React.useState(() => new Animated.Value(1));
 
   useEffect(() => {
-    Animated.spring(scaleAnim, {
-      toValue: focused ? 1 : 0.92,
-      tension: motionTokens.spring.snappy.tension,
-      friction: motionTokens.spring.snappy.friction,
-      useNativeDriver: !isWeb,
-    }).start();
-  }, [focused, scaleAnim, isWeb]);
+    if (reducedMotion) {
+      scaleAnim.setValue(1);
+      return;
+    }
+
+    if (focused) {
+      // Subtle tactile micro-pulse upon becoming active
+      scaleAnim.setValue(0.96);
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        tension: motionTokens.spring.snappy.tension,
+        friction: motionTokens.spring.snappy.friction,
+        useNativeDriver: !isWeb,
+      }).start();
+    } else {
+      scaleAnim.setValue(1);
+    }
+  }, [focused, scaleAnim, isWeb, reducedMotion]);
 
   return (
     <Animated.View

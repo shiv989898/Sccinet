@@ -26,15 +26,15 @@ export function AnimatedEntrance({
   const isWeb = Platform.OS === 'web';
   const reducedMotion = useReducedMotion();
 
-  // Calculate actual delay based on stagger hierarchy or explicit delay
+  // Restrain stagger delay: capped at max 2 stagger tiers (max 50ms) to prioritize immediate usability
   const computedDelay =
     explicitDelay !== undefined
       ? explicitDelay
       : staggerIndex !== undefined
-      ? staggerIndex * motionTokens.duration.stagger
+      ? Math.min(staggerIndex, 2) * motionTokens.duration.stagger
       : 0;
 
-  // Translation distance: subtle 8px default
+  // Translation distance: subtle 6px default
   const travelDistance =
     offsetY !== undefined
       ? offsetY
@@ -46,15 +46,11 @@ export function AnimatedEntrance({
 
   const [opacityAnim] = useState(() => new Animated.Value(reducedMotion ? 1 : 0));
   const [translateYAnim] = useState(() => new Animated.Value(reducedMotion ? 0 : initialY));
-  const [scaleAnim] = useState(
-    () => new Animated.Value(reducedMotion ? 1 : motionTokens.scale.entranceStart)
-  );
 
   useEffect(() => {
     if (reducedMotion) {
       opacityAnim.setValue(1);
       translateYAnim.setValue(0);
-      scaleAnim.setValue(1);
       return;
     }
 
@@ -71,17 +67,11 @@ export function AnimatedEntrance({
           friction: motionTokens.spring.gentle.friction,
           useNativeDriver: !isWeb,
         }),
-        Animated.spring(scaleAnim, {
-          toValue: 1,
-          tension: motionTokens.spring.gentle.tension,
-          friction: motionTokens.spring.gentle.friction,
-          useNativeDriver: !isWeb,
-        }),
       ]).start();
     }, computedDelay);
 
     return () => clearTimeout(timer);
-  }, [computedDelay, duration, isWeb, opacityAnim, reducedMotion, scaleAnim, translateYAnim]);
+  }, [computedDelay, duration, isWeb, opacityAnim, reducedMotion, translateYAnim]);
 
   return (
     <Animated.View
@@ -89,7 +79,7 @@ export function AnimatedEntrance({
         style,
         {
           opacity: opacityAnim,
-          transform: [{ translateY: translateYAnim }, { scale: scaleAnim }],
+          transform: [{ translateY: translateYAnim }],
         },
       ]}
     >

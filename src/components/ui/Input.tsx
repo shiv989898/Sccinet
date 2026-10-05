@@ -12,7 +12,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
-import { motionTokens } from '../../theme/motion';
+import { motionTokens, useReducedMotion } from '../../theme/motion';
 
 export interface InputProps extends TextInputProps {
   label?: string;
@@ -42,13 +42,20 @@ export function Input({
 }: InputProps) {
   const theme = useTheme();
   const isWeb = Platform.OS === 'web';
+  const reducedMotion = useReducedMotion();
   const [isFocused, setIsFocused] = useState(false);
 
-  // Smooth error transition animations
+  // Smooth, non-bouncy error transition
   const [errorAnim] = useState(() => new Animated.Value(error ? 1 : 0));
-  const [errorTranslateY] = useState(() => new Animated.Value(error ? 0 : -4));
+  const [errorTranslateY] = useState(() => new Animated.Value(error ? 0 : -3));
 
   useEffect(() => {
+    if (reducedMotion) {
+      errorAnim.setValue(error ? 1 : 0);
+      errorTranslateY.setValue(error ? 0 : -3);
+      return;
+    }
+
     if (error) {
       Animated.parallel([
         Animated.timing(errorAnim, {
@@ -56,10 +63,9 @@ export function Input({
           duration: motionTokens.duration.fast,
           useNativeDriver: !isWeb,
         }),
-        Animated.spring(errorTranslateY, {
+        Animated.timing(errorTranslateY, {
           toValue: 0,
-          tension: motionTokens.spring.snappy.tension,
-          friction: motionTokens.spring.snappy.friction,
+          duration: motionTokens.duration.fast,
           useNativeDriver: !isWeb,
         }),
       ]).start();
@@ -68,9 +74,11 @@ export function Input({
         toValue: 0,
         duration: motionTokens.duration.instant,
         useNativeDriver: !isWeb,
-      }).start();
+      }).start(() => {
+        errorTranslateY.setValue(-3);
+      });
     }
-  }, [error, errorAnim, errorTranslateY, isWeb]);
+  }, [error, errorAnim, errorTranslateY, isWeb, reducedMotion]);
 
   const handleFocus = (e: any) => {
     setIsFocused(true);

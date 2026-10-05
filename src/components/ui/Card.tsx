@@ -10,7 +10,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
-import { motionTokens } from '../../theme/motion';
+import { motionTokens, useReducedMotion } from '../../theme/motion';
 
 export type CardVariant = 'clay' | 'elevated' | 'outlined' | 'default';
 
@@ -34,43 +34,48 @@ export function Card({
 }: CardProps) {
   const theme = useTheme();
   const isWeb = Platform.OS === 'web';
+  const reducedMotion = useReducedMotion();
 
   const [scaleAnim] = React.useState(() => new Animated.Value(1));
   const [translateYAnim] = React.useState(() => new Animated.Value(0));
 
   const handlePressIn = (e: GestureResponderEvent) => {
-    Animated.parallel([
-      Animated.spring(scaleAnim, {
-        toValue: motionTokens.scale.pressedCard,
-        tension: motionTokens.spring.tactile.tension,
-        friction: motionTokens.spring.tactile.friction,
-        useNativeDriver: !isWeb,
-      }),
-      Animated.spring(translateYAnim, {
-        toValue: motionTokens.pressedTranslateY,
-        tension: motionTokens.spring.tactile.tension,
-        friction: motionTokens.spring.tactile.friction,
-        useNativeDriver: !isWeb,
-      }),
-    ]).start();
+    if (!reducedMotion) {
+      Animated.parallel([
+        Animated.spring(scaleAnim, {
+          toValue: motionTokens.scale.pressedCard,
+          tension: motionTokens.spring.tactile.tension,
+          friction: motionTokens.spring.tactile.friction,
+          useNativeDriver: !isWeb,
+        }),
+        Animated.spring(translateYAnim, {
+          toValue: motionTokens.pressedTranslateY,
+          tension: motionTokens.spring.tactile.tension,
+          friction: motionTokens.spring.tactile.friction,
+          useNativeDriver: !isWeb,
+        }),
+      ]).start();
+    }
     onPressIn?.(e);
   };
 
   const handlePressOut = (e: GestureResponderEvent) => {
-    Animated.parallel([
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        tension: motionTokens.spring.tactile.tension,
-        friction: motionTokens.spring.tactile.friction,
-        useNativeDriver: !isWeb,
-      }),
-      Animated.spring(translateYAnim, {
-        toValue: 0,
-        tension: motionTokens.spring.tactile.tension,
-        friction: motionTokens.spring.tactile.friction,
-        useNativeDriver: !isWeb,
-      }),
-    ]).start();
+    if (!reducedMotion) {
+      Animated.parallel([
+        Animated.spring(scaleAnim, {
+          toValue: 1,
+          tension: motionTokens.spring.tactile.tension,
+          friction: motionTokens.spring.tactile.friction,
+          useNativeDriver: !isWeb,
+        }),
+        Animated.spring(translateYAnim, {
+          toValue: 0,
+          tension: motionTokens.spring.tactile.tension,
+          friction: motionTokens.spring.tactile.friction,
+          useNativeDriver: !isWeb,
+        }),
+      ]).start();
+    }
     onPressOut?.(e);
   };
 

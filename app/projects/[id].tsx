@@ -342,93 +342,91 @@ export default function ProjectDetailScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      {/* Top Bar */}
-      <AnimatedEntrance staggerIndex={0}>
-        <View style={styles.topBar}>
+      {/* Top Bar - Anchored and instantly interactive */}
+      <View style={styles.topBar}>
+        <Pressable
+          onPress={() => {
+            if (router.canGoBack()) {
+              router.back();
+            } else {
+              router.replace('/(tabs)/workspace');
+            }
+          }}
+          style={({ pressed }) => [
+            styles.backButton,
+            {
+              backgroundColor: theme.clay.surface,
+              borderColor: theme.clay.borderCard,
+              opacity: pressed ? 0.85 : 1,
+              transform: pressed ? [{ scale: 0.96 }, { translateY: 0.5 }] : [],
+              ...Platform.select({
+                web: {
+                  boxShadow: pressed ? theme.clay.webChipShadow : theme.clay.webPillShadow,
+                  transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+                  cursor: 'pointer',
+                } as any,
+                default: theme.clay.shadowPill,
+              }),
+            },
+          ]}
+        >
+          <Ionicons name="arrow-back" size={18} color={theme.colors.text} />
+        </Pressable>
+
+        <View style={styles.topBarTitleContainer}>
+          <Text
+            style={[
+              styles.topBarTitle,
+              {
+                color: theme.colors.text,
+                fontSize: theme.typography.sizes.md,
+                fontWeight: theme.typography.weights.semibold,
+              },
+            ]}
+          >
+            Project Details
+          </Text>
+        </View>
+
+        {isOwner ? (
           <Pressable
-            onPress={() => {
-              if (router.canGoBack()) {
-                router.back();
-              } else {
-                router.replace('/(tabs)/workspace');
-              }
-            }}
+            onPress={() =>
+              router.push({
+                pathname: '/projects/edit',
+                params: { id: id! },
+              })
+            }
             style={({ pressed }) => [
-              styles.backButton,
+              styles.editButtonPill,
               {
                 backgroundColor: theme.clay.surface,
                 borderColor: theme.clay.borderCard,
                 opacity: pressed ? 0.85 : 1,
-                transform: pressed ? [{ scale: 0.96 }, { translateY: 0.5 }] : [],
+                transform: pressed ? [{ scale: 0.96 }] : [],
                 ...Platform.select({
                   web: {
-                    boxShadow: pressed ? theme.clay.webChipShadow : theme.clay.webPillShadow,
-                    transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+                    boxShadow: theme.clay.webChipShadow,
                     cursor: 'pointer',
                   } as any,
-                  default: theme.clay.shadowPill,
+                  default: theme.clay.shadowChip,
                 }),
               },
             ]}
           >
-            <Ionicons name="arrow-back" size={18} color={theme.colors.text} />
-          </Pressable>
-
-          <View style={styles.topBarTitleContainer}>
+            <Ionicons name="pencil" size={14} color={theme.colors.primary} />
             <Text
               style={[
-                styles.topBarTitle,
-                {
-                  color: theme.colors.text,
-                  fontSize: theme.typography.sizes.md,
-                  fontWeight: theme.typography.weights.semibold,
-                },
+                styles.editButtonText,
+                { color: theme.colors.primary, fontSize: theme.typography.sizes.xs },
               ]}
             >
-              Project Details
+              Edit
             </Text>
-          </View>
-
-          {isOwner ? (
-            <Pressable
-              onPress={() =>
-                router.push({
-                  pathname: '/projects/edit',
-                  params: { id: id! },
-                })
-              }
-              style={({ pressed }) => [
-                styles.editButtonPill,
-                {
-                  backgroundColor: theme.clay.surface,
-                  borderColor: theme.clay.borderCard,
-                  opacity: pressed ? 0.85 : 1,
-                  transform: pressed ? [{ scale: 0.96 }] : [],
-                  ...Platform.select({
-                    web: {
-                      boxShadow: theme.clay.webChipShadow,
-                      cursor: 'pointer',
-                    } as any,
-                    default: theme.clay.shadowChip,
-                  }),
-                },
-              ]}
-            >
-              <Ionicons name="pencil" size={14} color={theme.colors.primary} />
-              <Text
-                style={[
-                  styles.editButtonText,
-                  { color: theme.colors.primary, fontSize: theme.typography.sizes.xs },
-                ]}
-              >
-                Edit
-              </Text>
-            </Pressable>
-          ) : (
-            <View style={styles.topBarRightSlot} />
-          )}
-        </View>
-      </AnimatedEntrance>
+          </Pressable>
+        ) : (
+          <View style={styles.topBarRightSlot} />
+        )}
+      </View>
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -504,7 +502,7 @@ export default function ProjectDetailScreen() {
             </Card>
           </View>
         ) : (
-          <AnimatedEntrance duration={260}>
+          <AnimatedEntrance duration={180} distance={motionTokens.distance.subtle}>
             <View style={styles.centerContainer}>
               {/* 1. Project Identity Card */}
               <Card variant="clay" padding="lg" style={styles.sectionCard}>
