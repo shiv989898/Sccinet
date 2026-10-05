@@ -36,13 +36,13 @@ export default function DiscoverScreen() {
               style={[
                 styles.pageSubtitle,
                 {
-                  color: theme.colors.textMuted,
+                  color: theme.colors.textSecondary,
                   fontSize: theme.typography.sizes.sm,
                   marginTop: 2,
                 },
               ]}
             >
-              Find projects and collaborators
+              Discover and connect with builders across nodes.
             </Text>
           </View>
         </AnimatedEntrance>
@@ -83,13 +83,17 @@ export default function DiscoverScreen() {
               <View
                 style={[
                   styles.emptyIconWrap,
-                  { backgroundColor: theme.colors.primaryMuted },
+                  {
+                    backgroundColor: theme.isDark ? '#262A34' : theme.clay.surfaceRecessed,
+                    borderColor: theme.clay.borderCard,
+                    borderWidth: 1,
+                  },
                 ]}
               >
                 <Ionicons
                   name={activeTab === 'projects' ? 'folder-open-outline' : 'people-outline'}
                   size={26}
-                  color={theme.colors.primary}
+                  color={theme.isDark ? '#4CD7F6' : theme.colors.primary}
                 />
               </View>
               <Text

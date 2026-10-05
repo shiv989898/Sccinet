@@ -142,13 +142,13 @@ export default function TabLayout() {
       <Tabs.Screen
         name="workspace"
         options={{
-          title: 'Workspace',
-          tabBarLabel: 'Workspace',
-          headerTitle: 'My Workspace',
+          title: 'Projects',
+          tabBarLabel: 'Projects',
+          headerTitle: 'Projects',
           tabBarIcon: ({ color, focused }) => (
             <AnimatedTabIcon
-              name="briefcase"
-              outlineName="briefcase-outline"
+              name="layers"
+              outlineName="layers-outline"
               color={color}
               focused={focused}
               size={22}
