@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
 import { Card, Badge, Button, EmptyState, AnimatedEntrance, SkeletonLoader, SegmentedControl } from '../../src/components/ui';
 import { useAuth } from '../../src/features/auth/AuthContext';
 import { useProjects } from '../../src/features/projects';
-import { ProjectStatus } from '../../src/types/database';
 
 export default function WorkspaceScreen() {
   const theme = useTheme();
@@ -358,7 +357,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    shrink: 0,
+    flexShrink: 0,
   },
   projectTitleWrapper: {
     flex: 1,

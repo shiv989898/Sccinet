@@ -14,7 +14,7 @@ import { useTheme } from '../../src/hooks/useTheme';
 import { useThemeStore } from '../../src/stores/useThemeStore';
 import { useAuth } from '../../src/features/auth/AuthContext';
 import { useCurrentProfile, useUserSkills } from '../../src/features/profiles/useProfile';
-import { Card, Button, Avatar, AnimatedEntrance } from '../../src/components/ui';
+import { Card, Button, Avatar, AnimatedEntrance, SegmentedControl } from '../../src/components/ui';
 
 export default function ProfileScreen() {
   const theme = useTheme();
