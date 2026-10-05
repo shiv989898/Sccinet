@@ -618,6 +618,21 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   emptySkillsText: {},
+  appearanceSection: {
+    width: '100%',
+    marginTop: 16,
+    gap: 8,
+  },
+  appearanceLabel: {
+    textTransform: 'uppercase',
+  },
+  counterBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 9999,
+    borderWidth: 1,
+  },
+  counterBadgeText: {},
   emptyProjectsSlot: {
     borderWidth: 1,
     padding: 20,
@@ -639,15 +654,11 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   signOutWrapper: {
-    alignItems: 'center',
+    width: '100%',
     paddingVertical: 8,
   },
   signOutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    width: '100%',
   },
   signOutText: {},
 });
