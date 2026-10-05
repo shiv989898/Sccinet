@@ -1,19 +1,28 @@
-import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
-import { Card, Badge, Button, EmptyState, AnimatedEntrance, SkeletonLoader } from '../../src/components/ui';
+import { Card, Badge, Button, EmptyState, AnimatedEntrance, SkeletonLoader, SegmentedControl } from '../../src/components/ui';
 import { useAuth } from '../../src/features/auth/AuthContext';
 import { useProjects } from '../../src/features/projects';
+import { ProjectStatus } from '../../src/types/database';
 
 export default function WorkspaceScreen() {
   const theme = useTheme();
   const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState<'all' | 'ACTIVE' | 'COMPLETED'>('all');
 
   const { data: userProjects = [], isLoading: isLoadingProjects } = useProjects(
     user ? { ownerId: user.id } : undefined
   );
+
+  const activeProjectsCount = userProjects.filter((p) => p.status === 'ACTIVE').length;
+
+  const filteredProjects = userProjects.filter((proj) => {
+    if (activeTab === 'all') return true;
+    return proj.status === activeTab;
+  });
 
   return (
     <ScrollView
@@ -22,9 +31,9 @@ export default function WorkspaceScreen() {
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.innerStack}>
-        {/* Header - Anchored and immediately interactive */}
-        <View style={styles.headerRow}>
-          <View>
+        {/* Header - Matching Stitch Projects Screen */}
+        <View style={styles.headerBlock}>
+          <View style={styles.headerTitleRow}>
             <Text
               style={[
                 styles.pageTitle,
@@ -36,28 +45,75 @@ export default function WorkspaceScreen() {
                 },
               ]}
             >
-              Workspace
+              Projects
             </Text>
-            <Text
+
+            {/* Tactile Active Builds Indicator */}
+            <View
               style={[
-                styles.pageSubtitle,
+                styles.activeBadge,
                 {
-                  color: theme.colors.textMuted,
-                  fontSize: theme.typography.sizes.sm,
-                  marginTop: 2,
+                  backgroundColor: theme.isDark ? '#262A34' : theme.clay.surfaceRecessed,
+                  borderColor: theme.clay.borderCard,
                 },
               ]}
             >
-              Manage your active projects
-            </Text>
+              <View
+                style={[
+                  styles.pulseDot,
+                  {
+                    backgroundColor: theme.isDark ? '#4CD7F6' : theme.colors.primary,
+                  },
+                ]}
+              />
+              <Text
+                style={[
+                  styles.activeBadgeText,
+                  {
+                    color: theme.isDark ? '#4CD7F6' : theme.colors.primary,
+                    fontSize: theme.typography.sizes.xs,
+                    fontWeight: theme.typography.weights.medium,
+                  },
+                ]}
+              >
+                {activeProjectsCount} Active {activeProjectsCount === 1 ? 'Build' : 'Builds'}
+              </Text>
+            </View>
           </View>
 
-          <Button
-            title="New Project"
+          <Text
+            style={[
+              styles.pageSubtitle,
+              {
+                color: theme.colors.textSecondary,
+                fontSize: theme.typography.sizes.sm,
+              },
+            ]}
+          >
+            Repositories and active collaborative builds.
+          </Text>
+        </View>
+
+        {/* Top Action Bar: Segmented Switch & Tactile Button */}
+        <View style={styles.actionBar}>
+          <SegmentedControl<'all' | 'ACTIVE' | 'COMPLETED'>
             size="sm"
+            options={[
+              { label: 'All Projects', value: 'all' },
+              { label: 'Active', value: 'ACTIVE' },
+              { label: 'Completed', value: 'COMPLETED' },
+            ]}
+            value={activeTab}
+            onChange={setActiveTab}
+          />
+
+          <Button
+            title="+ New Project"
+            size="md"
             variant="clayPrimary"
-            leftIcon={<Ionicons name="add" size={16} color="#FFFFFF" />}
+            leftIcon={<Ionicons name="add-circle-outline" size={18} color="#FFFFFF" />}
             onPress={() => router.push('/projects/new')}
+            style={styles.newProjectButton}
           />
         </View>
 
@@ -77,10 +133,10 @@ export default function WorkspaceScreen() {
               </Card>
             ))}
           </View>
-        ) : userProjects.length > 0 ? (
+        ) : filteredProjects.length > 0 ? (
           <AnimatedEntrance duration={180}>
             <View style={styles.projectsList}>
-              {userProjects.map((proj) => (
+              {filteredProjects.map((proj) => (
                 <Card
                   key={proj.id}
                   variant="clay"
@@ -94,20 +150,80 @@ export default function WorkspaceScreen() {
                 >
                   <View style={styles.projectCardInner}>
                     <View style={styles.projectItemHeader}>
-                      <Text
-                        style={[
-                          styles.projectItemTitle,
-                          {
-                            color: theme.colors.text,
-                            fontSize: theme.typography.sizes.md,
-                            fontWeight: theme.typography.weights.semibold,
-                            letterSpacing: -0.2,
-                          },
-                        ]}
-                        numberOfLines={1}
-                      >
-                        {proj.title}
-                      </Text>
+                      <View style={styles.projectIdentityRow}>
+                        {/* Tactile Squircle Icon Box from Stitch */}
+                        <View
+                          style={[
+                            styles.projectIconSquircle,
+                            {
+                              backgroundColor: theme.isDark ? '#262A34' : theme.clay.surfaceTrack,
+                              borderColor: theme.clay.borderCard,
+                              ...Platform.select({
+                                web: {
+                                  boxShadow: theme.clay.webChipShadow,
+                                } as any,
+                                default: {
+                                  ...theme.clay.shadowChip,
+                                },
+                              }),
+                            },
+                          ]}
+                        >
+                          <Ionicons
+                            name="cube-outline"
+                            size={18}
+                            color={theme.isDark ? '#4CD7F6' : theme.colors.primary}
+                          />
+                        </View>
+
+                        <View style={styles.projectTitleWrapper}>
+                          <Text
+                            style={[
+                              styles.projectItemTitle,
+                              {
+                                color: theme.colors.text,
+                                fontSize: theme.typography.sizes.md,
+                                fontWeight: theme.typography.weights.semibold,
+                                letterSpacing: -0.2,
+                              },
+                            ]}
+                            numberOfLines={1}
+                          >
+                            {proj.title}
+                          </Text>
+
+                          <View style={styles.projectMetaRow}>
+                            <Text
+                              style={[
+                                styles.projectStatusIndicator,
+                                {
+                                  color: proj.status === 'ACTIVE'
+                                    ? (theme.isDark ? '#4CD7F6' : theme.colors.primary)
+                                    : theme.colors.textSecondary,
+                                  fontSize: theme.typography.sizes.micro,
+                                  fontWeight: theme.typography.weights.medium,
+                                },
+                              ]}
+                            >
+                              {proj.status.toLowerCase()}
+                            </Text>
+                            <Text style={[styles.metaDot, { color: theme.colors.textMuted }]}>•</Text>
+                            <Text
+                              style={[
+                                styles.projectItemSlug,
+                                {
+                                  color: theme.colors.textMuted,
+                                  fontSize: theme.typography.sizes.micro,
+                                },
+                              ]}
+                              numberOfLines={1}
+                            >
+                              /{proj.slug}
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+
                       <Badge
                         label={proj.status}
                         variant={proj.status === 'ACTIVE' ? 'success' : 'default'}
@@ -122,7 +238,7 @@ export default function WorkspaceScreen() {
                           {
                             color: theme.colors.textSecondary,
                             fontSize: theme.typography.sizes.sm,
-                            lineHeight: 19,
+                            lineHeight: 20,
                           },
                         ]}
                         numberOfLines={2}
@@ -132,18 +248,20 @@ export default function WorkspaceScreen() {
                     ) : null}
 
                     <View style={styles.projectItemFooter}>
-                      <Text
-                        style={[
-                          styles.projectItemSlug,
-                          {
-                            color: theme.colors.textMuted,
-                            fontSize: theme.typography.sizes.xs,
-                          },
-                        ]}
-                      >
-                        /{proj.slug}
-                      </Text>
-                      <Ionicons name="chevron-forward" size={14} color={theme.colors.textMuted} />
+                      <View style={styles.footerTag}>
+                        <Ionicons
+                          name="git-branch-outline"
+                          size={13}
+                          color={theme.colors.textMuted}
+                        />
+                        <Text style={[styles.footerBranch, { color: theme.colors.textMuted }]}>
+                          main
+                        </Text>
+                      </View>
+
+                      <View style={styles.footerChevronWrap}>
+                        <Ionicons name="chevron-forward" size={16} color={theme.colors.textMuted} />
+                      </View>
                     </View>
                   </View>
                 </Card>
@@ -155,8 +273,12 @@ export default function WorkspaceScreen() {
             <Card variant="clay" padding="lg">
               <EmptyState
                 icon={<Ionicons name="folder-open-outline" size={30} color={theme.colors.primary} />}
-                title="No projects yet"
-                description="Create your first project to start building and recruiting collaborators."
+                title={activeTab === 'all' ? 'No projects yet' : `No ${activeTab.toLowerCase()} projects`}
+                description={
+                  activeTab === 'all'
+                    ? 'Create your first project to start building and recruiting collaborators.'
+                    : `You don't have any projects with ${activeTab.toLowerCase()} status.`
+                }
                 actionTitle="Create a Project"
                 onActionPress={() => router.push('/projects/new')}
               />
@@ -176,41 +298,107 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   innerStack: {
-    gap: 20,
+    gap: 16,
   },
-  headerRow: {
+  headerBlock: {
+    gap: 4,
+    paddingTop: 4,
+  },
+  headerTitleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 4,
   },
   pageTitle: {},
-  pageSubtitle: {
-    marginTop: 2,
+  pageSubtitle: {},
+  activeBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 9999,
+    borderWidth: 1,
+    gap: 6,
+  },
+  pulseDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  activeBadgeText: {},
+  actionBar: {
+    gap: 10,
+  },
+  newProjectButton: {
+    width: '100%',
   },
   projectsList: {
     gap: 12,
   },
   projectCardInner: {
-    gap: 6,
+    gap: 10,
   },
   projectItemHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
+    gap: 8,
   },
-  projectItemTitle: {
+  projectIdentityRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
     flex: 1,
-    marginRight: 8,
+    minWidth: 0,
+  },
+  projectIconSquircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shrink: 0,
+  },
+  projectTitleWrapper: {
+    flex: 1,
+    minWidth: 0,
+  },
+  projectItemTitle: {},
+  projectMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 2,
+  },
+  projectStatusIndicator: {
+    textTransform: 'uppercase',
+  },
+  metaDot: {
+    fontSize: 10,
+  },
+  projectItemSlug: {
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    flexShrink: 1,
   },
   projectItemDesc: {},
   projectItemFooter: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 4,
+    paddingTop: 4,
   },
-  projectItemSlug: {
-    fontFamily: 'monospace',
+  footerTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  footerBranch: {
+    fontSize: 11,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  footerChevronWrap: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

@@ -227,6 +227,33 @@ export default function ProfileScreen() {
                 onPress={handleEditProfile}
               />
             </View>
+
+            {/* Appearance Segmented Control from Stitch */}
+            <View style={styles.appearanceSection}>
+              <Text
+                style={[
+                  styles.appearanceLabel,
+                  {
+                    color: theme.colors.textMuted,
+                    fontSize: theme.typography.sizes.micro,
+                    fontWeight: theme.typography.weights.semibold,
+                    letterSpacing: 0.8,
+                  },
+                ]}
+              >
+                APPEARANCE
+              </Text>
+              <SegmentedControl<'light' | 'dark' | 'system'>
+                size="sm"
+                options={[
+                  { label: 'Light', value: 'light' },
+                  { label: 'Dark', value: 'dark' },
+                  { label: 'Auto', value: 'system' },
+                ]}
+                value={preference}
+                onChange={setPreference}
+              />
+            </View>
           </Card>
           </AnimatedEntrance>
 
@@ -252,6 +279,30 @@ export default function ProfileScreen() {
                 >
                   Skills
                 </Text>
+
+                {/* Counter Badge from Stitch */}
+                <View
+                  style={[
+                    styles.counterBadge,
+                    {
+                      backgroundColor: theme.isDark ? '#262A34' : theme.clay.surfaceRecessed,
+                      borderColor: theme.clay.borderCard,
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.counterBadgeText,
+                      {
+                        color: theme.colors.textSecondary,
+                        fontSize: theme.typography.sizes.micro,
+                        fontWeight: theme.typography.weights.semibold,
+                      },
+                    ]}
+                  >
+                    {userSkills.length}
+                  </Text>
+                </View>
               </View>
 
               <TouchableOpacity
@@ -352,7 +403,7 @@ export default function ProfileScreen() {
               </View>
             </View>
 
-            {/* Clean Tactile Empty State */}
+            {/* Clean Tactile Empty State from Stitch */}
             <View
               style={[
                 styles.emptyProjectsSlot,
@@ -412,33 +463,25 @@ export default function ProfileScreen() {
           </Card>
           </AnimatedEntrance>
 
-          {/* Bottom Sign Out Button */}
+          {/* Bottom Sign Out Tactile Button from Stitch */}
           <AnimatedEntrance staggerIndex={1}>
             <View style={styles.signOutWrapper}>
-            <TouchableOpacity
-              onPress={handleSignOut}
-              activeOpacity={0.7}
-              style={styles.signOutButton}
-            >
-              <Ionicons
-                name="log-out-outline"
-                size={16}
-                color={theme.colors.error}
+              <Button
+                title="Sign Out"
+                variant="claySecondary"
+                size="md"
+                leftIcon={
+                  <Ionicons
+                    name="log-out-outline"
+                    size={18}
+                    color={theme.colors.error}
+                  />
+                }
+                textStyle={{ color: theme.colors.error }}
+                onPress={handleSignOut}
+                style={styles.signOutButton}
               />
-              <Text
-                style={[
-                  styles.signOutText,
-                  {
-                    color: theme.colors.error,
-                    fontSize: theme.typography.sizes.sm,
-                    fontWeight: theme.typography.weights.medium,
-                  },
-                ]}
-              >
-                Sign Out
-              </Text>
-            </TouchableOpacity>
-          </View>
+            </View>
           </AnimatedEntrance>
 
         </View>
