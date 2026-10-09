@@ -68,9 +68,10 @@ export default function EditProjectScreen() {
   const uploadCoverMutation = useUploadProjectCover(id || '');
   const removeCoverMutation = useRemoveProjectCover(id || '');
 
-  const [coverImageUri, setCoverImageUri] = useState<string | null>(null);
-  const [coverModified, setCoverModified] = useState(false);
+  const [localCoverUri, setLocalCoverUri] = useState<string | null | undefined>(undefined);
   const isCoverBusy = uploadCoverMutation.isPending || removeCoverMutation.isPending;
+  const effectiveCoverUri = localCoverUri !== undefined ? localCoverUri : (project?.cover_image_url || null);
+  const coverModified = localCoverUri !== undefined;
 
   const {
     control,
@@ -113,11 +114,8 @@ export default function EditProjectScreen() {
         live_url: project.live_url || '',
         skillIds: (project.skills || []).map((s) => s.id),
       });
-      if (!coverModified) {
-        setCoverImageUri(project.cover_image_url || null);
-      }
     }
-  }, [project, reset, coverModified]);
+  }, [project, reset]);
 
   const selectedSkillIds = useWatch({ control, name: 'skillIds' }) || [];
   const selectedStatus = useWatch({ control, name: 'status' }) || 'ACTIVE';
@@ -135,8 +133,7 @@ export default function EditProjectScreen() {
   };
 
   const handleCoverChange = (newUri: string | null) => {
-    setCoverImageUri(newUri);
-    setCoverModified(true);
+    setLocalCoverUri(newUri);
   };
 
   const onSubmit = async (formData: ProjectEditFormInput) => {
@@ -153,12 +150,12 @@ export default function EditProjectScreen() {
 
       // Handle cover image update or removal
       if (coverModified) {
-        if (coverImageUri && coverImageUri !== project?.cover_image_url) {
+        if (effectiveCoverUri && effectiveCoverUri !== project?.cover_image_url) {
           await uploadCoverMutation.mutateAsync({
-            imageUri: coverImageUri,
+            imageUri: effectiveCoverUri,
             previousCoverUrl: project?.cover_image_url,
           });
-        } else if (!coverImageUri && project?.cover_image_url) {
+        } else if (!effectiveCoverUri && project?.cover_image_url) {
           await removeCoverMutation.mutateAsync(project.cover_image_url);
         }
       }
@@ -395,7 +392,7 @@ export default function EditProjectScreen() {
             <Card variant="clay" padding="lg" style={styles.formCard}>
               {/* Cover Image Picker */}
               <CoverImagePicker
-                value={coverImageUri}
+                value={effectiveCoverUri}
                 onChange={handleCoverChange}
                 isUploading={isCoverBusy}
                 disabled={updateProjectMutation.isPending}
