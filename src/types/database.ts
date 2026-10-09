@@ -372,6 +372,46 @@ export interface Database {
           },
         ];
       };
+      connections: {
+        Row: {
+          id: string;
+          requester_id: string;
+          recipient_id: string;
+          status: ConnectionStatus;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          requester_id: string;
+          recipient_id: string;
+          status?: ConnectionStatus;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          requester_id?: string;
+          recipient_id?: string;
+          status?: ConnectionStatus;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'connections_requester_id_fkey';
+            columns: ['requester_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'connections_recipient_id_fkey';
+            columns: ['recipient_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -391,10 +431,19 @@ export interface Database {
         Args: Record<PropertyKey, never>;
         Returns: unknown;
       };
+      handle_new_connection_request: {
+        Args: Record<PropertyKey, never>;
+        Returns: unknown;
+      };
+      handle_connection_update: {
+        Args: Record<PropertyKey, never>;
+        Returns: unknown;
+      };
     };
     Enums: {
       project_status: ProjectStatus;
       collaboration_request_status: CollaborationRequestStatus;
+      connection_status: ConnectionStatus;
     };
   };
 }
@@ -445,4 +494,26 @@ export type PostUpdate = Database['public']['Tables']['posts']['Update'];
 
 export interface PostWithAuthor extends Post {
   author?: Profile | null;
+}
+
+export type ConnectionStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED';
+export type Connection = Database['public']['Tables']['connections']['Row'];
+export type ConnectionInsert = Database['public']['Tables']['connections']['Insert'];
+export type ConnectionUpdate = Database['public']['Tables']['connections']['Update'];
+
+export interface ConnectionWithProfiles extends Connection {
+  requester?: Profile | null;
+  recipient?: Profile | null;
+}
+
+export type ProfileRelationshipStatus =
+  | 'SELF'
+  | 'NOT_CONNECTED'
+  | 'OUTGOING_PENDING'
+  | 'INCOMING_PENDING'
+  | 'CONNECTED';
+
+export interface ProfileRelationship {
+  status: ProfileRelationshipStatus;
+  connection?: Connection | null;
 }

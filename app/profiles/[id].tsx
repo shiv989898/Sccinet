@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Alert,
   Platform,
   ScrollView,
   StyleSheet,
@@ -13,18 +14,30 @@ import { useQuery } from '@tanstack/react-query';
 import { useTheme } from '../../src/hooks/useTheme';
 import { profileService } from '../../src/services/profiles/profileService';
 import { projectService } from '../../src/services/projects/projectService';
+import { useAuth } from '../../src/features/auth/AuthContext';
 import {
   Card,
   Avatar,
   Badge,
+  Button,
   SkeletonLoader,
   EmptyState,
   AnimatedEntrance,
 } from '../../src/components/ui';
+import {
+  useAcceptConnectionRequest,
+  useProfileRelationship,
+  useRejectConnectionRequest,
+  useRemoveConnection,
+  useSendConnectionRequest,
+  useWithdrawConnectionRequest,
+} from '../../src/features/network';
 
 export default function PublicProfileScreen() {
   const theme = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { user } = useAuth();
+  const isSelf = user?.id === id;
 
   const profileQuery = useQuery({
     queryKey: ['profile', 'public', id],
@@ -61,6 +74,75 @@ export default function PublicProfileScreen() {
     },
     enabled: !!id,
   });
+
+  // Relationship hooks
+  const relationshipQuery = useProfileRelationship(isSelf ? undefined : id);
+  const relationship = relationshipQuery.data?.status || 'NOT_CONNECTED';
+  const connectionId = relationshipQuery.data?.connection?.id;
+
+  const sendRequestMutation = useSendConnectionRequest();
+  const acceptRequestMutation = useAcceptConnectionRequest();
+  const rejectRequestMutation = useRejectConnectionRequest();
+  const withdrawRequestMutation = useWithdrawConnectionRequest();
+  const removeConnectionMutation = useRemoveConnection();
+
+  const handleConnect = async () => {
+    if (!id) return;
+    try {
+      await sendRequestMutation.mutateAsync(id);
+    } catch (err: any) {
+      Alert.alert('Error', err?.message || 'Failed to send connection request.');
+    }
+  };
+
+  const handleAccept = async () => {
+    if (!connectionId) return;
+    try {
+      await acceptRequestMutation.mutateAsync(connectionId);
+    } catch (err: any) {
+      Alert.alert('Error', err?.message || 'Failed to accept connection request.');
+    }
+  };
+
+  const handleDecline = async () => {
+    if (!connectionId) return;
+    try {
+      await rejectRequestMutation.mutateAsync(connectionId);
+    } catch (err: any) {
+      Alert.alert('Error', err?.message || 'Failed to decline connection request.');
+    }
+  };
+
+  const handleWithdraw = async () => {
+    if (!connectionId) return;
+    try {
+      await withdrawRequestMutation.mutateAsync(connectionId);
+    } catch (err: any) {
+      Alert.alert('Error', err?.message || 'Failed to withdraw connection request.');
+    }
+  };
+
+  const handleRemove = () => {
+    if (!connectionId || !profile) return;
+    Alert.alert(
+      'Remove Connection',
+      `Are you sure you want to remove your connection with ${profile.full_name}?`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Remove',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await removeConnectionMutation.mutateAsync(connectionId);
+            } catch (err: any) {
+              Alert.alert('Error', err?.message || 'Failed to remove connection.');
+            }
+          },
+        },
+      ]
+    );
+  };
 
   const profile = profileQuery.data;
   const skills = skillsQuery.data || [];
@@ -277,6 +359,145 @@ export default function PublicProfileScreen() {
                     {profile.bio}
                   </Text>
                 ) : null}
+
+                {/* Connection Status & Actions */}
+                {!isSelf && (
+                  <View style={styles.connectionActionBlock}>
+                    {relationshipQuery.isLoading ? (
+                      <SkeletonLoader width={140} height={36} borderRadius={18} />
+                    ) : relationship === 'NOT_CONNECTED' ? (
+                      <Button
+                        title="Connect"
+                        size="sm"
+                        variant="clayPrimary"
+                        onPress={handleConnect}
+                        loading={sendRequestMutation.isPending}
+                        leftIcon={
+                          <Ionicons
+                            name="person-add-outline"
+                            size={16}
+                            color="#FFFFFF"
+                          />
+                        }
+                      />
+                    ) : relationship === 'OUTGOING_PENDING' ? (
+                      <View style={styles.pendingRow}>
+                        <View
+                          style={[
+                            styles.pendingStatusPill,
+                            {
+                              backgroundColor: theme.isDark
+                                ? '#262A34'
+                                : theme.clay.surfaceRecessed,
+                              borderColor: theme.clay.borderCard,
+                            },
+                          ]}
+                        >
+                          <Ionicons
+                            name="time-outline"
+                            size={14}
+                            color={theme.colors.textSecondary}
+                          />
+                          <Text
+                            style={[
+                              styles.pendingStatusLabel,
+                              {
+                                color: theme.colors.textSecondary,
+                                fontSize: theme.typography.sizes.xs,
+                              },
+                            ]}
+                          >
+                            Request Sent
+                          </Text>
+                        </View>
+
+                        <Button
+                          title="Withdraw"
+                          size="sm"
+                          variant="claySecondary"
+                          onPress={handleWithdraw}
+                          loading={withdrawRequestMutation.isPending}
+                        />
+                      </View>
+                    ) : relationship === 'INCOMING_PENDING' ? (
+                      <View style={styles.incomingContainer}>
+                        <Text
+                          style={[
+                            styles.incomingHeading,
+                            {
+                              color: theme.colors.textSecondary,
+                              fontSize: theme.typography.sizes.xs,
+                            },
+                          ]}
+                        >
+                          Requested to connect with you
+                        </Text>
+                        <View style={styles.incomingButtonsRow}>
+                          <Button
+                            title="Accept"
+                            size="sm"
+                            variant="clayPrimary"
+                            onPress={handleAccept}
+                            loading={acceptRequestMutation.isPending}
+                            style={{ flex: 1 }}
+                          />
+                          <Button
+                            title="Decline"
+                            size="sm"
+                            variant="claySecondary"
+                            onPress={handleDecline}
+                            loading={rejectRequestMutation.isPending}
+                            style={{ flex: 1 }}
+                          />
+                        </View>
+                      </View>
+                    ) : relationship === 'CONNECTED' ? (
+                      <View style={styles.connectedRow}>
+                        <View
+                          style={[
+                            styles.connectedPill,
+                            {
+                              backgroundColor: theme.isDark ? '#1C2E29' : '#ECFDF5',
+                              borderColor: theme.isDark ? '#059669' : '#10B981',
+                            },
+                          ]}
+                        >
+                          <Ionicons
+                            name="checkmark-circle"
+                            size={14}
+                            color={theme.isDark ? '#34D399' : '#059669'}
+                          />
+                          <Text
+                            style={[
+                              styles.connectedLabel,
+                              {
+                                color: theme.isDark ? '#34D399' : '#059669',
+                                fontSize: theme.typography.sizes.xs,
+                                fontWeight: theme.typography.weights.medium,
+                              },
+                            ]}
+                          >
+                            Connected
+                          </Text>
+                        </View>
+
+                        <TouchableOpacity
+                          onPress={handleRemove}
+                          activeOpacity={0.7}
+                          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                          accessibilityLabel="Remove connection"
+                          style={styles.disconnectProfileButton}
+                        >
+                          <Ionicons
+                            name="person-remove-outline"
+                            size={16}
+                            color={theme.colors.textMuted}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    ) : null}
+                  </View>
+                )}
               </View>
             </Card>
           </AnimatedEntrance>
@@ -493,6 +714,56 @@ const styles = StyleSheet.create({
   bioText: {
     textAlign: 'center',
     marginTop: 8,
+  },
+  connectionActionBlock: {
+    marginTop: 12,
+    alignItems: 'center',
+    width: '100%',
+  },
+  pendingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  pendingStatusPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    borderWidth: 1,
+    gap: 6,
+  },
+  pendingStatusLabel: {},
+  incomingContainer: {
+    alignItems: 'center',
+    gap: 8,
+    width: '100%',
+  },
+  incomingHeading: {},
+  incomingButtonsRow: {
+    flexDirection: 'row',
+    gap: 10,
+    width: '100%',
+    maxWidth: 240,
+  },
+  connectedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  connectedPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    borderWidth: 1,
+    gap: 6,
+  },
+  connectedLabel: {},
+  disconnectProfileButton: {
+    padding: 6,
   },
   sectionBlock: {
     gap: 10,
