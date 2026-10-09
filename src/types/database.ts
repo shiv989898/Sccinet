@@ -341,6 +341,37 @@ export interface Database {
           },
         ];
       };
+      posts: {
+        Row: {
+          id: string;
+          author_id: string;
+          content: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          author_id: string;
+          content: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          author_id?: string;
+          content?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'posts_author_id_fkey';
+            columns: ['author_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -353,6 +384,10 @@ export interface Database {
         Returns: unknown;
       };
       handle_collaboration_request_status_change: {
+        Args: Record<PropertyKey, never>;
+        Returns: unknown;
+      };
+      handle_post_updated_at: {
         Args: Record<PropertyKey, never>;
         Returns: unknown;
       };
@@ -402,4 +437,12 @@ export interface ProjectWithDetails extends Project {
   roles?: (ProjectRole & { skills?: Skill[] })[];
   members?: (ProjectMember & { profile?: Profile; role?: ProjectRole | null })[];
   collaboration_requests?: CollaborationRequestWithDetails[];
+}
+
+export type Post = Database['public']['Tables']['posts']['Row'];
+export type PostInsert = Database['public']['Tables']['posts']['Insert'];
+export type PostUpdate = Database['public']['Tables']['posts']['Update'];
+
+export interface PostWithAuthor extends Post {
+  author?: Profile | null;
 }
