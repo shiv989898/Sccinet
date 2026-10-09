@@ -15,7 +15,7 @@ import { router } from 'expo-router';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
-import { AnimatedEntrance, Button, Card, Input, SegmentedControl } from '../../src/components/ui';
+import { AnimatedEntrance, Button, Card, Input, SegmentedControl, CoverImagePicker } from '../../src/components/ui';
 import { motionTokens, useReducedMotion } from '../../src/theme/motion';
 import { useAvailableSkills } from '../../src/features/profiles/useProfile';
 import {
@@ -38,6 +38,8 @@ export default function CreateProjectScreen() {
   const reducedMotion = useReducedMotion();
   const [skillSearch, setSkillSearch] = useState('');
   const [generalError, setGeneralError] = useState<string | null>(null);
+  const [coverImageUri, setCoverImageUri] = useState<string | null>(null);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [errorAnim] = useState(() => new Animated.Value(0));
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -128,6 +130,19 @@ export default function CreateProjectScreen() {
 
       if (!createdProject) {
         throw new Error('Project could not be created');
+      }
+
+      // If user selected a cover image, upload it
+      if (coverImageUri) {
+        setIsUploadingCover(true);
+        try {
+          const { projectService } = await import('../../src/services/projects/projectService');
+          await projectService.uploadAndSetCoverImage(createdProject.id, coverImageUri);
+        } catch (uploadErr) {
+          console.warn('Cover image upload failed:', uploadErr);
+        } finally {
+          setIsUploadingCover(false);
+        }
       }
 
       setIsSuccess(true);
@@ -279,6 +294,14 @@ export default function CreateProjectScreen() {
 
               {/* Form Fields */}
               <View style={styles.fieldsContainer}>
+                {/* Cover Image */}
+                <CoverImagePicker
+                  value={coverImageUri}
+                  onChange={setCoverImageUri}
+                  isUploading={isUploadingCover}
+                  disabled={createProjectMutation.isPending}
+                />
+
                 {/* 1. Title */}
                 <View>
                   <Controller

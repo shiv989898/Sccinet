@@ -39,6 +39,69 @@ export function useUpdateProfile() {
         queryClient.invalidateQueries({
           queryKey: profileQueryKeys.profileById(updatedProfile.id),
         });
+        queryClient.invalidateQueries({
+          queryKey: ['profile', 'public', updatedProfile.id],
+        });
+      }
+    },
+  });
+}
+
+export function useUploadAvatar() {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async ({
+      imageUri,
+      previousAvatarUrl,
+    }: {
+      imageUri: string;
+      previousAvatarUrl?: string | null;
+    }) => {
+      if (!user?.id) throw new Error('User not authenticated');
+      const { data, error } = await profileService.uploadAndSetAvatar(
+        user.id,
+        imageUri,
+        previousAvatarUrl
+      );
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (updatedProfile) => {
+      queryClient.setQueryData(profileQueryKeys.currentProfile, updatedProfile);
+      if (updatedProfile?.id) {
+        queryClient.invalidateQueries({
+          queryKey: profileQueryKeys.profileById(updatedProfile.id),
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['profile', 'public', updatedProfile.id],
+        });
+      }
+    },
+  });
+}
+
+export function useRemoveAvatar() {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async (currentAvatarUrl?: string | null) => {
+      if (!user?.id) throw new Error('User not authenticated');
+      const { data, error } = await profileService.removeAvatar(user.id, currentAvatarUrl);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (updatedProfile) => {
+      queryClient.setQueryData(profileQueryKeys.currentProfile, updatedProfile);
+      if (updatedProfile?.id) {
+        queryClient.invalidateQueries({
+          queryKey: profileQueryKeys.profileById(updatedProfile.id),
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['profile', 'public', updatedProfile.id],
+        });
       }
     },
   });

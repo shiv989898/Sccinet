@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
 import { Card, Badge, Button, EmptyState, AnimatedEntrance, SkeletonLoader, SegmentedControl } from '../../src/components/ui';
+import { Image } from 'expo-image';
 import { useAuth } from '../../src/features/auth/AuthContext';
 import { useProjects } from '../../src/features/projects';
 
@@ -168,11 +169,20 @@ export default function WorkspaceScreen() {
                             },
                           ]}
                         >
-                          <Ionicons
-                            name="cube-outline"
-                            size={18}
-                            color={theme.isDark ? '#4CD7F6' : theme.colors.primary}
-                          />
+                          {proj.cover_image_url ? (
+                            <Image
+                              source={{ uri: proj.cover_image_url }}
+                              style={styles.projectCoverThumbnail}
+                              contentFit="cover"
+                              transition={200}
+                            />
+                          ) : (
+                            <Ionicons
+                              name="cube-outline"
+                              size={18}
+                              color={theme.isDark ? '#4CD7F6' : theme.colors.primary}
+                            />
+                          )}
                         </View>
 
                         <View style={styles.projectTitleWrapper}>
@@ -358,6 +368,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
+    overflow: 'hidden',
+  },
+  projectCoverThumbnail: {
+    width: '100%',
+    height: '100%',
   },
   projectTitleWrapper: {
     flex: 1,

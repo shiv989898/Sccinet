@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
+  Alert,
   Animated,
   KeyboardAvoidingView,
   Platform,
@@ -21,8 +23,11 @@ import {
   useUserSkills,
   useAddSkill,
   useRemoveSkill,
+  useUploadAvatar,
+  useRemoveAvatar,
 } from '../../src/features/profiles/useProfile';
-import { Card, Button, Input, AnimatedEntrance } from '../../src/components/ui';
+import { imageUploadService } from '../../src/services/storage/imageUploadService';
+import { Card, Button, Input, AnimatedEntrance, Avatar } from '../../src/components/ui';
 import { motionTokens, useReducedMotion } from '../../src/theme/motion';
 
 export default function OnboardingScreen() {
@@ -32,6 +37,9 @@ export default function OnboardingScreen() {
   const { user } = useAuth();
   const { data: profile } = useCurrentProfile();
   const { mutateAsync: updateProfile, isPending: isUpdating } = useUpdateProfile();
+  const { mutateAsync: uploadAvatar, isPending: isUploadingAvatar } = useUploadAvatar();
+  const { mutateAsync: removeAvatar, isPending: isRemovingAvatar } = useRemoveAvatar();
+  const isAvatarBusy = isUploadingAvatar || isRemovingAvatar;
   const { data: availableSkills = [] } = useAvailableSkills();
   const { data: userSkills = [] } = useUserSkills(user?.id);
   const { mutateAsync: addSkill } = useAddSkill(user?.id);
@@ -118,6 +126,71 @@ export default function OnboardingScreen() {
     }
   };
 
+  const handleAvatarPress = async () => {
+    if (isAvatarBusy) return;
+
+    const selectNewPhoto = async () => {
+      try {
+        const result = await imageUploadService.pickAndOptimizeAvatar();
+        if (result.canceled || !result.data) {
+          if (result.error) {
+            Alert.alert('Photo Access', result.error);
+          }
+          return;
+        }
+
+        await uploadAvatar({
+          imageUri: result.data.uri,
+          previousAvatarUrl: profile?.avatar_url,
+        });
+      } catch (err: any) {
+        Alert.alert('Upload Failed', err?.message || 'Could not upload avatar image.');
+      }
+    };
+
+    const confirmRemovePhoto = () => {
+      Alert.alert(
+        'Remove Avatar',
+        'Are you sure you want to remove your profile photo?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Remove',
+            style: 'destructive',
+            onPress: async () => {
+              try {
+                await removeAvatar(profile?.avatar_url);
+              } catch (err: any) {
+                Alert.alert('Error', err?.message || 'Failed to remove avatar.');
+              }
+            },
+          },
+        ]
+      );
+    };
+
+    if (profile?.avatar_url) {
+      if (Platform.OS === 'web') {
+        const choice = window.confirm(
+          'Choose OK to pick a new avatar, or Cancel to remove current avatar.'
+        );
+        if (choice) {
+          await selectNewPhoto();
+        } else {
+          confirmRemovePhoto();
+        }
+      } else {
+        Alert.alert('Profile Photo', 'Update or remove your avatar', [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Remove Photo', style: 'destructive', onPress: confirmRemovePhoto },
+          { text: 'Choose New Photo', onPress: selectNewPhoto },
+        ]);
+      }
+    } else {
+      await selectNewPhoto();
+    }
+  };
+
   const handleToggleSkill = async (skillId: string) => {
     const isSelected = userSkills.some((s) => s.id === skillId);
     try {
@@ -178,7 +251,14 @@ export default function OnboardingScreen() {
           {/* Header */}
           <AnimatedEntrance staggerIndex={0}>
             <View style={styles.header}>
-              <View style={styles.avatarOuterWrapper}>
+              <TouchableOpacity
+                onPress={handleAvatarPress}
+                activeOpacity={0.85}
+                disabled={isAvatarBusy}
+                accessibilityRole="button"
+                accessibilityLabel="Upload or change profile avatar"
+                style={styles.avatarOuterWrapper}
+              >
                 <View
                   style={[
                     styles.avatarContainer,
@@ -196,16 +276,20 @@ export default function OnboardingScreen() {
                     },
                   ]}
                 >
-                  <View
-                    style={[
-                      styles.avatarInner,
-                      {
-                        backgroundColor: theme.colors.primaryMuted,
-                      },
-                    ]}
-                  >
-                    <Ionicons name="person" size={28} color={theme.colors.primary} />
-                  </View>
+                  {profile?.avatar_url ? (
+                    <Avatar name={fullName || profile?.full_name} url={profile.avatar_url} size={64} />
+                  ) : (
+                    <View
+                      style={[
+                        styles.avatarInner,
+                        {
+                          backgroundColor: theme.colors.primaryMuted,
+                        },
+                      ]}
+                    >
+                      <Ionicons name="person" size={28} color={theme.colors.primary} />
+                    </View>
+                  )}
                 </View>
 
                 {/* Tactile Camera Edit Badge from Stitch */}
@@ -225,9 +309,13 @@ export default function OnboardingScreen() {
                     },
                   ]}
                 >
-                  <Ionicons name="camera" size={13} color="#FFFFFF" />
+                  {isAvatarBusy ? (
+                    <ActivityIndicator size="small" color="#FFFFFF" />
+                  ) : (
+                    <Ionicons name="camera" size={13} color="#FFFFFF" />
+                  )}
                 </View>
-              </View>
+              </TouchableOpacity>
 
               <Text
                 style={[

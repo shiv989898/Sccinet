@@ -117,6 +117,59 @@ export function useUpdateProject(projectId: string) {
   });
 }
 
+export function useUploadProjectCover(projectId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      imageUri,
+      previousCoverUrl,
+    }: {
+      imageUri: string;
+      previousCoverUrl?: string | null;
+    }) => {
+      const { data, error } = await projectService.uploadAndSetCoverImage(
+        projectId,
+        imageUri,
+        previousCoverUrl
+      );
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (updated) => {
+      queryClient.invalidateQueries({ queryKey: projectQueryKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: projectQueryKeys.detailById(projectId) });
+      if (updated?.slug) {
+        queryClient.invalidateQueries({ queryKey: projectQueryKeys.detailBySlug(updated.slug) });
+      }
+      queryClient.invalidateQueries({ queryKey: ['discover', 'projects'] });
+    },
+  });
+}
+
+export function useRemoveProjectCover(projectId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (currentCoverUrl?: string | null) => {
+      const { data, error } = await projectService.removeCoverImage(
+        projectId,
+        currentCoverUrl
+      );
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (updated) => {
+      queryClient.invalidateQueries({ queryKey: projectQueryKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: projectQueryKeys.detailById(projectId) });
+      if (updated?.slug) {
+        queryClient.invalidateQueries({ queryKey: projectQueryKeys.detailBySlug(updated.slug) });
+      }
+      queryClient.invalidateQueries({ queryKey: ['discover', 'projects'] });
+    },
+  });
+}
+
 export function useDeleteProject() {
   const queryClient = useQueryClient();
 

@@ -80,6 +80,78 @@ export const profileService = {
     }
   },
 
+  async uploadAndSetAvatar(
+    userId: string,
+    imageUri: string,
+    previousAvatarUrl?: string | null
+  ): Promise<{ data: Profile | null; error: Error | null }> {
+    try {
+      const { data: authData } = await supabase.auth.getUser();
+      if (!authData.user || authData.user.id !== userId) {
+        return { data: null, error: new Error('Unauthorized to update this avatar') };
+      }
+
+      // Dynamic import or direct call to imageUploadService
+      const { imageUploadService } = await import('../storage/imageUploadService');
+      const uploadResult = await imageUploadService.uploadAvatar(userId, imageUri);
+
+      if (uploadResult.error || !uploadResult.data) {
+        return { data: null, error: uploadResult.error || new Error('Upload failed') };
+      }
+
+      const { publicUrl, storagePath } = uploadResult.data;
+
+      // Update database profile
+      const { data: updatedProfile, error: dbError } = await this.updateCurrentProfile({
+        avatar_url: publicUrl,
+      });
+
+      if (dbError || !updatedProfile) {
+        // Rollback: delete newly uploaded file to avoid orphaned storage object
+        await imageUploadService.deleteFromStorage('avatars', storagePath);
+        return { data: null, error: dbError || new Error('Failed to update avatar in database') };
+      }
+
+      // Success: clean up previous avatar if it was in storage and different
+      if (previousAvatarUrl && previousAvatarUrl !== publicUrl) {
+        await imageUploadService.deleteFromStorage('avatars', previousAvatarUrl);
+      }
+
+      return { data: updatedProfile, error: null };
+    } catch (err: any) {
+      return { data: null, error: new Error(err.message || 'Failed to update avatar') };
+    }
+  },
+
+  async removeAvatar(
+    userId: string,
+    currentAvatarUrl?: string | null
+  ): Promise<{ data: Profile | null; error: Error | null }> {
+    try {
+      const { data: authData } = await supabase.auth.getUser();
+      if (!authData.user || authData.user.id !== userId) {
+        return { data: null, error: new Error('Unauthorized to remove this avatar') };
+      }
+
+      const { data: updatedProfile, error: dbError } = await this.updateCurrentProfile({
+        avatar_url: null,
+      });
+
+      if (dbError || !updatedProfile) {
+        return { data: null, error: dbError || new Error('Failed to remove avatar from database') };
+      }
+
+      if (currentAvatarUrl) {
+        const { imageUploadService } = await import('../storage/imageUploadService');
+        await imageUploadService.deleteFromStorage('avatars', currentAvatarUrl);
+      }
+
+      return { data: updatedProfile, error: null };
+    } catch (err: any) {
+      return { data: null, error: new Error(err.message || 'Failed to remove avatar') };
+    }
+  },
+
   async getAvailableSkills(): Promise<{ data: Skill[]; error: Error | null }> {
     try {
       const { data, error } = await supabase

@@ -297,6 +297,92 @@ export const projectService = {
     }
   },
 
+  async uploadAndSetCoverImage(
+    projectId: string,
+    imageUri: string,
+    previousCoverUrl?: string | null
+  ): Promise<{ data: ProjectWithDetails | null; error: Error | null }> {
+    try {
+      const { data: authData } = await supabase.auth.getUser();
+      if (!authData.user) {
+        return { data: null, error: new Error('User not authenticated') };
+      }
+
+      // Verify user is project owner
+      const { data: currentProject } = await this.getProjectById(projectId);
+      if (!currentProject || currentProject.owner_id !== authData.user.id) {
+        return { data: null, error: new Error('Unauthorized: only the project owner can update cover image') };
+      }
+
+      const { imageUploadService } = await import('../storage/imageUploadService');
+      const uploadResult = await imageUploadService.uploadProjectCover(
+        authData.user.id,
+        projectId,
+        imageUri
+      );
+
+      if (uploadResult.error || !uploadResult.data) {
+        return { data: null, error: uploadResult.error || new Error('Upload failed') };
+      }
+
+      const { publicUrl, storagePath } = uploadResult.data;
+
+      // Update project cover_image_url in database
+      const { error: updateError } = await this.updateProject(projectId, {
+        cover_image_url: publicUrl,
+      });
+
+      if (updateError) {
+        // Rollback: delete uploaded file so no orphaned file exists
+        await imageUploadService.deleteFromStorage('project-covers', storagePath);
+        return { data: null, error: updateError };
+      }
+
+      // Success: clean up previous cover if it was in storage and different
+      if (previousCoverUrl && previousCoverUrl !== publicUrl) {
+        await imageUploadService.deleteFromStorage('project-covers', previousCoverUrl);
+      }
+
+      return await this.getProjectById(projectId);
+    } catch (err: any) {
+      return { data: null, error: new Error(err.message || 'Failed to set project cover image') };
+    }
+  },
+
+  async removeCoverImage(
+    projectId: string,
+    currentCoverUrl?: string | null
+  ): Promise<{ data: ProjectWithDetails | null; error: Error | null }> {
+    try {
+      const { data: authData } = await supabase.auth.getUser();
+      if (!authData.user) {
+        return { data: null, error: new Error('User not authenticated') };
+      }
+
+      const { data: currentProject } = await this.getProjectById(projectId);
+      if (!currentProject || currentProject.owner_id !== authData.user.id) {
+        return { data: null, error: new Error('Unauthorized: only the project owner can remove cover image') };
+      }
+
+      const { error: updateError } = await this.updateProject(projectId, {
+        cover_image_url: null,
+      });
+
+      if (updateError) {
+        return { data: null, error: updateError };
+      }
+
+      if (currentCoverUrl) {
+        const { imageUploadService } = await import('../storage/imageUploadService');
+        await imageUploadService.deleteFromStorage('project-covers', currentCoverUrl);
+      }
+
+      return await this.getProjectById(projectId);
+    } catch (err: any) {
+      return { data: null, error: new Error(err.message || 'Failed to remove project cover image') };
+    }
+  },
+
   async deleteProject(id: string): Promise<{ error: Error | null }> {
     try {
       const { error } = await supabase

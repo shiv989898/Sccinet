@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Platform,
   ScrollView,
@@ -13,7 +14,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useThemeStore } from '../../src/stores/useThemeStore';
 import { useAuth } from '../../src/features/auth/AuthContext';
-import { useCurrentProfile, useUserSkills } from '../../src/features/profiles/useProfile';
+import {
+  useCurrentProfile,
+  useRemoveAvatar,
+  useUploadAvatar,
+  useUserSkills,
+} from '../../src/features/profiles/useProfile';
+import { imageUploadService } from '../../src/services/storage/imageUploadService';
 import { Card, Button, Avatar, AnimatedEntrance, SegmentedControl } from '../../src/components/ui';
 
 export default function ProfileScreen() {
@@ -22,6 +29,74 @@ export default function ProfileScreen() {
   const { user, signOut } = useAuth();
   const { data: profile } = useCurrentProfile();
   const { data: userSkills = [] } = useUserSkills(user?.id);
+  const { mutateAsync: uploadAvatar, isPending: isUploadingAvatar } = useUploadAvatar();
+  const { mutateAsync: removeAvatar, isPending: isRemovingAvatar } = useRemoveAvatar();
+  const isAvatarBusy = isUploadingAvatar || isRemovingAvatar;
+
+  const handleAvatarPress = async () => {
+    if (isAvatarBusy) return;
+
+    const selectNewPhoto = async () => {
+      try {
+        const result = await imageUploadService.pickAndOptimizeAvatar();
+        if (result.canceled || !result.data) {
+          if (result.error) {
+            Alert.alert('Photo Access', result.error);
+          }
+          return;
+        }
+
+        await uploadAvatar({
+          imageUri: result.data.uri,
+          previousAvatarUrl: profile?.avatar_url,
+        });
+      } catch (err: any) {
+        Alert.alert('Upload Failed', err?.message || 'Could not upload avatar image.');
+      }
+    };
+
+    const confirmRemovePhoto = () => {
+      Alert.alert(
+        'Remove Avatar',
+        'Are you sure you want to remove your profile photo?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Remove',
+            style: 'destructive',
+            onPress: async () => {
+              try {
+                await removeAvatar(profile?.avatar_url);
+              } catch (err: any) {
+                Alert.alert('Error', err?.message || 'Failed to remove avatar.');
+              }
+            },
+          },
+        ]
+      );
+    };
+
+    if (profile?.avatar_url) {
+      if (Platform.OS === 'web') {
+        const choice = window.confirm(
+          'Choose OK to pick a new avatar, or Cancel to remove current avatar.'
+        );
+        if (choice) {
+          await selectNewPhoto();
+        } else {
+          confirmRemovePhoto();
+        }
+      } else {
+        Alert.alert('Profile Photo', 'Update or remove your avatar', [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Remove Photo', style: 'destructive', onPress: confirmRemovePhoto },
+          { text: 'Choose New Photo', onPress: selectNewPhoto },
+        ]);
+      }
+    } else {
+      await selectNewPhoto();
+    }
+  };
 
   const handleEditProfile = () => {
     router.push('/(auth)/onboarding');
@@ -118,7 +193,12 @@ export default function ProfileScreen() {
           <AnimatedEntrance staggerIndex={0}>
             <Card variant="clay" padding="xl" style={styles.identityCard}>
             <View style={styles.avatarRow}>
-              <View
+              <TouchableOpacity
+                onPress={handleAvatarPress}
+                activeOpacity={0.85}
+                disabled={isAvatarBusy}
+                accessibilityRole="button"
+                accessibilityLabel="Change profile avatar"
                 style={[
                   styles.avatarWrapper,
                   {
@@ -136,7 +216,41 @@ export default function ProfileScreen() {
                 ]}
               >
                 <Avatar name={displayName} url={profile?.avatar_url} size="xl" />
-              </View>
+
+                <View
+                  style={[
+                    styles.avatarBadge,
+                    {
+                      backgroundColor: theme.isDark ? '#262A34' : theme.clay.surface,
+                      borderColor: theme.clay.borderCard,
+                      ...Platform.select({
+                        web: {
+                          boxShadow: theme.clay.webChipShadow,
+                        } as any,
+                        default: {
+                          ...theme.clay.shadowChip,
+                        },
+                      }),
+                    },
+                  ]}
+                >
+                  {isAvatarBusy ? (
+                    <ActivityIndicator size="small" color={theme.colors.primary} />
+                  ) : (
+                    <Ionicons
+                      name="camera-outline"
+                      size={14}
+                      color={theme.isDark ? '#4CD7F6' : theme.colors.primary}
+                    />
+                  )}
+                </View>
+
+                {isAvatarBusy ? (
+                  <View style={styles.avatarLoadingOverlay}>
+                    <ActivityIndicator size="small" color="#FFFFFF" />
+                  </View>
+                ) : null}
+              </TouchableOpacity>
             </View>
 
             <View style={styles.identityInfo}>
@@ -550,6 +664,29 @@ const styles = StyleSheet.create({
     padding: 3,
     borderRadius: 9999,
     borderWidth: 1,
+    position: 'relative',
+  },
+  avatarBadge: {
+    position: 'absolute',
+    bottom: -2,
+    right: -2,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarLoadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 9999,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   identityInfo: {
     alignItems: 'center',

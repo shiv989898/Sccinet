@@ -21,6 +21,7 @@ import {
   SkeletonLoader,
   EmptyState,
 } from '../../src/components/ui';
+import { Image } from 'expo-image';
 import {
   useDebounce,
   useDiscoverProjects,
@@ -296,11 +297,20 @@ export default function DiscoverScreen() {
                             },
                           ]}
                         >
-                          <Ionicons
-                            name="cube-outline"
-                            size={18}
-                            color={theme.isDark ? '#4CD7F6' : theme.colors.primary}
-                          />
+                          {project.cover_image_url ? (
+                            <Image
+                              source={{ uri: project.cover_image_url }}
+                              style={styles.projectCoverThumbnail}
+                              contentFit="cover"
+                              transition={200}
+                            />
+                          ) : (
+                            <Ionicons
+                              name="cube-outline"
+                              size={18}
+                              color={theme.isDark ? '#4CD7F6' : theme.colors.primary}
+                            />
+                          )}
                         </View>
 
                         <View style={styles.projectTitleWrapper}>
@@ -700,6 +710,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  projectCoverThumbnail: {
+    width: '100%',
+    height: '100%',
   },
   projectTitleWrapper: {
     flex: 1,

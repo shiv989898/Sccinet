@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
+import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
 import { AnimatedEntrance, Avatar, Badge, Button, Card, Input, SkeletonLoader } from '../../src/components/ui';
@@ -504,6 +505,34 @@ export default function ProjectDetailScreen() {
         ) : (
           <AnimatedEntrance duration={180}>
             <View style={styles.centerContainer}>
+              {/* Optional Project Cover Banner */}
+              {project.cover_image_url ? (
+                <View
+                  style={[
+                    styles.coverBannerContainer,
+                    {
+                      borderColor: theme.clay.borderCard,
+                      backgroundColor: theme.clay.surfaceRecessed,
+                      ...Platform.select({
+                        web: {
+                          boxShadow: theme.clay.webCardShadow,
+                        } as any,
+                        default: {
+                          ...theme.clay.shadowCard,
+                        },
+                      }),
+                    },
+                  ]}
+                >
+                  <Image
+                    source={{ uri: project.cover_image_url }}
+                    style={styles.coverBannerImage}
+                    contentFit="cover"
+                    transition={200}
+                  />
+                </View>
+              ) : null}
+
               {/* 1. Project Identity Card */}
               <Card variant="clay" padding="lg" style={styles.sectionCard}>
                 <View style={styles.headerMetaRow}>
@@ -1944,6 +1973,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 12,
     lineHeight: 18,
+  },
+  coverBannerContainer: {
+    width: '100%',
+    aspectRatio: 16 / 9,
+    maxHeight: 220,
+    borderRadius: 16,
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
+  coverBannerImage: {
+    width: '100%',
+    height: '100%',
   },
   sectionCard: {
     width: '100%',

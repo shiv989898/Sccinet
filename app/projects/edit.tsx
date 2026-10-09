@@ -15,7 +15,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
-import { AnimatedEntrance, Button, Card, Input, SegmentedControl, SkeletonLoader } from '../../src/components/ui';
+import { AnimatedEntrance, Button, Card, Input, SegmentedControl, SkeletonLoader, CoverImagePicker } from '../../src/components/ui';
 import { motionTokens, useReducedMotion } from '../../src/theme/motion';
 import { useAvailableSkills } from '../../src/features/profiles/useProfile';
 import { useAuth } from '../../src/features/auth/AuthContext';
@@ -24,6 +24,8 @@ import {
   ProjectEditFormInput,
   useProject,
   useUpdateProjectWithSkills,
+  useUploadProjectCover,
+  useRemoveProjectCover,
 } from '../../src/features/projects';
 import { ProjectStatus } from '../../src/types/database';
 
@@ -63,6 +65,12 @@ export default function EditProjectScreen() {
   const { data: project, isLoading: isLoadingProject, error: projectError } = useProject(id);
   const { data: allSkills = [], isLoading: isLoadingSkills } = useAvailableSkills();
   const updateProjectMutation = useUpdateProjectWithSkills(id || '');
+  const uploadCoverMutation = useUploadProjectCover(id || '');
+  const removeCoverMutation = useRemoveProjectCover(id || '');
+
+  const [coverImageUri, setCoverImageUri] = useState<string | null>(null);
+  const [coverModified, setCoverModified] = useState(false);
+  const isCoverBusy = uploadCoverMutation.isPending || removeCoverMutation.isPending;
 
   const {
     control,
@@ -105,8 +113,11 @@ export default function EditProjectScreen() {
         live_url: project.live_url || '',
         skillIds: (project.skills || []).map((s) => s.id),
       });
+      if (!coverModified) {
+        setCoverImageUri(project.cover_image_url || null);
+      }
     }
-  }, [project, reset]);
+  }, [project, reset, coverModified]);
 
   const selectedSkillIds = useWatch({ control, name: 'skillIds' }) || [];
   const selectedStatus = useWatch({ control, name: 'status' }) || 'ACTIVE';
@@ -123,6 +134,11 @@ export default function EditProjectScreen() {
     }
   };
 
+  const handleCoverChange = (newUri: string | null) => {
+    setCoverImageUri(newUri);
+    setCoverModified(true);
+  };
+
   const onSubmit = async (formData: ProjectEditFormInput) => {
     setGeneralError(null);
     try {
@@ -134,6 +150,18 @@ export default function EditProjectScreen() {
         live_url: formData.live_url?.trim() || null,
         skillIds: formData.skillIds,
       });
+
+      // Handle cover image update or removal
+      if (coverModified) {
+        if (coverImageUri && coverImageUri !== project?.cover_image_url) {
+          await uploadCoverMutation.mutateAsync({
+            imageUri: coverImageUri,
+            previousCoverUrl: project?.cover_image_url,
+          });
+        } else if (!coverImageUri && project?.cover_image_url) {
+          await removeCoverMutation.mutateAsync(project.cover_image_url);
+        }
+      }
 
       setIsSuccess(true);
       setTimeout(() => {
@@ -365,6 +393,14 @@ export default function EditProjectScreen() {
 
             {/* Form Card */}
             <Card variant="clay" padding="lg" style={styles.formCard}>
+              {/* Cover Image Picker */}
+              <CoverImagePicker
+                value={coverImageUri}
+                onChange={handleCoverChange}
+                isUploading={isCoverBusy}
+                disabled={updateProjectMutation.isPending}
+              />
+
               {/* Title Input */}
               <View style={styles.inputGroup}>
                 <Controller
