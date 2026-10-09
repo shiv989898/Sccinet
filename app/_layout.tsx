@@ -113,6 +113,14 @@ function RootNavigator() {
           }}
         />
         <Stack.Screen
+          name="profiles/[id]"
+          options={{
+            headerShown: false,
+            animation: Platform.OS === 'web' ? 'fade' : 'slide_from_right',
+            animationDuration: 220,
+          }}
+        />
+        <Stack.Screen
           name="+not-found"
           options={{
             title: 'Not Found',
