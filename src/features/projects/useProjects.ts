@@ -13,6 +13,8 @@ export const projectQueryKeys = {
   lists: () => [...projectQueryKeys.all, 'list'] as const,
   list: (filter?: { status?: ProjectStatus; ownerId?: string }) =>
     [...projectQueryKeys.lists(), filter] as const,
+  listDetails: (filter?: { status?: ProjectStatus; ownerId?: string }) =>
+    [...projectQueryKeys.lists(), 'details', filter] as const,
   details: () => [...projectQueryKeys.all, 'detail'] as const,
   detailById: (id: string) => [...projectQueryKeys.details(), 'id', id] as const,
   detailBySlug: (slug: string) => [...projectQueryKeys.details(), 'slug', slug] as const,
@@ -26,6 +28,17 @@ export function useProjects(filter?: { status?: ProjectStatus; ownerId?: string 
     queryKey: projectQueryKeys.list(filter),
     queryFn: async () => {
       const { data, error } = await projectService.listProjects(filter);
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+export function useProjectsWithDetails(filter?: { status?: ProjectStatus; ownerId?: string }) {
+  return useQuery({
+    queryKey: projectQueryKeys.listDetails(filter),
+    queryFn: async () => {
+      const { data, error } = await projectService.listProjectsWithDetails(filter);
       if (error) throw error;
       return data;
     },

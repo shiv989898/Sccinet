@@ -54,17 +54,48 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 ```
 
 ### 4. Running Locally
+
+#### Option A: Run in Web Browser (Fastest)
 ```bash
-# Start the Expo development server
-npm start
-
-# Run on web
 npm run web
+```
+This opens the application directly in your default browser at `http://localhost:8081`.
 
-# Run on Android
+---
+
+#### Option B: Run on Android Phone (via Expo Go App)
+
+1. **Install Expo Go on your phone:**
+   * Download and install **Expo Go** from the [Google Play Store](https://play.google.com/store/apps/details?id=host.exp.exponent).
+
+2. **Connect to the same Wi-Fi:**
+   * Make sure your computer and your Android phone are connected to the **same Wi-Fi network**.
+
+3. **Start the Expo server:**
+   ```bash
+   npm start
+   ```
+   *(Make sure not to add any extra characters or backslashes at the end of the command).*
+
+4. **Open on your phone:**
+   * Open the **Expo Go** app on your Android phone.
+   * Tap **"Scan QR code"** and point your camera at the QR code displayed in your computer's terminal.
+   * Metro bundler will load the project, and Sccinet will open natively on your phone!
+
+> **Note on Wi-Fi Isolation / Mobile Hotspot:**
+> If your phone cannot connect to your PC's IP, use tunnel mode:
+> ```bash
+> npx expo start --tunnel
+> ```
+
+---
+
+#### Option C: Run on Emulators
+```bash
+# Android Emulator (requires Android Studio)
 npm run android
 
-# Run on iOS (macOS required)
+# iOS Simulator (requires macOS + Xcode)
 npm run ios
 ```
 

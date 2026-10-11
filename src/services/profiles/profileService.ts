@@ -168,4 +168,34 @@ export const profileService = {
       return { error: new Error(err.message || 'Failed to remove skill') };
     }
   },
+
+  async listProfiles(filter?: {
+    limit?: number;
+  }): Promise<{ data: (Profile & { skills?: Skill[] })[]; error: Error | null }> {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select(`
+          *,
+          profile_skills(skills(*))
+        `)
+        .order('created_at', { ascending: false })
+        .limit(filter?.limit || 20);
+
+      if (error) {
+        return { data: [], error: new Error(error.message) };
+      }
+
+      const profilesWithSkills = (data || []).map((p: any) => ({
+        ...p,
+        skills: (p.profile_skills || [])
+          .map((ps: any) => ps.skills as Skill)
+          .filter(Boolean),
+      }));
+
+      return { data: profilesWithSkills, error: null };
+    } catch (err: any) {
+      return { data: [], error: new Error(err.message || 'Failed to list profiles') };
+    }
+  },
 };

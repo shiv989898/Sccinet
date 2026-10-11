@@ -6,9 +6,21 @@ import { useAuth } from '../auth/AuthContext';
 export const profileQueryKeys = {
   currentProfile: ['profile', 'current'] as const,
   profileById: (id: string) => ['profile', id] as const,
+  allProfiles: ['profiles', 'list'] as const,
   availableSkills: ['skills', 'available'] as const,
   userSkills: (userId: string) => ['skills', 'user', userId] as const,
 };
+
+export function useProfiles(limit?: number) {
+  return useQuery({
+    queryKey: [...profileQueryKeys.allProfiles, limit],
+    queryFn: async () => {
+      const { data, error } = await profileService.listProfiles({ limit });
+      if (error) throw error;
+      return data;
+    },
+  });
+}
 
 export function useCurrentProfile() {
   const { user } = useAuth();

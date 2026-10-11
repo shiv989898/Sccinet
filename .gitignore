@@ -42,3 +42,9 @@ example
 # generated native folders
 /ios
 /android
+
+# IDEs and editors
+.vs/
+.idea/
+*.swp
+*.swo

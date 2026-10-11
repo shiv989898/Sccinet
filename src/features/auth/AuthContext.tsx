@@ -9,6 +9,7 @@ interface AuthContextValue {
   isAuthenticated: boolean;
   signOut: () => Promise<void>;
   refreshSession: () => Promise<void>;
+  signInAsDemo: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -60,9 +61,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return () => {
       isMounted = false;
-      subscription.unsubscribe();
+      subscription?.unsubscribe();
     };
   }, []);
+
+  const signInAsDemo = async () => {
+    setIsLoading(true);
+    const { data } = await authService.signInWithDemo();
+    if (data) {
+      setSession(data);
+      setUser(data.user);
+    }
+    setIsLoading(false);
+  };
 
   const signOut = async () => {
     setIsLoading(true);
@@ -81,6 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthenticated: !!session?.user,
         signOut,
         refreshSession,
+        signInAsDemo,
       }}
     >
       {children}

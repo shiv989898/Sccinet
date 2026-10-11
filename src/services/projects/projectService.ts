@@ -344,6 +344,81 @@ export const projectService = {
     }
   },
 
+  async listProjectsWithDetails(filter?: {
+    status?: ProjectStatus;
+    ownerId?: string;
+  }): Promise<{ data: ProjectWithDetails[]; error: Error | null }> {
+    try {
+      let query = supabase
+        .from('projects')
+        .select(`
+          *,
+          owner:profiles!projects_owner_id_fkey(*),
+          project_skills(skills(*)),
+          roles:project_roles(
+            *,
+            project_role_skills(skills(*))
+          ),
+          members:project_members(
+            joined_at,
+            profile:profiles(*),
+            role:project_roles(*)
+          ),
+          collaboration_requests:project_collaboration_requests(
+            *,
+            user:profiles(*),
+            role:project_roles(*)
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (filter?.status) {
+        query = query.eq('status', filter.status);
+      }
+
+      if (filter?.ownerId) {
+        query = query.eq('owner_id', filter.ownerId);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        return { data: [], error: new Error(error.message) };
+      }
+
+      const projectsWithDetails: ProjectWithDetails[] = (data || []).map((item: any) => ({
+        ...item,
+        owner: item.owner as unknown as Profile | undefined,
+        skills: (item.project_skills || [])
+          .map((ps: any) => ps.skills as Skill)
+          .filter(Boolean),
+        roles: (item.roles || []).map((r: any) => ({
+          ...r,
+          skills: (r.project_role_skills || [])
+            .map((rs: any) => rs.skills as Skill)
+            .filter(Boolean),
+        })),
+        members: (item.members || []).map((m: any) => ({
+          project_id: item.id,
+          profile_id: m.profile?.id || '',
+          role_id: m.role?.id || null,
+          joined_at: m.joined_at,
+          profile: m.profile as unknown as Profile | undefined,
+          role: m.role as unknown as ProjectRole | null | undefined,
+        })),
+        collaboration_requests: (item.collaboration_requests || []).map((cr: any) => ({
+          ...cr,
+          user: cr.user as unknown as Profile | undefined,
+          role: cr.role as unknown as ProjectRole | null | undefined,
+        })),
+      }));
+
+      return { data: projectsWithDetails, error: null };
+    } catch (err: any) {
+      return { data: [], error: new Error(err.message || 'Failed to list projects with details') };
+    }
+  },
+
   async addProjectSkill(
     projectId: string,
     skillId: string

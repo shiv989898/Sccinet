@@ -13,6 +13,7 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
 import { authService } from '../../src/services/auth/authService';
+import { useAuth } from '../../src/features/auth/AuthContext';
 import { signInSchema, signUpSchema } from '../../src/features/auth/schemas';
 import { Card, Button, Input, AnimatedEntrance } from '../../src/components/ui';
 import { motionTokens, useReducedMotion } from '../../src/theme/motion';
@@ -20,6 +21,7 @@ import { motionTokens, useReducedMotion } from '../../src/theme/motion';
 export default function SignInScreen() {
   const theme = useTheme();
   const reducedMotion = useReducedMotion();
+  const { signInAsDemo } = useAuth();
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -153,6 +155,19 @@ export default function SignInScreen() {
       }
 
       router.replace('/(tabs)');
+    }
+  };
+
+  const handleDemoSignIn = async () => {
+    setLoading(true);
+    setErrorMessage(null);
+    try {
+      await signInAsDemo();
+      router.replace('/(tabs)');
+    } catch {
+      setErrorMessage('Failed to initiate demo session');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -539,6 +554,18 @@ export default function SignInScreen() {
                     loading={loading}
                     rightIcon={<Ionicons name="arrow-forward" size={16} color="#FFFFFF" />}
                     onPress={handleAuth}
+                  />
+                </View>
+
+                {/* 1-Tap Demo Builder Button */}
+                <View style={{ marginTop: 10 }}>
+                  <Button
+                    title="Explore as Demo Builder (1-Tap)"
+                    variant="claySecondary"
+                    size="md"
+                    loading={loading}
+                    leftIcon={<Ionicons name="sparkles" size={16} color={theme.colors.primary} />}
+                    onPress={handleDemoSignIn}
                   />
                 </View>
               </View>

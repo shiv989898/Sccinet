@@ -125,6 +125,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="discover"
         options={{
+          headerShown: false,
           title: 'Discover',
           tabBarLabel: 'Discover',
           headerTitle: 'Discover',
