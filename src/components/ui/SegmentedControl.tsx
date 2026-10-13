@@ -133,6 +133,7 @@ export function SegmentedControl<T extends string = string>({
               key={option.value}
               accessibilityRole="tab"
               accessibilityState={{ selected: isSelected }}
+              hitSlop={isSm ? { top: 4, bottom: 4, left: 0, right: 0 } : undefined}
               onPress={() => {
                 if (option.value !== value) {
                   onChange(option.value);
