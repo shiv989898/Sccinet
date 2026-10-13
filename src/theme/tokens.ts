@@ -23,8 +23,8 @@ export const palette = {
     borderSubtle: 'rgba(218, 226, 239, 0.6)',
     borderActive: '#3B82F6',
     text: '#0F172A',
-    textSecondary: '#64748B',
-    textMuted: '#94A3B8',
+    textSecondary: '#475569',
+    textMuted: '#596780',
     textInverse: '#FFFFFF',
   },
 
@@ -41,7 +41,7 @@ export const palette = {
     borderActive: '#3B82F6',
     text: '#F8FAFC', // Crisp off-white
     textSecondary: '#94A3B8', // Muted cool slate
-    textMuted: '#64748B',
+    textMuted: '#8897AB',
     textInverse: '#0D111A',
   },
 
