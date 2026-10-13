@@ -65,19 +65,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: true,
-        headerStyle: {
-          backgroundColor: theme.clay.surface,
-          borderBottomWidth: 1,
-          borderBottomColor: theme.clay.borderCard,
-        },
-        headerTitleStyle: {
-          color: theme.colors.text,
-          fontSize: theme.typography.sizes.lg,
-          fontWeight: '600',
-          letterSpacing: -0.3,
-        },
-        headerShadowVisible: false,
+        headerShown: false,
         tabBarHideOnKeyboard: true,
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.textMuted,

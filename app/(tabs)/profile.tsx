@@ -12,6 +12,7 @@ import {
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useThemeStore } from '../../src/stores/useThemeStore';
 import { useAuth } from '../../src/features/auth/AuthContext';
 import {
@@ -25,6 +26,7 @@ import { Card, Button, Avatar, AnimatedEntrance, SegmentedControl } from '../../
 
 export default function ProfileScreen() {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const { preference, setPreference } = useThemeStore();
   const { user, signOut } = useAuth();
   const { data: profile } = useCurrentProfile();
@@ -133,7 +135,10 @@ export default function ProfileScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingTop: Math.max(insets.top + 8, 16) },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         {/* Top Bar - Anchored and immediately interactive */}
@@ -163,7 +168,9 @@ export default function ProfileScreen() {
           <TouchableOpacity
             onPress={() => setPreference(preference === 'dark' ? 'light' : 'dark')}
             activeOpacity={0.8}
+            accessibilityRole="button"
             accessibilityLabel="Toggle appearance"
+            hitSlop={{ top: 5, bottom: 5, left: 5, right: 5 }}
             style={[
               styles.themeSwitchButton,
               {

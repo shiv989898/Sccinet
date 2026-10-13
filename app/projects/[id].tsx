@@ -2160,7 +2160,7 @@ const styles = StyleSheet.create({
   roleOwnerActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
     marginLeft: 6,
   },
   iconActionBtn: {
@@ -2285,12 +2285,12 @@ const styles = StyleSheet.create({
   },
   memberActionColumn: {
     alignItems: 'flex-end',
-    gap: 6,
+    gap: 8,
   },
   memberTextBtn: {
-    minHeight: 36,
+    minHeight: 38,
     paddingVertical: 6,
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
     justifyContent: 'center',
   },
   footerContainer: {

@@ -14,6 +14,7 @@ import {
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Card,
   Button,
@@ -48,6 +49,7 @@ function formatTimestamp(dateString: string): string {
 
 export default function FeedScreen() {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const { user } = useAuth();
   const { data: currentProfile } = useCurrentProfile();
 
@@ -116,7 +118,13 @@ export default function FeedScreen() {
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
-      contentContainerStyle={[styles.content, { padding: theme.spacing.lg }]}
+      contentContainerStyle={[
+        styles.content,
+        {
+          padding: theme.spacing.lg,
+          paddingTop: Math.max(insets.top + 8, theme.spacing.lg),
+        },
+      ]}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
       refreshControl={

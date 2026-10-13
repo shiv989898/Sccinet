@@ -12,6 +12,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import { useTheme } from '../../src/hooks/useTheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { profileService } from '../../src/services/profiles/profileService';
 import { projectService } from '../../src/services/projects/projectService';
 import { useAuth } from '../../src/features/auth/AuthContext';
@@ -35,6 +36,7 @@ import {
 
 export default function PublicProfileScreen() {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuth();
   const isSelf = user?.id === id;
@@ -232,11 +234,21 @@ export default function PublicProfileScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       {/* Top Navigation Bar */}
-      <View style={[styles.headerBar, { paddingHorizontal: theme.spacing.lg }]}>
+      <View
+        style={[
+          styles.headerBar,
+          {
+            paddingHorizontal: theme.spacing.lg,
+            paddingTop: Math.max(insets.top + 6, 12),
+          },
+        ]}
+      >
         <TouchableOpacity
           onPress={handleBack}
           activeOpacity={0.8}
-          accessibilityLabel="Back"
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           style={[
             styles.backButton,
             {

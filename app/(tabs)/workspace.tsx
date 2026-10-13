@@ -3,6 +3,7 @@ import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Card, Badge, Button, EmptyState, AnimatedEntrance, SkeletonLoader, SegmentedControl } from '../../src/components/ui';
 import { Image } from 'expo-image';
 import { useAuth } from '../../src/features/auth/AuthContext';
@@ -10,6 +11,7 @@ import { useProjects } from '../../src/features/projects';
 
 export default function WorkspaceScreen() {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'all' | 'ACTIVE' | 'COMPLETED'>('all');
 
@@ -27,7 +29,13 @@ export default function WorkspaceScreen() {
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
-      contentContainerStyle={[styles.content, { padding: theme.spacing.lg }]}
+      contentContainerStyle={[
+        styles.content,
+        {
+          padding: theme.spacing.lg,
+          paddingTop: Math.max(insets.top + 8, theme.spacing.lg),
+        },
+      ]}
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.innerStack}>

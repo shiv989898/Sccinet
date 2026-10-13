@@ -11,6 +11,7 @@ import {
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Card,
   Input,
@@ -30,6 +31,7 @@ import {
 
 export default function DiscoverScreen() {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<'projects' | 'people'>('projects');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -71,7 +73,13 @@ export default function DiscoverScreen() {
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
-      contentContainerStyle={[styles.content, { padding: theme.spacing.lg }]}
+      contentContainerStyle={[
+        styles.content,
+        {
+          padding: theme.spacing.lg,
+          paddingTop: Math.max(insets.top + 8, theme.spacing.lg),
+        },
+      ]}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
       refreshControl={
