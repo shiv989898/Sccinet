@@ -1330,7 +1330,8 @@ export default function ProjectDetailScreen() {
                                   <Pressable
                                     onPress={() => handleStartEditRole(role)}
                                     style={styles.iconActionBtn}
-                                    hitSlop={4}
+                                    hitSlop={{ top: 4, bottom: 4, left: 3, right: 3 }}
+                                    accessibilityRole="button"
                                     accessibilityLabel={`Edit role ${role.title}`}
                                   >
                                     <Ionicons
@@ -1342,7 +1343,8 @@ export default function ProjectDetailScreen() {
                                   <Pressable
                                     onPress={() => handleDeleteRole(role.id)}
                                     style={styles.iconActionBtn}
-                                    hitSlop={4}
+                                    hitSlop={{ top: 4, bottom: 4, left: 3, right: 3 }}
+                                    accessibilityRole="button"
                                     accessibilityLabel={`Delete role ${role.title}`}
                                   >
                                     <Ionicons
@@ -1772,7 +1774,8 @@ export default function ProjectDetailScreen() {
                                       )
                                     }
                                     style={styles.memberTextBtn}
-                                    hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+                                    hitSlop={{ top: 3, bottom: 3, left: 4, right: 4 }}
+                                    accessibilityRole="button"
                                     accessibilityLabel={isEditingRole ? 'Done editing role' : 'Change role'}
                                   >
                                     <Text
@@ -1793,7 +1796,8 @@ export default function ProjectDetailScreen() {
                                       )
                                     }
                                     style={styles.memberTextBtn}
-                                    hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+                                    hitSlop={{ top: 3, bottom: 3, left: 4, right: 4 }}
+                                    accessibilityRole="button"
                                     accessibilityLabel="Remove member"
                                   >
                                     <Text
@@ -1816,6 +1820,7 @@ export default function ProjectDetailScreen() {
                                   }
                                   style={styles.memberTextBtn}
                                   hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+                                  accessibilityRole="button"
                                   accessibilityLabel="Leave project"
                                 >
                                   <Text
