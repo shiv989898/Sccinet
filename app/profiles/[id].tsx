@@ -484,7 +484,7 @@ export default function PublicProfileScreen() {
                         <TouchableOpacity
                           onPress={handleRemove}
                           activeOpacity={0.7}
-                          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                          hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
                           accessibilityLabel="Remove connection"
                           style={styles.disconnectProfileButton}
                         >
@@ -763,7 +763,11 @@ const styles = StyleSheet.create({
   },
   connectedLabel: {},
   disconnectProfileButton: {
-    padding: 6,
+    width: 36,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 18,
   },
   sectionBlock: {
     gap: 10,

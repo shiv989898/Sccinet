@@ -139,7 +139,7 @@ export default function DiscoverScreen() {
                   onPress={() => setSearchQuery('')}
                   activeOpacity={0.7}
                   accessibilityLabel="Clear search"
-                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  hitSlop={{ top: 13, bottom: 13, left: 13, right: 13 }}
                 >
                   <Ionicons
                     name="close-circle"

@@ -353,6 +353,8 @@ export default function ProjectDetailScreen() {
               router.replace('/(tabs)/workspace');
             }
           }}
+          hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+          accessibilityLabel="Go back"
           style={({ pressed }) => [
             styles.backButton,
             {
@@ -397,6 +399,8 @@ export default function ProjectDetailScreen() {
                 params: { id: id! },
               })
             }
+            hitSlop={{ top: 9, bottom: 9, left: 6, right: 6 }}
+            accessibilityLabel="Edit project"
             style={({ pressed }) => [
               styles.editButtonPill,
               {
@@ -1326,7 +1330,8 @@ export default function ProjectDetailScreen() {
                                   <Pressable
                                     onPress={() => handleStartEditRole(role)}
                                     style={styles.iconActionBtn}
-                                    hitSlop={6}
+                                    hitSlop={4}
+                                    accessibilityLabel={`Edit role ${role.title}`}
                                   >
                                     <Ionicons
                                       name="pencil-outline"
@@ -1337,7 +1342,8 @@ export default function ProjectDetailScreen() {
                                   <Pressable
                                     onPress={() => handleDeleteRole(role.id)}
                                     style={styles.iconActionBtn}
-                                    hitSlop={6}
+                                    hitSlop={4}
+                                    accessibilityLabel={`Delete role ${role.title}`}
                                   >
                                     <Ionicons
                                       name="trash-outline"
@@ -1766,7 +1772,8 @@ export default function ProjectDetailScreen() {
                                       )
                                     }
                                     style={styles.memberTextBtn}
-                                    hitSlop={6}
+                                    hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+                                    accessibilityLabel={isEditingRole ? 'Done editing role' : 'Change role'}
                                   >
                                     <Text
                                       style={{
@@ -1786,7 +1793,8 @@ export default function ProjectDetailScreen() {
                                       )
                                     }
                                     style={styles.memberTextBtn}
-                                    hitSlop={6}
+                                    hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+                                    accessibilityLabel="Remove member"
                                   >
                                     <Text
                                       style={{
@@ -1807,7 +1815,8 @@ export default function ProjectDetailScreen() {
                                     handleRemoveMember(member.profile_id, 'yourself')
                                   }
                                   style={styles.memberTextBtn}
-                                  hitSlop={6}
+                                  hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+                                  accessibilityLabel="Leave project"
                                 >
                                   <Text
                                     style={{
@@ -2150,7 +2159,11 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
   iconActionBtn: {
-    padding: 4,
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   roleDescription: {
     lineHeight: 18,
@@ -2270,8 +2283,10 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   memberTextBtn: {
-    paddingVertical: 4,
-    paddingHorizontal: 6,
+    minHeight: 36,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    justifyContent: 'center',
   },
   footerContainer: {
     alignItems: 'center',

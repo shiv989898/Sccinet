@@ -361,7 +361,7 @@ export default function NetworkScreen() {
                             handleRemoveConnection(conn.id, conn.partner.full_name)
                           }
                           activeOpacity={0.7}
-                          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                          hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
                           accessibilityLabel="Remove connection"
                           style={styles.disconnectButton}
                         >
@@ -626,7 +626,11 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   disconnectButton: {
-    padding: 6,
+    width: 36,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 18,
   },
   requestsContainer: {
     gap: 20,
