@@ -578,6 +578,9 @@ export default function OnboardingScreen() {
                         key={skill.id}
                         activeOpacity={0.7}
                         onPress={() => handleToggleSkill(skill.id)}
+                        accessibilityRole="button"
+                        accessibilityLabel={`Remove skill ${skill.name}`}
+                        hitSlop={{ top: 4, bottom: 4, left: 2, right: 2 }}
                         style={[
                           styles.chipSelected,
                           {
@@ -638,6 +641,9 @@ export default function OnboardingScreen() {
                         key={skill.id}
                         activeOpacity={0.7}
                         onPress={() => handleToggleSkill(skill.id)}
+                        accessibilityRole="button"
+                        accessibilityLabel={`Add skill ${skill.name}`}
+                        hitSlop={{ top: 4, bottom: 4, left: 2, right: 2 }}
                         style={[
                           styles.chipSuggested,
                           {

@@ -15,6 +15,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AnimatedEntrance, Button, Card, Input, SegmentedControl, SkeletonLoader, CoverImagePicker } from '../../src/components/ui';
 import { motionTokens, useReducedMotion } from '../../src/theme/motion';
 import { useAvailableSkills } from '../../src/features/profiles/useProfile';
@@ -38,6 +39,7 @@ const STATUS_OPTIONS: { label: string; value: ProjectStatus }[] = [
 export default function EditProjectScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const isWeb = Platform.OS === 'web';
   const reducedMotion = useReducedMotion();
   const { user } = useAuth();
@@ -251,10 +253,20 @@ export default function EditProjectScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Top Bar - Anchored and immediately interactive */}
-        <View style={styles.topBar}>
+        <View
+          style={[
+            styles.topBar,
+            {
+              paddingTop: Math.max(insets.top + 6, 12),
+              height: undefined,
+              minHeight: 48,
+            },
+          ]}
+        >
           <Pressable
             onPress={() => router.back()}
-            hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+            accessibilityRole="button"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             accessibilityLabel="Go back"
             style={({ pressed }) => [
               styles.backButton,

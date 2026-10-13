@@ -483,7 +483,9 @@ export default function SignInScreen() {
                     rightAccessory={
                       <TouchableOpacity
                         onPress={() => setShowPassword(!showPassword)}
-                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                        accessibilityRole="button"
+                        accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
+                        hitSlop={{ top: 13, bottom: 13, left: 13, right: 13 }}
                       >
                         <Ionicons
                           name={showPassword ? 'eye-off-outline' : 'eye-outline'}
