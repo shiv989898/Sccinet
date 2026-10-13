@@ -448,7 +448,7 @@ export default function FeedScreen() {
                           <TouchableOpacity
                             onPress={() => handleDeletePost(post.id)}
                             activeOpacity={0.7}
-                            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                            hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
                             accessibilityLabel="Delete post"
                             style={styles.deleteButton}
                           >
