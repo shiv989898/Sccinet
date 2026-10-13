@@ -14,6 +14,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AnimatedEntrance, Avatar, Badge, Button, Card, Input, SkeletonLoader } from '../../src/components/ui';
 import { BadgeVariant } from '../../src/components/ui/Badge';
 import { useAuth } from '../../src/features/auth/AuthContext';
