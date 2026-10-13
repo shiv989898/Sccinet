@@ -40,6 +40,7 @@ import { ProjectRole, Skill } from '../../src/types/database';
 export default function ProjectDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const { user } = useAuth();
 
   const { data: project, isLoading, error } = useProject(id);
@@ -345,7 +346,16 @@ export default function ProjectDetailScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       {/* Top Bar - Anchored and instantly interactive */}
-      <View style={styles.topBar}>
+      <View
+        style={[
+          styles.topBar,
+          {
+            paddingTop: Math.max(insets.top + 6, 12),
+            height: undefined,
+            minHeight: 48,
+          },
+        ]}
+      >
         <Pressable
           onPress={() => {
             if (router.canGoBack()) {
@@ -354,7 +364,8 @@ export default function ProjectDetailScreen() {
               router.replace('/(tabs)/workspace');
             }
           }}
-          hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+          accessibilityRole="button"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           accessibilityLabel="Go back"
           style={({ pressed }) => [
             styles.backButton,
