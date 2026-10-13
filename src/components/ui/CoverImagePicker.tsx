@@ -103,7 +103,9 @@ export function CoverImagePicker({
               onPress={handlePickImage}
               disabled={isBusy}
               activeOpacity={0.8}
-              hitSlop={{ top: 8, bottom: 8, left: 6, right: 6 }}
+              accessibilityRole="button"
+              accessibilityLabel="Change cover image"
+              hitSlop={{ top: 6, bottom: 6, left: 2, right: 2 }}
               style={[
                 styles.actionButton,
                 {
@@ -135,7 +137,9 @@ export function CoverImagePicker({
               onPress={handleRemove}
               disabled={isBusy}
               activeOpacity={0.8}
-              hitSlop={{ top: 8, bottom: 8, left: 6, right: 6 }}
+              accessibilityRole="button"
+              accessibilityLabel="Remove cover image"
+              hitSlop={{ top: 6, bottom: 6, left: 2, right: 2 }}
               style={[
                 styles.actionButton,
                 {

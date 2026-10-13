@@ -74,7 +74,7 @@ export function SegmentedControl<T extends string = string>({
   };
 
   const isSm = size === 'sm';
-  const controlHeight = isSm ? 36 : 42;
+  const controlHeight = isSm ? 40 : 44;
 
   return (
     <View
@@ -126,14 +126,15 @@ export function SegmentedControl<T extends string = string>({
 
       {/* Options */}
       <View style={styles.optionsRow}>
-        {options.map((option, index) => {
+        {options.map((option) => {
           const isSelected = option.value === value;
           return (
             <Pressable
               key={option.value}
               accessibilityRole="tab"
+              accessibilityLabel={option.label}
               accessibilityState={{ selected: isSelected }}
-              hitSlop={isSm ? { top: 4, bottom: 4, left: 0, right: 0 } : undefined}
+              hitSlop={isSm ? { top: 2, bottom: 2, left: 0, right: 0 } : undefined}
               onPress={() => {
                 if (option.value !== value) {
                   onChange(option.value);
@@ -142,15 +143,14 @@ export function SegmentedControl<T extends string = string>({
               style={({ pressed }) => [
                 styles.option,
                 {
-                  opacity: pressed ? 0.8 : 1,
-                  transform:
-                    isWeb && pressed
-                      ? [{ scale: motionTokens.scale.pressedChip }]
-                      : [],
+                  opacity: pressed ? 0.75 : 1,
+                  transform: pressed
+                    ? [{ scale: motionTokens.scale.pressedChip }]
+                    : [],
                   ...Platform.select({
                     web: {
                       cursor: 'pointer',
-                      transition: 'opacity 0.15s ease',
+                      transition: 'opacity 0.15s ease, transform 0.15s ease',
                     } as any,
                   }),
                 },
@@ -190,7 +190,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 4,
     justifyContent: 'center',
-    overflow: 'hidden',
   },
   indicator: {
     position: 'absolute',
