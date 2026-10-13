@@ -254,6 +254,8 @@ export default function EditProjectScreen() {
         <View style={styles.topBar}>
           <Pressable
             onPress={() => router.back()}
+            hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+            accessibilityLabel="Go back"
             style={({ pressed }) => [
               styles.backButton,
               {
@@ -575,7 +577,11 @@ export default function EditProjectScreen() {
                     style={[styles.searchInput, { color: theme.colors.text }]}
                   />
                   {skillSearch.length > 0 && (
-                    <Pressable onPress={() => setSkillSearch('')} hitSlop={8}>
+                    <Pressable
+                      onPress={() => setSkillSearch('')}
+                      hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                      accessibilityLabel="Clear skill search"
+                    >
                       <Ionicons name="close-circle" size={16} color={theme.colors.textMuted} />
                     </Pressable>
                   )}
@@ -592,6 +598,8 @@ export default function EditProjectScreen() {
                         <Pressable
                           key={skill.id}
                           onPress={() => handleToggleSkill(skill.id)}
+                          hitSlop={{ top: 4, bottom: 4, left: 2, right: 2 }}
+                          accessibilityLabel={`Remove ${skill.name}`}
                           style={({ pressed }) => [
                             styles.chipSelected,
                             {
@@ -646,6 +654,8 @@ export default function EditProjectScreen() {
                         <Pressable
                           key={skill.id}
                           onPress={() => handleToggleSkill(skill.id)}
+                          hitSlop={{ top: 4, bottom: 4, left: 2, right: 2 }}
+                          accessibilityLabel={`Add ${skill.name}`}
                           style={({ pressed }) => [
                             styles.chipSuggested,
                             {

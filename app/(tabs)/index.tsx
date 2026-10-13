@@ -570,7 +570,11 @@ const styles = StyleSheet.create({
   metaDot: {},
   timestampText: {},
   deleteButton: {
-    padding: 4,
+    width: 36,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 18,
   },
   postBodyText: {
     marginTop: 2,
