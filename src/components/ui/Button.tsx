@@ -55,6 +55,11 @@ export function Button({
   const isWeb = Platform.OS === 'web';
   const reducedMotion = useReducedMotion();
   const isDisabled = disabled || loading;
+  const effectiveHitSlop =
+    props.hitSlop ??
+    (size === 'sm'
+      ? { top: 4, bottom: 4, left: 4, right: 4 }
+      : undefined);
 
   // Native tactile press animation
   const [scaleAnim] = React.useState(() => new Animated.Value(1));
@@ -277,6 +282,7 @@ export function Button({
         accessibilityRole="button"
         accessibilityState={{ disabled: isDisabled, busy: loading }}
         disabled={isDisabled}
+        hitSlop={effectiveHitSlop}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         style={({ pressed }) => [getContainerStyle(pressed), style]}
