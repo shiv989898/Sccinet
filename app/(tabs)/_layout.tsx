@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Animated, Platform, StyleSheet } from 'react-native';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../../src/hooks/useTheme';
 import { useReducedMotion } from '../../src/theme/motion';
 import { GlassView } from '../../src/components/ui/GlassView';
 
