@@ -7,7 +7,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import { BlurView, BlurTint } from 'expo-blur';
+import { BlurView, BlurTint, BlurMethod } from 'expo-blur';
 import { useTheme } from '../../hooks/useTheme';
 
 export type GlassVariant = 'regular' | 'clear' | 'prominent' | 'tabBar';
@@ -21,6 +21,8 @@ export interface GlassViewProps {
   style?: StyleProp<ViewStyle>;
   children?: React.ReactNode;
   pointerEvents?: 'box-none' | 'none' | 'box-only' | 'auto';
+  blurTarget?: React.RefObject<View | null>;
+  blurMethod?: BlurMethod;
 }
 
 /**
@@ -41,6 +43,8 @@ export function GlassView({
   style,
   children,
   pointerEvents,
+  blurTarget,
+  blurMethod,
 }: GlassViewProps) {
   const theme = useTheme();
   const isWeb = Platform.OS === 'web';
@@ -141,6 +145,13 @@ export function GlassView({
   }
 
   // Native BlurView rendering (iOS and Android)
+  const resolvedBlurMethod: BlurMethod | undefined =
+    Platform.OS === 'android'
+      ? blurTarget
+        ? blurMethod || 'dimezisBlurViewSdk31Plus'
+        : 'none'
+      : undefined;
+
   return (
     <View
       pointerEvents={pointerEvents}
@@ -149,7 +160,8 @@ export function GlassView({
       <BlurView
         intensity={effectiveIntensity}
         tint={effectiveTint}
-        blurMethod="dimezisBlurViewSdk31Plus"
+        blurMethod={resolvedBlurMethod}
+        blurTarget={blurTarget}
         style={[
           StyleSheet.absoluteFill,
           {
