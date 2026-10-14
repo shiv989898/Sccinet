@@ -1,4 +1,5 @@
-import { spacing, borderRadius, typography, dimensions, motion, glassTokens } from '../theme/tokens';
+import { ViewStyle } from 'react-native';
+import { spacing, borderRadius, typography, dimensions, motion } from '../theme/tokens';
 
 export type ColorScheme = 'light' | 'dark';
 
@@ -64,10 +65,29 @@ export interface ClayTheme {
   webChipSelectedShadow: string;
 }
 
+export interface GlassMaterial {
+  fill: string;
+  blurIntensity: number;
+  border: string;
+}
+
+export interface GlassTheme {
+  regular: GlassMaterial;
+  clear: GlassMaterial;
+  prominent: GlassMaterial;
+  tabBar: {
+    fill: string;
+    blurIntensity: number;
+    borderTop: string;
+  };
+  highlight: string;
+  ambientShadow: ViewStyle;
+}
+
 export interface Theme {
   colors: ThemeColors;
   clay: ClayTheme;
-  glass: typeof glassTokens.light;
+  glass: GlassTheme;
   spacing: typeof spacing;
   borderRadius: typeof borderRadius;
   typography: typeof typography;
