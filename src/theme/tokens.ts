@@ -1,251 +1,317 @@
 import { ViewStyle } from 'react-native';
 
 export const palette = {
-  // Brand / Primary (Cobalt Blue from Stitch)
-  primary: '#3B82F6',
-  primaryLight: '#60A5FA',
-  primaryDark: '#2563EB',
-  primaryMuted: 'rgba(59, 130, 246, 0.15)',
+  // Apple System Blue Brand Primary
+  primary: '#007AFF',
+  primaryLight: '#409CFF',
+  primaryDark: '#0062CC',
+  primaryMuted: 'rgba(0, 122, 255, 0.12)',
 
-  // Secondary indicator (Cyan / Cool Slate from Stitch)
-  secondary: '#4CD7F6',
-  secondaryMuted: 'rgba(76, 215, 246, 0.15)',
+  // Apple System Secondary (Indigo / Teal Accent)
+  secondary: '#5E5CE6',
+  secondaryMuted: 'rgba(94, 92, 230, 0.12)',
 
-  // Light Mode (True Claymorphism)
+  // Light Appearance (Apple iOS Grouped & Liquid Glass System)
   light: {
-    background: '#EEF1F7', // Soft porcelain clay canvas
-    surface: '#FFFFFF',
-    surfaceSubtle: '#F6F8FC',
+    background: '#F2F2F7', // Apple system grouped background
+    surface: '#FFFFFF', // Secondary grouped background / card surface
+    surfaceSubtle: '#F7F7FA',
     surfaceElevated: '#FFFFFF',
-    surfaceRecessed: '#F1F4F9',
-    surfaceTrack: '#E8EDF5',
-    border: 'rgba(255, 255, 255, 0.95)',
-    borderSubtle: 'rgba(218, 226, 239, 0.6)',
-    borderActive: '#3B82F6',
-    text: '#0F172A',
-    textSecondary: '#475569',
-    textMuted: '#596780',
+    surfaceRecessed: '#E5E5EA', // Apple system gray 5 / search well
+    surfaceTrack: '#E5E5EA',
+    border: 'rgba(0, 0, 0, 0.08)', // Hairline separator (0.5 - 1px)
+    borderSubtle: 'rgba(0, 0, 0, 0.04)',
+    borderActive: '#007AFF',
+    text: '#1C1C1E', // Apple primary label (> 13:1 contrast on #F2F2F7, AAA)
+    textSecondary: '#48484A', // Apple secondary label (> 8:1 contrast on #F2F2F7, AAA)
+    textMuted: '#636366', // Apple tertiary label (> 5.4:1 contrast on #F2F2F7, AA)
     textInverse: '#FFFFFF',
   },
 
-  // Dark Mode (Machined Slate Claymorphism from Stitch DESIGN.md)
+  // Dark Appearance (Apple iOS Pure Black & Elevated Materials)
   dark: {
-    background: '#0D111A', // Foundational void canvas base
-    surface: '#161C28', // Surface elevation for cards and floating controls
-    surfaceSubtle: '#121622',
-    surfaceElevated: '#1C2230',
-    surfaceRecessed: '#101522', // Substrate well for inputs and tracks
-    surfaceTrack: '#0A0E17', // Container lowest
-    border: 'rgba(255, 255, 255, 0.08)', // Inner rim highlight
-    borderSubtle: 'rgba(255, 255, 255, 0.04)',
-    borderActive: '#3B82F6',
-    text: '#F8FAFC', // Crisp off-white
-    textSecondary: '#94A3B8', // Muted cool slate
-    textMuted: '#8897AB',
-    textInverse: '#0D111A',
+    background: '#000000', // Apple true black canvas
+    surface: '#1C1C1E', // Apple system gray 6 card surface
+    surfaceSubtle: '#141416',
+    surfaceElevated: '#2C2C2E', // Apple system gray 5
+    surfaceRecessed: '#1C1C1E', // Search well
+    surfaceTrack: '#121214',
+    border: 'rgba(255, 255, 255, 0.12)', // Hairline light reflection
+    borderSubtle: 'rgba(255, 255, 255, 0.06)',
+    borderActive: '#0A84FF',
+    text: '#FFFFFF', // Crisp pure white (> 18:1 contrast, AAA)
+    textSecondary: '#AEAEB2', // Apple dark secondary label (> 8:1 contrast on #000000, AAA)
+    textMuted: '#8E8E93', // Apple dark tertiary label (> 5.7:1 contrast on #000000, AA)
+    textInverse: '#000000',
   },
 
-  // Status Colors
-  success: '#10B981',
-  successMuted: 'rgba(16, 185, 129, 0.12)',
-  warning: '#F59E0B',
-  warningMuted: 'rgba(245, 158, 11, 0.12)',
-  error: '#EF4444',
-  errorMuted: 'rgba(239, 68, 68, 0.12)',
-  info: '#0EA5E9',
-  infoMuted: 'rgba(14, 165, 233, 0.12)',
+  // Apple Status Colors
+  success: '#34C759',
+  successMuted: 'rgba(52, 199, 89, 0.14)',
+  warning: '#FF9500',
+  warningMuted: 'rgba(255, 149, 0, 0.14)',
+  error: '#FF3B30',
+  errorMuted: 'rgba(255, 59, 48, 0.14)',
+  info: '#32ADE6',
+  infoMuted: 'rgba(50, 173, 230, 0.14)',
 } as const;
 
+export const glassTokens = {
+  light: {
+    regular: {
+      fill: 'rgba(255, 255, 255, 0.75)',
+      blurIntensity: 65,
+      border: 'rgba(255, 255, 255, 0.65)',
+    },
+    clear: {
+      fill: 'rgba(255, 255, 255, 0.45)',
+      blurIntensity: 35,
+      border: 'rgba(255, 255, 255, 0.45)',
+    },
+    prominent: {
+      fill: 'rgba(255, 255, 255, 0.88)',
+      blurIntensity: 85,
+      border: 'rgba(255, 255, 255, 0.85)',
+    },
+    tabBar: {
+      fill: 'rgba(255, 255, 255, 0.80)',
+      blurIntensity: 75,
+      borderTop: 'rgba(0, 0, 0, 0.08)',
+    },
+    highlight: 'rgba(255, 255, 255, 0.75)',
+    ambientShadow: {
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.06,
+      shadowRadius: 16,
+      elevation: 3,
+    } as ViewStyle,
+  },
+  dark: {
+    regular: {
+      fill: 'rgba(28, 28, 30, 0.75)',
+      blurIntensity: 65,
+      border: 'rgba(255, 255, 255, 0.12)',
+    },
+    clear: {
+      fill: 'rgba(28, 28, 30, 0.45)',
+      blurIntensity: 35,
+      border: 'rgba(255, 255, 255, 0.08)',
+    },
+    prominent: {
+      fill: 'rgba(22, 22, 24, 0.88)',
+      blurIntensity: 85,
+      border: 'rgba(255, 255, 255, 0.16)',
+    },
+    tabBar: {
+      fill: 'rgba(18, 18, 20, 0.80)',
+      blurIntensity: 75,
+      borderTop: 'rgba(255, 255, 255, 0.10)',
+    },
+    highlight: 'rgba(255, 255, 255, 0.14)',
+    ambientShadow: {
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.40,
+      shadowRadius: 24,
+      elevation: 4,
+    } as ViewStyle,
+  },
+} as const;
+
+/**
+ * Standardized Component Tokens
+ * Replaces clay with Apple Glass / Material primitives while maintaining full API compatibility
+ */
 export const clayTokens = {
   light: {
     surface: '#FFFFFF',
     surfaceElevated: '#FFFFFF',
-    surfaceRecessed: '#F4F7FC',
-    surfaceTrack: '#EFF2F8',
+    surfaceRecessed: '#E5E5EA',
+    surfaceTrack: '#E5E5EA',
     surfaceActivePill: '#FFFFFF',
-    surfaceChipSelected: '#EFF6FF',
-    surfaceChipSuggested: '#F4F7FC',
-    borderCard: 'rgba(255, 255, 255, 0.95)',
+    surfaceChipSelected: 'rgba(0, 122, 255, 0.10)',
+    surfaceChipSuggested: 'rgba(0, 0, 0, 0.04)',
+    borderCard: 'rgba(0, 0, 0, 0.06)',
     borderRecessed: 'transparent',
-    borderChipSelected: 'rgba(191, 219, 254, 0.7)',
+    borderChipSelected: 'rgba(0, 122, 255, 0.35)',
     borderChipSuggested: 'transparent',
-    textChipSelected: '#1D4ED8',
-    textChipSuggested: '#334155',
+    textChipSelected: '#007AFF',
+    textChipSuggested: '#48484A',
     shadowCard: {
-      shadowColor: '#10223E',
-      shadowOffset: { width: 0, height: 8 },
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.05,
-      shadowRadius: 20,
-      elevation: 3,
+      shadowRadius: 10,
+      elevation: 2,
     } as ViewStyle,
     shadowCardPressed: {
-      shadowColor: '#10223E',
-      shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.04,
-      shadowRadius: 8,
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.03,
+      shadowRadius: 4,
       elevation: 1,
     } as ViewStyle,
     shadowButton: {
-      shadowColor: '#1D4ED8',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.16,
-      shadowRadius: 10,
+      shadowColor: '#007AFF',
+      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: 0.20,
+      shadowRadius: 8,
       elevation: 3,
     } as ViewStyle,
     shadowButtonPressed: {
-      shadowColor: '#1D4ED8',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 5,
+      shadowColor: '#007AFF',
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.12,
+      shadowRadius: 4,
       elevation: 1,
     } as ViewStyle,
     shadowPill: {
-      shadowColor: '#10223E',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.06,
-      shadowRadius: 5,
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.08,
+      shadowRadius: 4,
       elevation: 2,
     } as ViewStyle,
     shadowChip: {
-      shadowColor: '#10223E',
+      shadowColor: '#000000',
       shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.04,
-      shadowRadius: 3,
+      shadowOpacity: 0.03,
+      shadowRadius: 2,
       elevation: 1,
     } as ViewStyle,
     webCardShadow:
-      '0 16px 36px -6px rgba(20, 35, 65, 0.05), 0 4px 12px -2px rgba(20, 35, 65, 0.02), inset 0 1px 1px 0 rgba(255, 255, 255, 1.0), inset 0 -1px 2px 0 rgba(190, 202, 222, 0.12)',
+      '0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.05)',
     webCardHoverShadow:
-      '0 20px 42px -6px rgba(20, 35, 65, 0.08), 0 6px 16px -2px rgba(20, 35, 65, 0.03), inset 0 1px 1px 0 rgba(255, 255, 255, 1.0), inset 0 -1px 2px 0 rgba(190, 202, 222, 0.15)',
+      '0 8px 24px -2px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.06)',
     webCardPressedShadow:
-      '0 6px 16px -4px rgba(20, 35, 65, 0.04), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 1px 0 rgba(190, 202, 222, 0.1)',
+      '0 2px 8px -2px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.05)',
     webRecessedShadow:
-      'inset 0 2px 4px 0 rgba(20, 35, 65, 0.05), inset 0 -1px 1.5px 0 rgba(255, 255, 255, 0.85)',
+      'inset 0 1px 2px 0 rgba(0, 0, 0, 0.04)',
     webRecessedFocusedShadow:
-      'inset 0 1px 2px 0 rgba(20, 35, 65, 0.04), 0 0 0 2.5px rgba(59, 130, 246, 0.25)',
+      '0 0 0 3px rgba(0, 122, 255, 0.25), inset 0 1px 2px 0 rgba(0, 0, 0, 0.04)',
     webRecessedTrackShadow:
-      'inset 0 2px 4px 0 rgba(20, 35, 65, 0.06), inset 0 -1px 1.5px 0 rgba(255, 255, 255, 0.85)',
+      'inset 0 1px 2px 0 rgba(0, 0, 0, 0.04)',
     webButtonShadow:
-      '0 8px 18px -4px rgba(37, 99, 235, 0.22), 0 2px 6px -1px rgba(37, 99, 235, 0.12), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.35), inset 0 -2px 3px 0 rgba(15, 45, 130, 0.25)',
+      '0 4px 14px -2px rgba(0, 122, 255, 0.35)',
     webButtonPressedShadow:
-      '0 3px 8px -2px rgba(37, 99, 235, 0.18), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 2px 0 rgba(15, 45, 130, 0.3)',
+      '0 2px 6px -1px rgba(0, 122, 255, 0.25)',
     webSecondaryButtonShadow:
-      '0 4px 12px -2px rgba(20, 35, 65, 0.05), 0 1px 3px 0 rgba(20, 35, 65, 0.02), inset 0 1px 1.5px 0 rgba(255, 255, 255, 1.0), inset 0 -1px 1.5px 0 rgba(190, 202, 222, 0.18)',
+      '0 2px 8px -1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.05)',
     webSecondaryButtonPressedShadow:
-      '0 1.5px 4px 0 rgba(20, 35, 65, 0.04), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9)',
+      '0 1px 4px 0 rgba(0, 0, 0, 0.04)',
     webPillShadow:
-      '0 3px 8px 0 rgba(20, 35, 65, 0.07), inset 0 1px 1.5px 0 rgba(255, 255, 255, 1.0), inset 0 -1px 1.5px 0 rgba(200, 210, 228, 0.18)',
+      '0 2px 8px rgba(0, 0, 0, 0.08), 0 0 0 0.5px rgba(0, 0, 0, 0.04)',
     webChipShadow:
-      '0 2px 5px 0 rgba(20, 35, 65, 0.04), inset 0 1px 1px 0 rgba(255, 255, 255, 1.0), inset 0 -1px 1px 0 rgba(200, 210, 228, 0.12)',
+      '0 1px 3px rgba(0, 0, 0, 0.04)',
     webChipSelectedShadow:
-      '0 2px 6px 0 rgba(59, 130, 246, 0.12), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 1px 0 rgba(191, 219, 254, 0.25)',
+      '0 2px 6px rgba(0, 122, 255, 0.15)',
   },
   dark: {
-    surface: '#161C28', // Surface elevation from Stitch
-    surfaceElevated: '#1C2230',
-    surfaceRecessed: '#101522', // Substrate well from Stitch
-    surfaceTrack: '#0A0E17', // Lowest container
-    surfaceActivePill: '#262A34', // Highest active container
-    surfaceChipSelected: '#1C2230',
-    surfaceChipSuggested: '#101522',
-    borderCard: 'rgba(255, 255, 255, 0.08)',
+    surface: '#1C1C1E',
+    surfaceElevated: '#2C2C2E',
+    surfaceRecessed: '#1C1C1E',
+    surfaceTrack: '#121214',
+    surfaceActivePill: '#3A3A3C',
+    surfaceChipSelected: 'rgba(10, 132, 255, 0.18)',
+    surfaceChipSuggested: 'rgba(255, 255, 255, 0.07)',
+    borderCard: 'rgba(255, 255, 255, 0.10)',
     borderRecessed: 'transparent',
-    borderChipSelected: 'rgba(59, 130, 246, 0.45)',
-    borderChipSuggested: 'rgba(255, 255, 255, 0.04)',
-    textChipSelected: '#93C5FD',
-    textChipSuggested: '#94A3B8',
+    borderChipSelected: 'rgba(10, 132, 255, 0.45)',
+    borderChipSuggested: 'transparent',
+    textChipSelected: '#409CFF',
+    textChipSuggested: '#AEAEB2',
     shadowCard: {
       shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.45,
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.35,
       shadowRadius: 18,
       elevation: 4,
     } as ViewStyle,
     shadowCardPressed: {
       shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.35,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
       shadowRadius: 8,
       elevation: 2,
     } as ViewStyle,
     shadowButton: {
-      shadowColor: '#3B82F6',
+      shadowColor: '#0A84FF',
       shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.35,
+      shadowOpacity: 0.30,
       shadowRadius: 12,
       elevation: 3,
     } as ViewStyle,
     shadowButtonPressed: {
       shadowColor: '#000000',
       shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.3,
+      shadowOpacity: 0.2,
       shadowRadius: 4,
       elevation: 1,
     } as ViewStyle,
     shadowPill: {
       shadowColor: '#000000',
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.35,
+      shadowOpacity: 0.30,
       shadowRadius: 6,
       elevation: 2,
     } as ViewStyle,
     shadowChip: {
       shadowColor: '#000000',
       shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.25,
+      shadowOpacity: 0.20,
       shadowRadius: 4,
       elevation: 1,
     } as ViewStyle,
-    // Dual-opposed directional claymorphism shadows matching Stitch DESIGN.md
     webCardShadow:
-      '4px 8px 20px rgba(0, 0, 0, 0.45), -2px -2px 10px rgba(255, 255, 255, 0.03), inset 1px 1px 2px rgba(255, 255, 255, 0.08), inset -2px -2px 4px rgba(0, 0, 0, 0.35)',
+      '0 8px 28px -4px rgba(0, 0, 0, 0.50), 0 0 0 1px rgba(255, 255, 255, 0.08)',
     webCardHoverShadow:
-      '4px 12px 28px rgba(0, 0, 0, 0.52), -2px -2px 10px rgba(255, 255, 255, 0.04), inset 1px 1px 2px rgba(255, 255, 255, 0.1), inset -2px -2px 4px rgba(0, 0, 0, 0.35)',
+      '0 12px 36px -4px rgba(0, 0, 0, 0.60), 0 0 0 1px rgba(255, 255, 255, 0.12)',
     webCardPressedShadow:
-      '2px 4px 10px rgba(0, 0, 0, 0.4), inset 1px 1px 1px rgba(255, 255, 255, 0.06), inset -1px -1px 2px rgba(0, 0, 0, 0.35)',
+      '0 4px 14px -2px rgba(0, 0, 0, 0.40), 0 0 0 1px rgba(255, 255, 255, 0.08)',
     webRecessedShadow:
-      'inset 2px 2px 6px rgba(0, 0, 0, 0.55), inset -1px -1px 2px rgba(255, 255, 255, 0.03)',
+      'inset 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.06)',
     webRecessedFocusedShadow:
-      'inset 2px 2px 6px rgba(0, 0, 0, 0.55), 0 0 0 1.5px rgba(59, 130, 246, 0.35)',
+      '0 0 0 3px rgba(10, 132, 255, 0.35), inset 0 1px 2px rgba(0, 0, 0, 0.4)',
     webRecessedTrackShadow:
-      'inset 3px 3px 6px rgba(0, 0, 0, 0.6), inset -2px -2px 4px rgba(255, 255, 255, 0.02)',
+      'inset 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.04)',
     webButtonShadow:
-      '0px 6px 16px rgba(59, 130, 246, 0.25), 2px 4px 12px rgba(0, 0, 0, 0.4), inset 1px 1px 2px rgba(255, 255, 255, 0.35), inset -2px -2px 4px rgba(0, 0, 0, 0.3)',
+      '0 4px 16px rgba(10, 132, 255, 0.35)',
     webButtonPressedShadow:
-      'inset 2px 2px 4px rgba(0, 0, 0, 0.5), inset -1px -1px 1px rgba(255, 255, 255, 0.2)',
+      '0 2px 6px rgba(10, 132, 255, 0.20)',
     webSecondaryButtonShadow:
-      '2px 4px 12px rgba(0, 0, 0, 0.3), inset 1px 1px 1px rgba(255, 255, 255, 0.06), inset -1px -1px 2px rgba(0, 0, 0, 0.3)',
+      '0 2px 8px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.08)',
     webSecondaryButtonPressedShadow:
-      'inset 2px 2px 4px rgba(0, 0, 0, 0.5)',
+      '0 1px 4px rgba(0, 0, 0, 0.3)',
     webPillShadow:
-      '2px 4px 10px rgba(0, 0, 0, 0.4), inset 1px 1px 1px rgba(255, 255, 255, 0.08)',
+      '0 2px 10px rgba(0, 0, 0, 0.35), 0 0 0 0.5px rgba(255, 255, 255, 0.12)',
     webChipShadow:
-      '2px 3px 8px rgba(0, 0, 0, 0.35), inset 1px 1px 1px rgba(255, 255, 255, 0.06), inset -1px -1px 2px rgba(0, 0, 0, 0.3)',
+      '0 2px 6px rgba(0, 0, 0, 0.25), 0 0 0 0.5px rgba(255, 255, 255, 0.06)',
     webChipSelectedShadow:
-      '0 2px 8px rgba(59, 130, 246, 0.25), inset 1px 1px 1px rgba(255, 255, 255, 0.2), inset -1px -1px 2px rgba(0, 0, 0, 0.3)',
+      '0 2px 8px rgba(10, 132, 255, 0.25), 0 0 0 0.5px rgba(10, 132, 255, 0.4)',
   },
 } as const;
 
 export const motion = {
   duration: {
-    instant: 80,
-    fast: 150,
-    normal: 220,
-    deliberate: 300,
-    slow: 450,
-    stagger: 40,
+    instant: 70,
+    fast: 140,
+    normal: 240,
+    deliberate: 320,
+    slow: 440,
+    stagger: 30,
   },
   distance: {
-    subtle: 4,
-    normal: 8,
-    card: 12,
+    subtle: 3,
+    normal: 6,
+    card: 10,
     sheet: 24,
   },
   scale: {
-    pressedButton: 0.975,
+    pressedButton: 0.98,
     pressedCard: 0.988,
-    pressedChip: 0.96,
-    entranceStart: 0.99,
+    pressedChip: 0.965,
+    entranceStart: 0.995,
   },
   easing: {
     standard: 'cubic-bezier(0.16, 1, 0.3, 1)',
@@ -254,9 +320,9 @@ export const motion = {
     subtle: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
   },
   spring: {
-    tactile: { tension: 300, friction: 20 },
-    gentle: { tension: 190, friction: 18 },
-    snappy: { tension: 320, friction: 24 },
+    tactile: { tension: 360, friction: 32 },
+    gentle: { tension: 180, friction: 24 },
+    snappy: { tension: 340, friction: 30 },
   },
 } as const;
 
@@ -275,13 +341,13 @@ export const spacing = {
 export const borderRadius = {
   none: 0,
   xs: 4,
-  sm: 8, // Compact sub-elements (chips, tags, badges) from Stitch
+  sm: 8, // Apple compact controls & tags
   md: 12, // Sub-buttons and secondary containers
-  lg: 16, // Unified structural containers from Stitch DESIGN.md
-  xl: 20,
+  lg: 16, // Apple standard grouped cards
+  xl: 20, // Floating panels & sheets
   xxl: 24,
-  card: 16, // Unified 16px corner rounding from Stitch DESIGN.md
-  full: 9999, // Pill rounding from Stitch DESIGN.md
+  card: 16, // Apple 16px corner rounding
+  full: 9999, // Pill / Capsule rounding
 } as const;
 
 export const typography = {
@@ -313,7 +379,7 @@ export const dimensions = {
   buttonHeight: {
     sm: 36,
     md: 44,
-    lg: 48,
+    lg: 50,
   },
   inputHeight: 48,
   avatarSize: {
@@ -325,4 +391,3 @@ export const dimensions = {
   headerHeight: 56,
   bottomTabHeight: 64,
 } as const;
-

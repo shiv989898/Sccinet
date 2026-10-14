@@ -12,7 +12,7 @@ import {
 import { useTheme } from '../../hooks/useTheme';
 import { motionTokens, useReducedMotion } from '../../theme/motion';
 
-export type CardVariant = 'clay' | 'elevated' | 'outlined' | 'default';
+export type CardVariant = 'clay' | 'elevated' | 'outlined' | 'glass' | 'default';
 
 export interface CardProps extends Omit<PressableProps, 'style'> {
   children: React.ReactNode;
@@ -149,6 +149,28 @@ export function Card({
               transition: 'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
               cursor: onPress ? 'pointer' : 'default',
             } as any,
+          }),
+        };
+      case 'glass':
+        return {
+          backgroundColor: pressed ? theme.glass.clear.fill : theme.glass.regular.fill,
+          borderWidth: 1,
+          borderColor: theme.glass.regular.border,
+          borderRadius: theme.borderRadius.card,
+          ...Platform.select({
+            web: {
+              backdropFilter: 'blur(20px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+              boxShadow: pressed
+                ? '0 2px 8px rgba(0, 0, 0, 0.04)'
+                : '0 8px 24px rgba(0, 0, 0, 0.06)',
+              transition:
+                'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+              cursor: onPress ? 'pointer' : 'default',
+            } as any,
+            default: {
+              ...(pressed ? theme.clay.shadowCardPressed : theme.glass.ambientShadow),
+            },
           }),
         };
     }

@@ -18,7 +18,7 @@ export interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
   hint?: string;
-  variant?: 'default' | 'clay';
+  variant?: 'default' | 'clay' | 'glass';
   leftAccessory?: React.ReactNode;
   rightAccessory?: React.ReactNode;
   containerStyle?: StyleProp<ViewStyle>;
@@ -92,11 +92,13 @@ export function Input({
 
   const getBorderColor = () => {
     if (error) return theme.colors.error;
-    if (isFocused) return theme.isDark ? 'rgba(59, 130, 246, 0.6)' : 'rgba(37, 99, 235, 0.45)';
+    if (isFocused) return theme.colors.primary;
+    if (variant === 'glass') return theme.glass.regular.border;
     return theme.clay.borderCard;
   };
 
   const getBackgroundColor = () => {
+    if (variant === 'glass') return theme.glass.clear.fill;
     if (variant === 'clay') return theme.clay.surfaceRecessed;
     return theme.colors.surface;
   };
@@ -133,6 +135,8 @@ export function Input({
             paddingHorizontal: theme.spacing.md,
             ...Platform.select({
               web: {
+                backdropFilter: variant === 'glass' ? 'blur(16px)' : undefined,
+                WebkitBackdropFilter: variant === 'glass' ? 'blur(16px)' : undefined,
                 boxShadow: isFocused
                   ? error
                     ? 'inset 0 1px 2px 0 rgba(239, 68, 68, 0.1), 0 0 0 2.5px rgba(239, 68, 68, 0.2)'

@@ -22,6 +22,7 @@ export type ButtonVariant =
   | 'outline'
   | 'ghost'
   | 'danger'
+  | 'glass'
   | 'clayPrimary'
   | 'claySecondary';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -243,6 +244,32 @@ export function Button({
             },
           }),
         };
+      case 'glass':
+        return {
+          ...base,
+          backgroundColor: pressed ? theme.glass.clear.fill : theme.glass.regular.fill,
+          borderWidth: 1,
+          borderColor: theme.glass.regular.border,
+          borderRadius: size === 'sm' ? theme.borderRadius.md : theme.borderRadius.lg,
+          ...Platform.select({
+            web: {
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              boxShadow: pressed
+                ? '0 1px 4px rgba(0, 0, 0, 0.06)'
+                : '0 4px 14px rgba(0, 0, 0, 0.08)',
+              transition:
+                'transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
+              cursor: isDisabled ? 'not-allowed' : 'pointer',
+              transform: pressed
+                ? `scale(${motionTokens.scale.pressedButton}) translateY(${motionTokens.pressedTranslateY}px)`
+                : 'none',
+            } as any,
+            default: {
+              ...(pressed ? theme.clay.shadowButtonPressed : theme.clay.shadowButton),
+            },
+          }),
+        };
       default:
         return {
           ...base,
@@ -253,6 +280,7 @@ export function Button({
 
   const getTextColor = (): string => {
     switch (variant) {
+      case 'glass':
       case 'claySecondary':
       case 'secondary':
         return theme.colors.text;

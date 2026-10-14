@@ -78,6 +78,7 @@ export default function DiscoverScreen() {
         {
           padding: theme.spacing.lg,
           paddingTop: Math.max(insets.top + 8, theme.spacing.lg),
+          paddingBottom: Math.max(insets.bottom + 96, 110),
         },
       ]}
       showsVerticalScrollIndicator={false}
@@ -232,7 +233,7 @@ export default function DiscoverScreen() {
                     <Ionicons
                       name={isSearching ? 'search-outline' : 'folder-open-outline'}
                       size={26}
-                      color={theme.isDark ? '#4CD7F6' : theme.colors.primary}
+                      color={theme.colors.primary}
                     />
                   </View>
                   <Text
@@ -316,7 +317,7 @@ export default function DiscoverScreen() {
                             <Ionicons
                               name="cube-outline"
                               size={18}
-                              color={theme.isDark ? '#4CD7F6' : theme.colors.primary}
+                              color={theme.colors.primary}
                             />
                           )}
                         </View>
@@ -357,9 +358,7 @@ export default function DiscoverScreen() {
                           style={[
                             styles.statusPill,
                             {
-                              backgroundColor: theme.isDark
-                                ? '#262A34'
-                                : theme.clay.surfaceRecessed,
+                              backgroundColor: theme.clay.surfaceRecessed,
                               borderColor: theme.clay.borderCard,
                             },
                           ]}
@@ -368,8 +367,7 @@ export default function DiscoverScreen() {
                             style={[
                               styles.statusDot,
                               {
-                                backgroundColor:
-                                  theme.isDark ? '#4CD7F6' : theme.colors.primary,
+                                backgroundColor: theme.colors.primary,
                               },
                             ]}
                           />
@@ -377,8 +375,7 @@ export default function DiscoverScreen() {
                             style={[
                               styles.statusLabel,
                               {
-                                color:
-                                  theme.isDark ? '#4CD7F6' : theme.colors.primary,
+                                color: theme.colors.primary,
                                 fontSize: theme.typography.sizes.micro,
                                 fontWeight: theme.typography.weights.medium,
                               },
@@ -495,7 +492,7 @@ export default function DiscoverScreen() {
                     <Ionicons
                       name={isSearching ? 'search-outline' : 'people-outline'}
                       size={26}
-                      color={theme.isDark ? '#4CD7F6' : theme.colors.primary}
+                      color={theme.colors.primary}
                     />
                   </View>
                   <Text
@@ -589,9 +586,7 @@ export default function DiscoverScreen() {
                               style={[
                                 styles.builderHeadline,
                                 {
-                                  color: theme.isDark
-                                    ? '#4CD7F6'
-                                    : theme.colors.primary,
+                                  color: theme.colors.primary,
                                   fontSize: theme.typography.sizes.xs,
                                   fontWeight: theme.typography.weights.medium,
                                   marginTop: 2,

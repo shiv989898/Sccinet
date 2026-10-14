@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import { Animated, Platform } from 'react-native';
+import { Animated, Platform, StyleSheet } from 'react-native';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
 import { motionTokens, useReducedMotion } from '../../src/theme/motion';
+import { GlassView } from '../../src/components/ui/GlassView';
 
 function AnimatedTabIcon({
   name,
@@ -69,10 +70,21 @@ export default function TabLayout() {
         tabBarHideOnKeyboard: true,
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.textMuted,
+        tabBarBackground: () => (
+          <GlassView
+            variant="tabBar"
+            border={true}
+            style={StyleSheet.absoluteFill}
+          />
+        ),
         tabBarStyle: {
-          backgroundColor: theme.clay.surface,
-          borderTopWidth: 1,
-          borderTopColor: theme.clay.borderCard,
+          backgroundColor: Platform.OS === 'ios' ? 'transparent' : theme.glass.tabBar.fill,
+          borderTopWidth: 0,
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          elevation: 0,
           height: Platform.OS === 'ios' ? 88 : 64,
           paddingBottom: Platform.OS === 'ios' ? 28 : 10,
           paddingTop: 8,
@@ -81,9 +93,6 @@ export default function TabLayout() {
               boxShadow: theme.clay.webCardShadow,
               transition: 'background-color 0.2s ease, border-color 0.2s ease',
             } as any,
-            default: {
-              ...theme.clay.shadowPill,
-            },
           }),
         },
         tabBarLabelStyle: {

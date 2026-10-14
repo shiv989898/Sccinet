@@ -134,6 +134,7 @@ export default function NetworkScreen() {
         {
           padding: theme.spacing.lg,
           paddingTop: Math.max(insets.top + 8, theme.spacing.lg),
+          paddingBottom: Math.max(insets.bottom + 96, 110),
         },
       ]}
       showsVerticalScrollIndicator={false}
@@ -254,7 +255,7 @@ export default function NetworkScreen() {
                     <Ionicons
                       name="people-outline"
                       size={26}
-                      color={theme.isDark ? '#4CD7F6' : theme.colors.primary}
+                      color={theme.colors.primary}
                     />
                   </View>
                   <Text
@@ -350,9 +351,7 @@ export default function NetworkScreen() {
                               style={[
                                 styles.partnerHeadline,
                                 {
-                                  color: theme.isDark
-                                    ? '#4CD7F6'
-                                    : theme.colors.primary,
+                                  color: theme.colors.primary,
                                   fontSize: theme.typography.sizes.xs,
                                   fontWeight: theme.typography.weights.medium,
                                 },

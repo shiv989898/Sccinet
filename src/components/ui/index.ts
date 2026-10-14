@@ -8,3 +8,4 @@ export * from './EmptyState';
 export * from './AnimatedEntrance';
 export * from './SegmentedControl';
 export * from './CoverImagePicker';
+export * from './GlassView';

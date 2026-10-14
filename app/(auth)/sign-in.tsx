@@ -227,7 +227,7 @@ export default function SignInScreen() {
                     style={[
                       styles.protocolLabel,
                       {
-                        color: theme.isDark ? '#4CD7F6' : theme.colors.primary,
+                        color: theme.colors.primary,
                         fontSize: theme.typography.sizes.micro,
                         fontWeight: theme.typography.weights.semibold,
                         letterSpacing: 1.2,

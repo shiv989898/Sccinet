@@ -123,6 +123,7 @@ export default function FeedScreen() {
         {
           padding: theme.spacing.lg,
           paddingTop: Math.max(insets.top + 8, theme.spacing.lg),
+          paddingBottom: Math.max(insets.bottom + 96, 110),
         },
       ]}
       showsVerticalScrollIndicator={false}
@@ -343,7 +344,7 @@ export default function FeedScreen() {
                   <Ionicons
                     name="newspaper-outline"
                     size={26}
-                    color={theme.isDark ? '#4CD7F6' : theme.colors.primary}
+                    color={theme.colors.primary}
                   />
                 </View>
                 <Text

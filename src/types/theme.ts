@@ -1,5 +1,4 @@
-import { ViewStyle } from 'react-native';
-import { spacing, borderRadius, typography, dimensions, motion } from '../theme/tokens';
+import { spacing, borderRadius, typography, dimensions, motion, glassTokens } from '../theme/tokens';
 
 export type ColorScheme = 'light' | 'dark';
 
@@ -68,6 +67,7 @@ export interface ClayTheme {
 export interface Theme {
   colors: ThemeColors;
   clay: ClayTheme;
+  glass: typeof glassTokens.light;
   spacing: typeof spacing;
   borderRadius: typeof borderRadius;
   typography: typeof typography;

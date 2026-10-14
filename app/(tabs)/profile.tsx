@@ -137,7 +137,10 @@ export default function ProfileScreen() {
       <ScrollView
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingTop: Math.max(insets.top + 8, 16) },
+          {
+            paddingTop: Math.max(insets.top + 8, 16),
+            paddingBottom: Math.max(insets.bottom + 96, 110),
+          },
         ]}
         showsVerticalScrollIndicator={false}
       >
@@ -247,7 +250,7 @@ export default function ProfileScreen() {
                     <Ionicons
                       name="camera-outline"
                       size={14}
-                      color={theme.isDark ? '#4CD7F6' : theme.colors.primary}
+                      color={theme.colors.primary}
                     />
                   )}
                 </View>

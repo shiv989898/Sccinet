@@ -34,12 +34,13 @@ export default function WorkspaceScreen() {
         {
           padding: theme.spacing.lg,
           paddingTop: Math.max(insets.top + 8, theme.spacing.lg),
+          paddingBottom: Math.max(insets.bottom + 96, 110),
         },
       ]}
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.innerStack}>
-        {/* Header - Matching Stitch Projects Screen */}
+        {/* Header - Matching Projects Screen */}
         <View style={styles.headerBlock}>
           <View style={styles.headerTitleRow}>
             <Text
@@ -56,12 +57,12 @@ export default function WorkspaceScreen() {
               Projects
             </Text>
 
-            {/* Tactile Active Builds Indicator */}
+            {/* Active Builds Indicator */}
             <View
               style={[
                 styles.activeBadge,
                 {
-                  backgroundColor: theme.isDark ? '#262A34' : theme.clay.surfaceRecessed,
+                  backgroundColor: theme.clay.surfaceRecessed,
                   borderColor: theme.clay.borderCard,
                 },
               ]}
@@ -70,7 +71,7 @@ export default function WorkspaceScreen() {
                 style={[
                   styles.pulseDot,
                   {
-                    backgroundColor: theme.isDark ? '#4CD7F6' : theme.colors.primary,
+                    backgroundColor: theme.colors.primary,
                   },
                 ]}
               />
@@ -78,7 +79,7 @@ export default function WorkspaceScreen() {
                 style={[
                   styles.activeBadgeText,
                   {
-                    color: theme.isDark ? '#4CD7F6' : theme.colors.primary,
+                    color: theme.colors.primary,
                     fontSize: theme.typography.sizes.xs,
                     fontWeight: theme.typography.weights.medium,
                   },
@@ -188,7 +189,7 @@ export default function WorkspaceScreen() {
                             <Ionicons
                               name="cube-outline"
                               size={18}
-                              color={theme.isDark ? '#4CD7F6' : theme.colors.primary}
+                              color={theme.colors.primary}
                             />
                           )}
                         </View>
@@ -215,7 +216,7 @@ export default function WorkspaceScreen() {
                                 styles.projectStatusIndicator,
                                 {
                                   color: proj.status === 'ACTIVE'
-                                    ? (theme.isDark ? '#4CD7F6' : theme.colors.primary)
+                                    ? theme.colors.primary
                                     : theme.colors.textSecondary,
                                   fontSize: theme.typography.sizes.micro,
                                   fontWeight: theme.typography.weights.medium,
