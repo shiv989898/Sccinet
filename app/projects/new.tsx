@@ -234,7 +234,7 @@ export default function CreateProjectScreen() {
         </View>
 
         {/* Content Container */}
-        <AnimatedEntrance duration={180}>
+        <AnimatedEntrance>
           <View style={styles.centerContainer}>
             {/* Main Form Clay Vessel */}
             <Card variant="clay" padding="lg" style={styles.cardContainer}>

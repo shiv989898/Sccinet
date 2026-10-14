@@ -307,7 +307,7 @@ export default function EditProjectScreen() {
           <View style={styles.topBarRightSlot} />
         </View>
 
-        <AnimatedEntrance duration={180}>
+        <AnimatedEntrance>
           <View style={styles.centerContainer}>
             {/* Header info */}
             <View style={styles.header}>

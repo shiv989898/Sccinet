@@ -519,7 +519,7 @@ export default function ProjectDetailScreen() {
             </Card>
           </View>
         ) : (
-          <AnimatedEntrance duration={180}>
+          <AnimatedEntrance>
             <View style={styles.centerContainer}>
               {/* Optional Project Cover Banner */}
               {project.cover_image_url ? (
@@ -751,7 +751,7 @@ export default function ProjectDetailScreen() {
 
                 {/* Collaboration Request Dialog/Card */}
                 {isRequestModalOpen && (
-                  <AnimatedEntrance duration={200}>
+                  <AnimatedEntrance>
                     <View
                       style={[
                         styles.requestModalBox,
@@ -1153,7 +1153,7 @@ export default function ProjectDetailScreen() {
 
                 {/* Role Creation / Editing Form */}
                 {isOwner && isAddingRole && (
-                  <AnimatedEntrance duration={200}>
+                  <AnimatedEntrance>
                     <View
                       style={[
                         styles.inlineFormCard,
@@ -1513,7 +1513,7 @@ export default function ProjectDetailScreen() {
 
                 {/* Add Member Form */}
                 {isOwner && isAddingMember && (
-                  <AnimatedEntrance duration={200}>
+                  <AnimatedEntrance>
                     <View
                       style={[
                         styles.inlineFormCard,

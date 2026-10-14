@@ -109,15 +109,15 @@ export function CoverImagePicker({
               style={[
                 styles.actionButton,
                 {
-                  backgroundColor: theme.isDark ? 'rgba(38, 42, 52, 0.88)' : 'rgba(255, 255, 255, 0.92)',
-                  borderColor: theme.clay.borderCard,
+                  backgroundColor: theme.glass.regular.fill,
+                  borderColor: theme.glass.regular.border,
                 },
               ]}
             >
               <Ionicons
                 name="camera-outline"
                 size={14}
-                color={theme.isDark ? '#4CD7F6' : theme.colors.primary}
+                color={theme.colors.primary}
               />
               <Text
                 style={[
@@ -207,7 +207,7 @@ export function CoverImagePicker({
                 style={[
                   styles.iconWrap,
                   {
-                    backgroundColor: theme.isDark ? '#262A34' : theme.clay.surfaceTrack,
+                    backgroundColor: theme.clay.surfaceTrack,
                     borderColor: theme.clay.borderCard,
                   },
                 ]}
@@ -215,7 +215,7 @@ export function CoverImagePicker({
                 <Ionicons
                   name="image-outline"
                   size={22}
-                  color={theme.isDark ? '#4CD7F6' : theme.colors.primary}
+                  color={theme.colors.primary}
                 />
               </View>
 

@@ -21,27 +21,48 @@ function AnimatedTabIcon({
 }) {
   const isWeb = Platform.OS === 'web';
   const reducedMotion = useReducedMotion();
-  const [scaleAnim] = React.useState(() => new Animated.Value(1));
+  const theme = useTheme();
+  const [scaleAnim] = React.useState(() => new Animated.Value(focused ? 1 : 0.92));
+  const [pillOpacity] = React.useState(() => new Animated.Value(focused ? 1 : 0));
 
   useEffect(() => {
     if (reducedMotion) {
       scaleAnim.setValue(1);
+      pillOpacity.setValue(focused ? 1 : 0);
       return;
     }
 
     if (focused) {
-      // Subtle tactile micro-pulse upon becoming active
-      scaleAnim.setValue(0.96);
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        tension: motionTokens.spring.snappy.tension,
-        friction: motionTokens.spring.snappy.friction,
-        useNativeDriver: !isWeb,
-      }).start();
+      scaleAnim.setValue(0.82);
+      Animated.parallel([
+        Animated.spring(scaleAnim, {
+          toValue: 1,
+          tension: 280,
+          friction: 14,
+          useNativeDriver: !isWeb,
+        }),
+        Animated.timing(pillOpacity, {
+          toValue: 1,
+          duration: 180,
+          useNativeDriver: !isWeb,
+        }),
+      ]).start();
     } else {
-      scaleAnim.setValue(1);
+      Animated.parallel([
+        Animated.spring(scaleAnim, {
+          toValue: 0.92,
+          tension: 240,
+          friction: 20,
+          useNativeDriver: !isWeb,
+        }),
+        Animated.timing(pillOpacity, {
+          toValue: 0,
+          duration: 140,
+          useNativeDriver: !isWeb,
+        }),
+      ]).start();
     }
-  }, [focused, scaleAnim, isWeb, reducedMotion]);
+  }, [focused, scaleAnim, pillOpacity, isWeb, reducedMotion]);
 
   return (
     <Animated.View
@@ -49,8 +70,27 @@ function AnimatedTabIcon({
         transform: [{ scale: scaleAnim }],
         alignItems: 'center',
         justifyContent: 'center',
+        paddingHorizontal: 12,
+        paddingVertical: 3,
+        borderRadius: 16,
       }}
     >
+      <Animated.View
+        style={[
+          StyleSheet.absoluteFill,
+          {
+            backgroundColor: theme.isDark
+              ? 'rgba(10, 132, 255, 0.18)'
+              : 'rgba(0, 122, 255, 0.10)',
+            borderRadius: 16,
+            opacity: pillOpacity,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor: theme.isDark
+              ? 'rgba(10, 132, 255, 0.35)'
+              : 'rgba(0, 122, 255, 0.20)',
+          },
+        ]}
+      />
       <Ionicons
         name={focused ? name : outlineName}
         size={size}

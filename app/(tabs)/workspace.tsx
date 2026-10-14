@@ -143,11 +143,10 @@ export default function WorkspaceScreen() {
             ))}
           </View>
         ) : filteredProjects.length > 0 ? (
-          <AnimatedEntrance duration={180}>
-            <View style={styles.projectsList}>
-              {filteredProjects.map((proj) => (
+          <View style={styles.projectsList}>
+            {filteredProjects.map((proj, index) => (
+              <AnimatedEntrance key={proj.id} staggerIndex={index}>
                 <Card
-                  key={proj.id}
                   variant="clay"
                   padding="md"
                   onPress={() =>
@@ -160,12 +159,12 @@ export default function WorkspaceScreen() {
                   <View style={styles.projectCardInner}>
                     <View style={styles.projectItemHeader}>
                       <View style={styles.projectIdentityRow}>
-                        {/* Tactile Squircle Icon Box from Stitch */}
+                        {/* Squircle Icon Box */}
                         <View
                           style={[
                             styles.projectIconSquircle,
                             {
-                              backgroundColor: theme.isDark ? '#262A34' : theme.clay.surfaceTrack,
+                              backgroundColor: theme.clay.surfaceTrack,
                               borderColor: theme.clay.borderCard,
                               ...Platform.select({
                                 web: {
@@ -283,11 +282,11 @@ export default function WorkspaceScreen() {
                     </View>
                   </View>
                 </Card>
-              ))}
-            </View>
-          </AnimatedEntrance>
+              </AnimatedEntrance>
+            ))}
+          </View>
         ) : (
-          <AnimatedEntrance duration={180}>
+          <AnimatedEntrance>
             <Card variant="clay" padding="lg">
               <EmptyState
                 icon={<Ionicons name="folder-open-outline" size={30} color={theme.colors.primary} />}
