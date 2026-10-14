@@ -11,72 +11,72 @@ export const palette = {
   secondary: '#5E5CE6',
   secondaryMuted: 'rgba(94, 92, 230, 0.12)',
 
-  // Light Appearance (Apple iOS Grouped & Liquid Glass System)
+  // Light Appearance (Apple Liquid Glass System)
   light: {
-    background: '#F2F2F7', // Apple system grouped background
-    surface: '#FFFFFF', // Secondary grouped background / card surface
-    surfaceSubtle: '#F7F7FA',
+    background: '#F0F3F9', // Calm frosted porcelain canvas
+    surface: 'rgba(255, 255, 255, 0.82)', // Translucent frosted glass card
+    surfaceSubtle: 'rgba(240, 244, 252, 0.75)',
     surfaceElevated: '#FFFFFF',
-    surfaceRecessed: '#E5E5EA', // Apple system gray 5 / search well
-    surfaceTrack: '#E5E5EA',
-    border: 'rgba(0, 0, 0, 0.08)', // Hairline separator (0.5 - 1px)
+    surfaceRecessed: 'rgba(225, 232, 244, 0.65)', // Search & input well
+    surfaceTrack: 'rgba(225, 232, 244, 0.60)',
+    border: 'rgba(0, 0, 0, 0.07)', // Hairline separator
     borderSubtle: 'rgba(0, 0, 0, 0.04)',
     borderActive: '#007AFF',
-    text: '#1C1C1E', // Apple primary label (> 13:1 contrast on #F2F2F7, AAA)
-    textSecondary: '#48484A', // Apple secondary label (> 8:1 contrast on #F2F2F7, AAA)
-    textMuted: '#636366', // Apple tertiary label (> 5.4:1 contrast on #F2F2F7, AA)
+    text: '#0F172A', // Crisp primary text (high contrast)
+    textSecondary: '#475569', // Secondary slate
+    textMuted: '#64748B', // Tertiary slate
     textInverse: '#FFFFFF',
   },
 
-  // Dark Appearance (Apple iOS Pure Black & Elevated Materials)
+  // Dark Appearance (Apple Liquid Glass Midnight Canvas - Reference Image)
   dark: {
-    background: '#000000', // Apple true black canvas
-    surface: '#1C1C1E', // Apple system gray 6 card surface
-    surfaceSubtle: '#141416',
-    surfaceElevated: '#2C2C2E', // Apple system gray 5
-    surfaceRecessed: '#1C1C1E', // Search well
-    surfaceTrack: '#121214',
-    border: 'rgba(255, 255, 255, 0.12)', // Hairline light reflection
+    background: '#0B101B', // Deep serene midnight slate canvas
+    surface: 'rgba(22, 32, 50, 0.72)', // Translucent frosted glass card
+    surfaceSubtle: 'rgba(16, 24, 38, 0.60)',
+    surfaceElevated: 'rgba(28, 42, 66, 0.82)', // Elevated floating surface
+    surfaceRecessed: 'rgba(18, 26, 42, 0.60)', // Input & search well
+    surfaceTrack: 'rgba(14, 21, 35, 0.55)', // Segmented control track
+    border: 'rgba(255, 255, 255, 0.12)', // Specular hairline highlight
     borderSubtle: 'rgba(255, 255, 255, 0.06)',
     borderActive: '#0A84FF',
-    text: '#FFFFFF', // Crisp pure white (> 18:1 contrast, AAA)
-    textSecondary: '#AEAEB2', // Apple dark secondary label (> 8:1 contrast on #000000, AAA)
-    textMuted: '#8E8E93', // Apple dark tertiary label (> 5.7:1 contrast on #000000, AA)
-    textInverse: '#000000',
+    text: '#FFFFFF', // Crisp pure white
+    textSecondary: '#94A3B8', // Cool secondary slate (> 7:1 contrast on #0B101B)
+    textMuted: '#64748B', // Cool muted slate (> 4.8:1 contrast on #0B101B)
+    textInverse: '#0B101B',
   },
 
   // Apple Status Colors
-  success: '#34C759',
-  successMuted: 'rgba(52, 199, 89, 0.14)',
-  warning: '#FF9500',
-  warningMuted: 'rgba(255, 149, 0, 0.14)',
-  error: '#FF3B30',
-  errorMuted: 'rgba(255, 59, 48, 0.14)',
-  info: '#32ADE6',
-  infoMuted: 'rgba(50, 173, 230, 0.14)',
+  success: '#10B981', // Clean Apple Emerald / Mint
+  successMuted: 'rgba(16, 185, 129, 0.15)',
+  warning: '#F59E0B',
+  warningMuted: 'rgba(245, 158, 11, 0.15)',
+  error: '#EF4444',
+  errorMuted: 'rgba(239, 68, 68, 0.15)',
+  info: '#0A84FF',
+  infoMuted: 'rgba(10, 132, 255, 0.15)',
 } as const;
 
 export const glassTokens = {
   light: {
     regular: {
-      fill: 'rgba(255, 255, 255, 0.75)',
-      blurIntensity: 65,
-      border: 'rgba(255, 255, 255, 0.65)',
+      fill: 'rgba(255, 255, 255, 0.78)',
+      blurIntensity: 50,
+      border: 'rgba(255, 255, 255, 0.75)',
     },
     clear: {
-      fill: 'rgba(255, 255, 255, 0.45)',
-      blurIntensity: 35,
-      border: 'rgba(255, 255, 255, 0.45)',
+      fill: 'rgba(255, 255, 255, 0.48)',
+      blurIntensity: 25,
+      border: 'rgba(255, 255, 255, 0.50)',
     },
     prominent: {
-      fill: 'rgba(255, 255, 255, 0.88)',
-      blurIntensity: 85,
-      border: 'rgba(255, 255, 255, 0.85)',
+      fill: 'rgba(255, 255, 255, 0.90)',
+      blurIntensity: 70,
+      border: 'rgba(255, 255, 255, 0.90)',
     },
     tabBar: {
-      fill: 'rgba(255, 255, 255, 0.80)',
-      blurIntensity: 75,
-      borderTop: 'rgba(0, 0, 0, 0.08)',
+      fill: 'rgba(255, 255, 255, 0.84)',
+      blurIntensity: 65,
+      borderTop: 'rgba(0, 0, 0, 0.07)',
     },
     highlight: 'rgba(255, 255, 255, 0.75)',
     ambientShadow: {
@@ -89,31 +89,31 @@ export const glassTokens = {
   },
   dark: {
     regular: {
-      fill: 'rgba(28, 28, 30, 0.75)',
-      blurIntensity: 65,
+      fill: 'rgba(22, 32, 50, 0.70)',
+      blurIntensity: 50,
       border: 'rgba(255, 255, 255, 0.12)',
     },
     clear: {
-      fill: 'rgba(28, 28, 30, 0.45)',
-      blurIntensity: 35,
+      fill: 'rgba(18, 26, 42, 0.45)',
+      blurIntensity: 25,
       border: 'rgba(255, 255, 255, 0.08)',
     },
     prominent: {
-      fill: 'rgba(22, 22, 24, 0.88)',
-      blurIntensity: 85,
+      fill: 'rgba(28, 42, 66, 0.85)',
+      blurIntensity: 70,
       border: 'rgba(255, 255, 255, 0.16)',
     },
     tabBar: {
-      fill: 'rgba(18, 18, 20, 0.80)',
-      blurIntensity: 75,
+      fill: 'rgba(13, 19, 32, 0.84)',
+      blurIntensity: 65,
       borderTop: 'rgba(255, 255, 255, 0.10)',
     },
-    highlight: 'rgba(255, 255, 255, 0.14)',
+    highlight: 'rgba(255, 255, 255, 0.15)',
     ambientShadow: {
       shadowColor: '#000000',
       shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.40,
-      shadowRadius: 24,
+      shadowOpacity: 0.35,
+      shadowRadius: 20,
       elevation: 4,
     } as ViewStyle,
   },
