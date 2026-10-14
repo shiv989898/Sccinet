@@ -244,9 +244,7 @@ export default function NetworkScreen() {
                     style={[
                       styles.emptyIconWrap,
                       {
-                        backgroundColor: theme.isDark
-                          ? '#262A34'
-                          : theme.clay.surfaceRecessed,
+                        backgroundColor: theme.clay.surfaceRecessed,
                         borderColor: theme.clay.borderCard,
                         borderWidth: 1,
                       },

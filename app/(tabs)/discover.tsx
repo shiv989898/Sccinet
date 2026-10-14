@@ -222,9 +222,7 @@ export default function DiscoverScreen() {
                     style={[
                       styles.emptyIconWrap,
                       {
-                        backgroundColor: theme.isDark
-                          ? '#262A34'
-                          : theme.clay.surfaceRecessed,
+                        backgroundColor: theme.clay.surfaceRecessed,
                         borderColor: theme.clay.borderCard,
                         borderWidth: 1,
                       },
@@ -291,9 +289,7 @@ export default function DiscoverScreen() {
                           style={[
                             styles.projectIconSquircle,
                             {
-                              backgroundColor: theme.isDark
-                                ? '#262A34'
-                                : theme.clay.surfaceTrack,
+                              backgroundColor: theme.clay.surfaceTrack,
                               borderColor: theme.clay.borderCard,
                               ...Platform.select({
                                 web: {
@@ -481,9 +477,7 @@ export default function DiscoverScreen() {
                     style={[
                       styles.emptyIconWrap,
                       {
-                        backgroundColor: theme.isDark
-                          ? '#262A34'
-                          : theme.clay.surfaceRecessed,
+                        backgroundColor: theme.clay.surfaceRecessed,
                         borderColor: theme.clay.borderCard,
                         borderWidth: 1,
                       },
