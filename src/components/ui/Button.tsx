@@ -311,7 +311,6 @@ export function Button({
         accessibilityState={{ disabled: isDisabled, busy: loading }}
         disabled={isDisabled}
         hitSlop={effectiveHitSlop}
-        delayPressIn={0}
         unstable_pressDelay={0}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}

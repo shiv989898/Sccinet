@@ -190,7 +190,6 @@ export function Card({
         <Pressable
           accessibilityRole="button"
           onPress={onPress}
-          delayPressIn={0}
           unstable_pressDelay={0}
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
