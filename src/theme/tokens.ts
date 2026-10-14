@@ -346,7 +346,7 @@ export const borderRadius = {
   lg: 16, // Apple standard grouped cards
   xl: 20, // Floating panels & sheets
   xxl: 24,
-  card: 16, // Apple 16px corner rounding
+  card: 18, // Apple 18px corner rounding
   full: 9999, // Pill / Capsule rounding
 } as const;
 

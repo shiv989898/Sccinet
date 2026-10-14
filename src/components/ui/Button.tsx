@@ -177,6 +177,8 @@ export function Button({
           borderRadius: size === 'sm' ? theme.borderRadius.md : theme.borderRadius.lg,
           ...Platform.select({
             web: {
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
               boxShadow: pressed
                 ? theme.clay.webSecondaryButtonPressedShadow
                 : theme.clay.webSecondaryButtonShadow,

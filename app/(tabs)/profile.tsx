@@ -231,7 +231,7 @@ export default function ProfileScreen() {
                   style={[
                     styles.avatarBadge,
                     {
-                      backgroundColor: theme.isDark ? '#262A34' : theme.clay.surface,
+                      backgroundColor: theme.clay.surfaceElevated,
                       borderColor: theme.clay.borderCard,
                       ...Platform.select({
                         web: {
@@ -409,7 +409,7 @@ export default function ProfileScreen() {
                   style={[
                     styles.counterBadge,
                     {
-                      backgroundColor: theme.isDark ? '#262A34' : theme.clay.surfaceRecessed,
+                      backgroundColor: theme.clay.surfaceRecessed,
                       borderColor: theme.clay.borderCard,
                     },
                   ]}

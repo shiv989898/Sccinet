@@ -200,20 +200,29 @@ export default function SignInScreen() {
                   style={[
                     styles.logoBadge,
                     {
-                      backgroundColor: theme.clay.surface,
-                      borderColor: theme.clay.borderCard,
+                      backgroundColor: theme.colors.primary,
+                      borderColor: 'rgba(255, 255, 255, 0.25)',
+                      borderRadius: 18,
+                      width: 58,
+                      height: 58,
+                      alignItems: 'center',
+                      justifyContent: 'center',
                       ...Platform.select({
                         web: {
-                          boxShadow: theme.clay.webCardShadow,
+                          boxShadow: '0 8px 24px rgba(10, 132, 255, 0.35), inset 0 1px 1.5px rgba(255, 255, 255, 0.35)',
                         } as any,
                         default: {
-                          ...theme.clay.shadowCard,
+                          shadowColor: theme.colors.primary,
+                          shadowOffset: { width: 0, height: 4 },
+                          shadowOpacity: 0.35,
+                          shadowRadius: 12,
+                          elevation: 4,
                         },
                       }),
                     },
                   ]}
                 >
-                  <Ionicons name="terminal-outline" size={26} color={theme.colors.primary} />
+                  <Ionicons name="shield-checkmark" size={30} color="#FFFFFF" />
                 </View>
 
                 <Animated.View
@@ -225,25 +234,26 @@ export default function SignInScreen() {
                 >
                   <Text
                     style={[
-                      styles.protocolLabel,
-                      {
-                        color: theme.colors.primary,
-                        fontSize: theme.typography.sizes.micro,
-                        fontWeight: theme.typography.weights.semibold,
-                        letterSpacing: 1.2,
-                        marginBottom: 4,
-                      },
-                    ]}
-                  >
-                    SCCINET PROTOCOL
-                  </Text>
-                  <Text
-                    style={[
                       styles.title,
                       {
                         color: theme.colors.text,
-                        fontSize: theme.typography.sizes.xxl,
+                        fontSize: 26,
+                        fontWeight: '700',
+                        letterSpacing: -0.4,
+                        marginTop: 10,
+                        marginBottom: 2,
+                      },
+                    ]}
+                  >
+                    Sccinet
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        color: theme.colors.text,
+                        fontSize: theme.typography.sizes.lg,
                         fontWeight: theme.typography.weights.semibold,
+                        marginBottom: 4,
                       },
                     ]}
                   >
@@ -260,7 +270,7 @@ export default function SignInScreen() {
                   >
                     {isSignUp
                       ? 'Tell the community what you build'
-                      : 'Sign in to continue to your workspace'}
+                      : 'Continue building with your community.'}
                   </Text>
                 </Animated.View>
               </View>
