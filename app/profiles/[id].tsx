@@ -581,9 +581,7 @@ export default function PublicProfileScreen() {
                             style={[
                               styles.projectIconWrap,
                               {
-                                backgroundColor: theme.isDark
-                                  ? '#262A34'
-                                  : theme.clay.surfaceTrack,
+                                backgroundColor: theme.clay.surfaceTrack,
                                 borderColor: theme.clay.borderCard,
                               },
                             ]}
@@ -591,7 +589,7 @@ export default function PublicProfileScreen() {
                             <Ionicons
                               name="cube-outline"
                               size={16}
-                              color={theme.isDark ? '#4CD7F6' : theme.colors.primary}
+                              color={theme.colors.primary}
                             />
                           </View>
                           <View style={{ flex: 1 }}>
