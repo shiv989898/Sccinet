@@ -106,6 +106,8 @@ export function Card({
           borderRadius: theme.borderRadius.card,
           ...Platform.select({
             web: {
+              backdropFilter: 'blur(20px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(20px) saturate(180%)',
               boxShadow: pressed
                 ? theme.clay.webCardPressedShadow
                 : theme.clay.webCardShadow,
@@ -126,6 +128,8 @@ export function Card({
           borderRadius: theme.borderRadius.card,
           ...Platform.select({
             web: {
+              backdropFilter: 'blur(24px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(24px) saturate(180%)',
               boxShadow: pressed
                 ? theme.clay.webCardPressedShadow
                 : theme.clay.webCardHoverShadow,

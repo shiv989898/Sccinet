@@ -125,19 +125,19 @@ export const glassTokens = {
  */
 export const clayTokens = {
   light: {
-    surface: '#FFFFFF',
+    surface: 'rgba(255, 255, 255, 0.82)',
     surfaceElevated: '#FFFFFF',
-    surfaceRecessed: '#E5E5EA',
-    surfaceTrack: '#E5E5EA',
+    surfaceRecessed: 'rgba(225, 232, 244, 0.65)',
+    surfaceTrack: 'rgba(225, 232, 244, 0.60)',
     surfaceActivePill: '#FFFFFF',
-    surfaceChipSelected: 'rgba(0, 122, 255, 0.10)',
+    surfaceChipSelected: 'rgba(0, 122, 255, 0.12)',
     surfaceChipSuggested: 'rgba(0, 0, 0, 0.04)',
-    borderCard: 'rgba(0, 0, 0, 0.06)',
-    borderRecessed: 'transparent',
+    borderCard: 'rgba(0, 0, 0, 0.07)',
+    borderRecessed: 'rgba(0, 0, 0, 0.04)',
     borderChipSelected: 'rgba(0, 122, 255, 0.35)',
     borderChipSuggested: 'transparent',
     textChipSelected: '#007AFF',
-    textChipSuggested: '#48484A',
+    textChipSuggested: '#475569',
     shadowCard: {
       shadowColor: '#000000',
       shadowOffset: { width: 0, height: 2 },
@@ -181,46 +181,46 @@ export const clayTokens = {
       elevation: 1,
     } as ViewStyle,
     webCardShadow:
-      '0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.05)',
+      '0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(255, 255, 255, 0.8)',
     webCardHoverShadow:
-      '0 8px 24px -2px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.06)',
+      '0 8px 24px -2px rgba(15, 23, 42, 0.10), 0 0 0 1px rgba(255, 255, 255, 0.9)',
     webCardPressedShadow:
-      '0 2px 8px -2px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.05)',
+      '0 2px 8px -2px rgba(15, 23, 42, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.05)',
     webRecessedShadow:
-      'inset 0 1px 2px 0 rgba(0, 0, 0, 0.04)',
+      'inset 0 1px 2px 0 rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.04)',
     webRecessedFocusedShadow:
-      '0 0 0 3px rgba(0, 122, 255, 0.25), inset 0 1px 2px 0 rgba(0, 0, 0, 0.04)',
+      '0 0 0 3px rgba(0, 122, 255, 0.25), inset 0 1px 2px 0 rgba(0, 0, 0, 0.04), 0 0 0 1px #007AFF',
     webRecessedTrackShadow:
-      'inset 0 1px 2px 0 rgba(0, 0, 0, 0.04)',
+      'inset 0 1px 2px 0 rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.03)',
     webButtonShadow:
-      '0 4px 14px -2px rgba(0, 122, 255, 0.35)',
+      '0 4px 14px -2px rgba(0, 122, 255, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.25)',
     webButtonPressedShadow:
       '0 2px 6px -1px rgba(0, 122, 255, 0.25)',
     webSecondaryButtonShadow:
-      '0 2px 8px -1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.05)',
+      '0 2px 8px -1px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.07)',
     webSecondaryButtonPressedShadow:
-      '0 1px 4px 0 rgba(0, 0, 0, 0.04)',
+      '0 1px 4px 0 rgba(15, 23, 42, 0.04)',
     webPillShadow:
-      '0 2px 8px rgba(0, 0, 0, 0.08), 0 0 0 0.5px rgba(0, 0, 0, 0.04)',
+      '0 2px 8px rgba(15, 23, 42, 0.08), 0 0 0 0.5px rgba(0, 0, 0, 0.04)',
     webChipShadow:
-      '0 1px 3px rgba(0, 0, 0, 0.04)',
+      '0 1px 3px rgba(15, 23, 42, 0.04)',
     webChipSelectedShadow:
       '0 2px 6px rgba(0, 122, 255, 0.15)',
   },
   dark: {
-    surface: '#1C1C1E',
-    surfaceElevated: '#2C2C2E',
-    surfaceRecessed: '#1C1C1E',
-    surfaceTrack: '#121214',
-    surfaceActivePill: '#3A3A3C',
-    surfaceChipSelected: 'rgba(10, 132, 255, 0.18)',
-    surfaceChipSuggested: 'rgba(255, 255, 255, 0.07)',
-    borderCard: 'rgba(255, 255, 255, 0.10)',
-    borderRecessed: 'transparent',
+    surface: 'rgba(22, 32, 50, 0.72)',
+    surfaceElevated: 'rgba(28, 42, 66, 0.82)',
+    surfaceRecessed: 'rgba(18, 26, 42, 0.60)',
+    surfaceTrack: 'rgba(14, 21, 35, 0.55)',
+    surfaceActivePill: 'rgba(38, 54, 84, 0.85)',
+    surfaceChipSelected: 'rgba(10, 132, 255, 0.22)',
+    surfaceChipSuggested: 'rgba(255, 255, 255, 0.08)',
+    borderCard: 'rgba(255, 255, 255, 0.12)',
+    borderRecessed: 'rgba(255, 255, 255, 0.06)',
     borderChipSelected: 'rgba(10, 132, 255, 0.45)',
-    borderChipSuggested: 'transparent',
+    borderChipSuggested: 'rgba(255, 255, 255, 0.08)',
     textChipSelected: '#409CFF',
-    textChipSuggested: '#AEAEB2',
+    textChipSuggested: '#94A3B8',
     shadowCard: {
       shadowColor: '#000000',
       shadowOffset: { width: 0, height: 6 },
@@ -264,29 +264,29 @@ export const clayTokens = {
       elevation: 1,
     } as ViewStyle,
     webCardShadow:
-      '0 8px 28px -4px rgba(0, 0, 0, 0.50), 0 0 0 1px rgba(255, 255, 255, 0.08)',
+      '0 4px 24px -2px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.10)',
     webCardHoverShadow:
-      '0 12px 36px -4px rgba(0, 0, 0, 0.60), 0 0 0 1px rgba(255, 255, 255, 0.12)',
+      '0 8px 32px -4px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.16)',
     webCardPressedShadow:
-      '0 4px 14px -2px rgba(0, 0, 0, 0.40), 0 0 0 1px rgba(255, 255, 255, 0.08)',
+      '0 2px 10px -1px rgba(0, 0, 0, 0.30), 0 0 0 1px rgba(255, 255, 255, 0.08)',
     webRecessedShadow:
-      'inset 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.06)',
+      'inset 0 1px 2px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.08)',
     webRecessedFocusedShadow:
-      '0 0 0 3px rgba(10, 132, 255, 0.35), inset 0 1px 2px rgba(0, 0, 0, 0.4)',
+      '0 0 0 3px rgba(10, 132, 255, 0.25), inset 0 1px 2px rgba(0, 0, 0, 0.35), 0 0 0 1px #0A84FF',
     webRecessedTrackShadow:
-      'inset 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.04)',
+      'inset 0 1px 2px rgba(0, 0, 0, 0.30), 0 0 0 1px rgba(255, 255, 255, 0.06)',
     webButtonShadow:
-      '0 4px 16px rgba(10, 132, 255, 0.35)',
+      '0 4px 16px rgba(10, 132, 255, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.20)',
     webButtonPressedShadow:
-      '0 2px 6px rgba(10, 132, 255, 0.20)',
+      '0 2px 8px rgba(10, 132, 255, 0.20)',
     webSecondaryButtonShadow:
-      '0 2px 8px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.08)',
+      '0 2px 10px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.12)',
     webSecondaryButtonPressedShadow:
-      '0 1px 4px rgba(0, 0, 0, 0.3)',
+      '0 1px 4px rgba(0, 0, 0, 0.20), 0 0 0 1px rgba(255, 255, 255, 0.08)',
     webPillShadow:
-      '0 2px 10px rgba(0, 0, 0, 0.35), 0 0 0 0.5px rgba(255, 255, 255, 0.12)',
+      '0 2px 10px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.14)',
     webChipShadow:
-      '0 2px 6px rgba(0, 0, 0, 0.25), 0 0 0 0.5px rgba(255, 255, 255, 0.06)',
+      '0 2px 6px rgba(0, 0, 0, 0.20), 0 0 0 0.5px rgba(255, 255, 255, 0.08)',
     webChipSelectedShadow:
       '0 2px 8px rgba(10, 132, 255, 0.25), 0 0 0 0.5px rgba(10, 132, 255, 0.4)',
   },
