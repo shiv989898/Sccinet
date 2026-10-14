@@ -311,9 +311,15 @@ export function Button({
         accessibilityState={{ disabled: isDisabled, busy: loading }}
         disabled={isDisabled}
         hitSlop={effectiveHitSlop}
+        delayPressIn={0}
+        unstable_pressDelay={0}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        style={({ pressed }) => [getContainerStyle(pressed), style]}
+        style={({ pressed }) => [
+          getContainerStyle(pressed),
+          { opacity: isDisabled ? 0.5 : pressed ? 0.88 : 1 },
+          style,
+        ]}
         {...props}
       >
         {loading ? (

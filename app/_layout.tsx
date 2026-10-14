@@ -1,9 +1,11 @@
+import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Platform, View } from 'react-native';
 import { router, Stack, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useTheme } from '../src/hooks/useTheme';
 import { AuthProvider, useAuth } from '../src/features/auth/AuthContext';
 
@@ -79,7 +81,7 @@ function RootNavigator() {
           },
           headerShadowVisible: false,
           animation: Platform.OS === 'web' ? 'fade' : 'slide_from_right',
-          animationDuration: 200,
+          animationDuration: 300,
           gestureEnabled: true,
           contentStyle: {
             backgroundColor: theme.colors.background,
@@ -93,7 +95,7 @@ function RootNavigator() {
           options={{
             headerShown: false,
             animation: Platform.OS === 'web' ? 'fade' : 'slide_from_bottom',
-            animationDuration: 220,
+            animationDuration: 320,
           }}
         />
         <Stack.Screen
@@ -101,7 +103,7 @@ function RootNavigator() {
           options={{
             headerShown: false,
             animation: Platform.OS === 'web' ? 'fade' : 'slide_from_right',
-            animationDuration: 220,
+            animationDuration: 300,
           }}
         />
         <Stack.Screen
@@ -109,7 +111,7 @@ function RootNavigator() {
           options={{
             headerShown: false,
             animation: Platform.OS === 'web' ? 'fade' : 'slide_from_bottom',
-            animationDuration: 220,
+            animationDuration: 320,
           }}
         />
         <Stack.Screen
@@ -117,7 +119,7 @@ function RootNavigator() {
           options={{
             headerShown: false,
             animation: Platform.OS === 'web' ? 'fade' : 'slide_from_right',
-            animationDuration: 220,
+            animationDuration: 300,
           }}
         />
         <Stack.Screen
@@ -128,7 +130,6 @@ function RootNavigator() {
           }}
         />
       </Stack>
-
     </>
   );
 }
@@ -148,12 +149,14 @@ export default function RootLayout() {
   );
 
   return (
-    <SafeAreaProvider>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <RootNavigator />
-        </AuthProvider>
-      </QueryClientProvider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <RootNavigator />
+          </AuthProvider>
+        </QueryClientProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }

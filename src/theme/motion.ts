@@ -7,49 +7,49 @@ import { AccessibilityInfo, Platform } from 'react-native';
  */
 
 export const motionTokens = {
-  // Timings (ms) - Restrained, fast, and responsive for real devices
+  // Timings (ms) - Apple mobile interaction standards
   duration: {
     instant: 80,
-    fast: 140,       // Tactile press, toggle switch, micro-transitions
-    normal: 200,     // Screen enter, card expansion, tab switch
-    deliberate: 260, // Modal presentation, sheet reveal, prominent state transition
-    stagger: 25,     // Restrained stagger interval between hierarchical elements
+    fast: 160,       // Tactile press, toggle switch, micro-transitions
+    normal: 280,     // Screen enter, card expansion, tab switch
+    deliberate: 360, // Modal presentation, sheet reveal, prominent state transition
+    stagger: 45,     // Natural cascade interval between hierarchical elements
   },
 
-  // Distance of movement (px) - Restrained travel distances
+  // Distance of movement (px) - Clearly visible travel distances on mobile
   distance: {
-    subtle: 3,       // Micro elevation / focus shift
-    normal: 6,       // Standard entrance translate (calm, subtle)
-    card: 8,         // Prominent card entrance
-    sheet: 20,       // Slide from bottom / sheet reveal
+    subtle: 4,       // Micro elevation / focus shift
+    normal: 16,      // Standard entrance translate (smooth, visible)
+    card: 20,        // Prominent card entrance
+    sheet: 36,       // Slide from bottom / sheet reveal
   },
 
-  // Scale factors for tactile responses
+  // Scale factors for tactile responses - calibrated for real human thumbs
   scale: {
-    pressedButton: 0.98, // Physical compression on button press (calm, restrained)
-    pressedCard: 0.99,   // Subtle physical depression on card press
-    pressedChip: 0.97,   // Tactile pill / chip tap
-    pressedTab: 0.96,    // Tab bar icon micro-nudge
-    entranceStart: 1.0,  // Pure opacity + subtle translate for entrances, zero text scale flutter
+    pressedButton: 0.95, // Visible 5% physical compression on button press
+    pressedCard: 0.965,  // Visible 3.5% physical depression on card press
+    pressedChip: 0.93,   // Tactile pill / chip tap
+    pressedTab: 0.88,    // Tab bar icon micro-nudge
+    entranceStart: 0.98, // Gentle scale-in matching Apple modal/card reveal
   },
 
-  // TranslateY on press (px) - physically depresses the clay surface
-  pressedTranslateY: 1,
+  // TranslateY on press (px) - physically depresses the surface
+  pressedTranslateY: 2,
 
   // Spring Physics configurations (for Animated.spring)
-  // Tuned for real devices: critically damped, NO bounce, zero oscillation
+  // Tuned for real devices: responsive touch-down, smooth settling, subtle physical rebound
   spring: {
     tactile: {
-      tension: 320,
-      friction: 28, // Fast return, crisp tactile feedback with zero rubbery overshoot
+      tension: 280,
+      friction: 22, // Crisp tactile feedback with energetic return
     },
     gentle: {
-      tension: 180,
-      friction: 26, // Damping ratio ~0.97, critically damped, smooth settling, ZERO bounce
+      tension: 160,
+      friction: 20, // Smooth settling for entrances and transitions
     },
     snappy: {
-      tension: 340,
-      friction: 34, // Damping ratio ~0.92, swift glide for segmented controls & indicators, zero overshoot
+      tension: 300,
+      friction: 26, // Swift glide for segmented controls & tab indicators
     },
   },
 
