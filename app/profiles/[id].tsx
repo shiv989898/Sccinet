@@ -326,7 +326,7 @@ export default function PublicProfileScreen() {
                     style={[
                       styles.headline,
                       {
-                        color: theme.isDark ? '#4CD7F6' : theme.colors.primary,
+                        color: theme.colors.primary,
                         fontSize: theme.typography.sizes.sm,
                         fontWeight: theme.typography.weights.medium,
                       },
