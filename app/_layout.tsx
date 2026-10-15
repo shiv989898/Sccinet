@@ -32,6 +32,8 @@ if (Platform.OS === 'web' && typeof document !== 'undefined') {
   }
 }
 
+import { AtmosphericBackground } from '../src/components/ui/AtmosphericBackground';
+
 function RootNavigator() {
   const theme = useTheme();
   const { isAuthenticated, isLoading } = useAuth();
@@ -67,7 +69,7 @@ function RootNavigator() {
   }
 
   return (
-    <>
+    <AtmosphericBackground>
       <StatusBar style={theme.isDark ? 'light' : 'dark'} />
       <Stack
         screenOptions={{
@@ -83,12 +85,20 @@ function RootNavigator() {
           animationDuration: 300,
           gestureEnabled: true,
           contentStyle: {
-            backgroundColor: theme.colors.background,
+            backgroundColor: 'transparent',
           },
         }}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false, animation: 'fade' }} />
+        <Stack.Screen
+          name="settings"
+          options={{
+            headerShown: false,
+            animation: Platform.OS === 'web' ? 'fade' : 'slide_from_right',
+            animationDuration: 300,
+          }}
+        />
         <Stack.Screen
           name="projects/new"
           options={{
@@ -122,6 +132,14 @@ function RootNavigator() {
           }}
         />
         <Stack.Screen
+          name="profiles/edit"
+          options={{
+            headerShown: false,
+            animation: Platform.OS === 'web' ? 'fade' : 'slide_from_bottom',
+            animationDuration: 320,
+          }}
+        />
+        <Stack.Screen
           name="+not-found"
           options={{
             title: 'Not Found',
@@ -129,7 +147,7 @@ function RootNavigator() {
           }}
         />
       </Stack>
-    </>
+    </AtmosphericBackground>
   );
 }
 

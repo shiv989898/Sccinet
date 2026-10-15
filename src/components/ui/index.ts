@@ -9,3 +9,5 @@ export * from './AnimatedEntrance';
 export * from './SegmentedControl';
 export * from './CoverImagePicker';
 export * from './GlassView';
+export * from './AtmosphericBackground';
+export * from './SccinetLogo';

@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
 import { authService } from '../../src/services/auth/authService';
 import { signInSchema, signUpSchema } from '../../src/features/auth/schemas';
-import { Card, Button, Input, AnimatedEntrance } from '../../src/components/ui';
+import { Card, Button, Input, AnimatedEntrance, SccinetLogo } from '../../src/components/ui';
 import { motionTokens, useReducedMotion } from '../../src/theme/motion';
 
 export default function SignInScreen() {
@@ -196,34 +196,7 @@ export default function SignInScreen() {
             <Card variant="clay" padding="xl" style={styles.authCard}>
               {/* Header / Identity */}
               <View style={styles.header}>
-                <View
-                  style={[
-                    styles.logoBadge,
-                    {
-                      backgroundColor: theme.colors.primary,
-                      borderColor: 'rgba(255, 255, 255, 0.25)',
-                      borderRadius: 18,
-                      width: 58,
-                      height: 58,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      ...Platform.select({
-                        web: {
-                          boxShadow: '0 8px 24px rgba(10, 132, 255, 0.35), inset 0 1px 1.5px rgba(255, 255, 255, 0.35)',
-                        } as any,
-                        default: {
-                          shadowColor: theme.colors.primary,
-                          shadowOffset: { width: 0, height: 4 },
-                          shadowOpacity: 0.35,
-                          shadowRadius: 12,
-                          elevation: 4,
-                        },
-                      }),
-                    },
-                  ]}
-                >
-                  <Ionicons name="shield-checkmark" size={30} color="#FFFFFF" />
-                </View>
+                <SccinetLogo size="lg" />
 
                 <Animated.View
                   style={{
@@ -453,8 +426,8 @@ export default function SignInScreen() {
                 {/* Email Address */}
                 <View style={styles.fieldWrapper}>
                   <Input
-                    label="Email address"
-                    placeholder="name@work.com"
+                    label="Email"
+                    placeholder="you@example.com"
                     value={email}
                     onChangeText={setEmail}
                     keyboardType="email-address"
@@ -476,7 +449,7 @@ export default function SignInScreen() {
                 <View style={[styles.fieldWrapper, { marginBottom: isSignUp ? 22 : 10 }]}>
                   <Input
                     label="Password"
-                    placeholder="••••••••••••"
+                    placeholder="Enter your password"
                     value={password}
                     onChangeText={setPassword}
                     secureTextEntry={!showPassword}
@@ -545,11 +518,10 @@ export default function SignInScreen() {
                 {/* Primary Action Button */}
                 <View style={styles.actionContainer}>
                   <Button
-                    title={isSignUp ? 'Create account' : 'Sign in'}
+                    title={isSignUp ? 'Sign Up' : 'Sign In'}
                     variant="clayPrimary"
                     size="lg"
                     loading={loading}
-                    rightIcon={<Ionicons name="arrow-forward" size={16} color="#FFFFFF" />}
                     onPress={handleAuth}
                   />
                 </View>
@@ -620,7 +592,7 @@ export default function SignInScreen() {
                   },
                 ]}
               >
-                {isSignUp ? 'Already have an account?' : "Don't have an account?"}
+                {isSignUp ? 'Already have an account?' : 'New here?'}
               </Text>
               <TouchableOpacity
                 onPress={() => switchMode(isSignUp ? 'signin' : 'signup')}
@@ -636,7 +608,7 @@ export default function SignInScreen() {
                     },
                   ]}
                 >
-                  {isSignUp ? 'Sign in' : 'Sign up'}
+                  {isSignUp ? 'Sign In' : 'Create an account'}
                 </Text>
               </TouchableOpacity>
             </View>

@@ -1,15 +1,15 @@
 import { ViewStyle } from 'react-native';
 
 export const palette = {
-  // Apple System Blue Brand Primary
-  primary: '#007AFF',
+  // Apple System Blue Brand Primary (Electric Sapphire Blue from Mockup)
+  primary: '#0066FF',
   primaryLight: '#409CFF',
-  primaryDark: '#0062CC',
-  primaryMuted: 'rgba(0, 122, 255, 0.12)',
+  primaryDark: '#0052CC',
+  primaryMuted: 'rgba(0, 102, 255, 0.16)',
 
   // Apple System Secondary (Indigo / Teal Accent)
   secondary: '#5E5CE6',
-  secondaryMuted: 'rgba(94, 92, 230, 0.12)',
+  secondaryMuted: 'rgba(94, 92, 230, 0.14)',
 
   // Light Appearance (Apple Liquid Glass System)
   light: {
@@ -21,7 +21,7 @@ export const palette = {
     surfaceTrack: 'rgba(225, 232, 244, 0.60)',
     border: 'rgba(0, 0, 0, 0.07)', // Hairline separator
     borderSubtle: 'rgba(0, 0, 0, 0.04)',
-    borderActive: '#007AFF',
+    borderActive: '#0066FF',
     text: '#0F172A', // Crisp primary text (high contrast)
     textSecondary: '#475569', // Secondary slate
     textMuted: '#64748B', // Tertiary slate
@@ -31,14 +31,14 @@ export const palette = {
   // Dark Appearance (Apple Liquid Glass Midnight Canvas - Reference Image)
   dark: {
     background: '#0B101B', // Deep serene midnight slate canvas
-    surface: 'rgba(22, 32, 50, 0.72)', // Translucent frosted glass card
-    surfaceSubtle: 'rgba(16, 24, 38, 0.60)',
-    surfaceElevated: 'rgba(28, 42, 66, 0.82)', // Elevated floating surface
-    surfaceRecessed: 'rgba(18, 26, 42, 0.60)', // Input & search well
-    surfaceTrack: 'rgba(14, 21, 35, 0.55)', // Segmented control track
-    border: 'rgba(255, 255, 255, 0.12)', // Specular hairline highlight
-    borderSubtle: 'rgba(255, 255, 255, 0.06)',
-    borderActive: '#0A84FF',
+    surface: 'rgba(20, 27, 44, 0.74)', // Translucent frosted glass card
+    surfaceSubtle: 'rgba(16, 22, 36, 0.60)',
+    surfaceElevated: 'rgba(28, 38, 62, 0.84)', // Elevated floating surface
+    surfaceRecessed: 'rgba(12, 17, 28, 0.65)', // Input & search well
+    surfaceTrack: 'rgba(10, 15, 25, 0.65)', // Segmented control track
+    border: 'rgba(255, 255, 255, 0.14)', // Specular hairline highlight
+    borderSubtle: 'rgba(255, 255, 255, 0.08)',
+    borderActive: '#0066FF',
     text: '#FFFFFF', // Crisp pure white
     textSecondary: '#94A3B8', // Cool secondary slate (> 7:1 contrast on #0B101B)
     textMuted: '#64748B', // Cool muted slate (> 4.8:1 contrast on #0B101B)
@@ -46,14 +46,14 @@ export const palette = {
   },
 
   // Apple Status Colors
-  success: '#10B981', // Clean Apple Emerald / Mint
-  successMuted: 'rgba(16, 185, 129, 0.15)',
+  success: '#22C55E', // Clean Emerald Green (matching ACTIVE badge in mockup)
+  successMuted: 'rgba(34, 197, 94, 0.18)',
   warning: '#F59E0B',
   warningMuted: 'rgba(245, 158, 11, 0.15)',
   error: '#EF4444',
   errorMuted: 'rgba(239, 68, 68, 0.15)',
-  info: '#0A84FF',
-  infoMuted: 'rgba(10, 132, 255, 0.15)',
+  info: '#0066FF',
+  infoMuted: 'rgba(0, 102, 255, 0.18)',
 } as const;
 
 export const glassTokens = {
@@ -208,25 +208,25 @@ export const clayTokens = {
       '0 2px 6px rgba(0, 122, 255, 0.15)',
   },
   dark: {
-    surface: 'rgba(22, 32, 50, 0.72)',
-    surfaceElevated: 'rgba(28, 42, 66, 0.82)',
-    surfaceRecessed: 'rgba(18, 26, 42, 0.60)',
-    surfaceTrack: 'rgba(14, 21, 35, 0.55)',
-    surfaceActivePill: 'rgba(38, 54, 84, 0.85)',
-    surfaceChipSelected: 'rgba(10, 132, 255, 0.22)',
+    surface: 'rgba(20, 27, 44, 0.74)',
+    surfaceElevated: 'rgba(28, 38, 62, 0.84)',
+    surfaceRecessed: 'rgba(12, 17, 28, 0.65)',
+    surfaceTrack: 'rgba(10, 15, 25, 0.65)',
+    surfaceActivePill: 'rgba(40, 56, 88, 0.90)',
+    surfaceChipSelected: 'rgba(0, 102, 255, 0.25)',
     surfaceChipSuggested: 'rgba(255, 255, 255, 0.08)',
-    borderCard: 'rgba(255, 255, 255, 0.12)',
-    borderRecessed: 'rgba(255, 255, 255, 0.06)',
-    borderChipSelected: 'rgba(10, 132, 255, 0.45)',
-    borderChipSuggested: 'rgba(255, 255, 255, 0.08)',
-    textChipSelected: '#409CFF',
+    borderCard: 'rgba(255, 255, 255, 0.14)',
+    borderRecessed: 'rgba(255, 255, 255, 0.08)',
+    borderChipSelected: 'rgba(0, 102, 255, 0.50)',
+    borderChipSuggested: 'rgba(255, 255, 255, 0.10)',
+    textChipSelected: '#60A5FA',
     textChipSuggested: '#94A3B8',
     shadowCard: {
       shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 6 },
-      shadowOpacity: 0.35,
-      shadowRadius: 18,
-      elevation: 4,
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.40,
+      shadowRadius: 22,
+      elevation: 5,
     } as ViewStyle,
     shadowCardPressed: {
       shadowColor: '#000000',
@@ -236,18 +236,18 @@ export const clayTokens = {
       elevation: 2,
     } as ViewStyle,
     shadowButton: {
-      shadowColor: '#0A84FF',
+      shadowColor: '#0066FF',
       shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.30,
-      shadowRadius: 12,
-      elevation: 3,
+      shadowOpacity: 0.45,
+      shadowRadius: 16,
+      elevation: 4,
     } as ViewStyle,
     shadowButtonPressed: {
-      shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.2,
-      shadowRadius: 4,
-      elevation: 1,
+      shadowColor: '#0066FF',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 6,
+      elevation: 2,
     } as ViewStyle,
     shadowPill: {
       shadowColor: '#000000',
@@ -264,23 +264,23 @@ export const clayTokens = {
       elevation: 1,
     } as ViewStyle,
     webCardShadow:
-      '0 4px 24px -2px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.10)',
+      '0 8px 32px rgba(0, 0, 0, 0.38), 0 0 0 1px rgba(255, 255, 255, 0.14), inset 0 1px 1px rgba(255, 255, 255, 0.12)',
     webCardHoverShadow:
-      '0 8px 32px -4px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.16)',
+      '0 12px 40px rgba(0, 0, 0, 0.48), 0 0 0 1px rgba(255, 255, 255, 0.20), inset 0 1px 1px rgba(255, 255, 255, 0.18)',
     webCardPressedShadow:
-      '0 2px 10px -1px rgba(0, 0, 0, 0.30), 0 0 0 1px rgba(255, 255, 255, 0.08)',
+      '0 2px 10px rgba(0, 0, 0, 0.30), 0 0 0 1px rgba(255, 255, 255, 0.10)',
     webRecessedShadow:
-      'inset 0 1px 2px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.08)',
+      'inset 0 1px 3px rgba(0, 0, 0, 0.40), 0 0 0 1px rgba(255, 255, 255, 0.08)',
     webRecessedFocusedShadow:
-      '0 0 0 3px rgba(10, 132, 255, 0.25), inset 0 1px 2px rgba(0, 0, 0, 0.35), 0 0 0 1px #0A84FF',
+      '0 0 0 3px rgba(0, 102, 255, 0.30), inset 0 1px 3px rgba(0, 0, 0, 0.40), 0 0 0 1px #0066FF',
     webRecessedTrackShadow:
-      'inset 0 1px 2px rgba(0, 0, 0, 0.30), 0 0 0 1px rgba(255, 255, 255, 0.06)',
+      'inset 0 1px 3px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.06)',
     webButtonShadow:
-      '0 4px 16px rgba(10, 132, 255, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.20)',
+      '0 6px 20px rgba(0, 102, 255, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.35)',
     webButtonPressedShadow:
-      '0 2px 8px rgba(10, 132, 255, 0.20)',
+      '0 2px 8px rgba(0, 102, 255, 0.25)',
     webSecondaryButtonShadow:
-      '0 2px 10px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.12)',
+      '0 4px 16px rgba(0, 0, 0, 0.30), 0 0 0 1px rgba(255, 255, 255, 0.14), inset 0 1px 1px rgba(255, 255, 255, 0.10)',
     webSecondaryButtonPressedShadow:
       '0 1px 4px rgba(0, 0, 0, 0.20), 0 0 0 1px rgba(255, 255, 255, 0.08)',
     webPillShadow:
@@ -288,7 +288,7 @@ export const clayTokens = {
     webChipShadow:
       '0 2px 6px rgba(0, 0, 0, 0.20), 0 0 0 0.5px rgba(255, 255, 255, 0.08)',
     webChipSelectedShadow:
-      '0 2px 8px rgba(10, 132, 255, 0.25), 0 0 0 0.5px rgba(10, 132, 255, 0.4)',
+      '0 2px 10px rgba(0, 102, 255, 0.30), 0 0 0 0.5px rgba(0, 102, 255, 0.5)',
   },
 } as const;
 
@@ -343,10 +343,10 @@ export const borderRadius = {
   xs: 4,
   sm: 8, // Apple compact controls & tags
   md: 12, // Sub-buttons and secondary containers
-  lg: 16, // Apple standard grouped cards
-  xl: 20, // Floating panels & sheets
-  xxl: 24,
-  card: 18, // Apple 18px corner rounding
+  lg: 18, // Apple standard grouped cards
+  xl: 24, // Floating panels & sheets
+  xxl: 28,
+  card: 22, // Apple 22px curved glass corner rounding (matches reference mockup)
   full: 9999, // Pill / Capsule rounding
 } as const;
 
