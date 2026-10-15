@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Animated,
   Platform,
   StyleSheet,
   Text,
@@ -11,7 +10,7 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../src/hooks/useTheme';
-import { Card, Button, AnimatedEntrance } from '../../src/components/ui';
+import { Button, AnimatedEntrance } from '../../src/components/ui';
 
 export default function OnboardingScreen() {
   const theme = useTheme();
