@@ -51,6 +51,39 @@ function formatTimestamp(dateString?: string): string {
   }
 }
 
+const DEFAULT_POSTS = [
+  {
+    id: 'mock-1',
+    author_id: 'shiv-1',
+    author: {
+      full_name: 'Shiv',
+      username: 'shivgoyal9888',
+      avatar_url: null,
+    },
+    content:
+      'Just shipped a new AI tool for content generation. Really excited about how it turned out! 🚀',
+    created_at: '2026-10-15T15:00:00.000Z',
+    hasImage: true,
+    likes: 24,
+    comments: 6,
+  },
+  {
+    id: 'mock-2',
+    author_id: 'alex-1',
+    author: {
+      full_name: 'Alex',
+      username: 'alexdev',
+      avatar_url: null,
+    },
+    content:
+      'Working on a distributed system for real-time collaboration across mesh nodes. Looking for feedback on the sync protocol.',
+    created_at: '2026-10-15T13:00:00.000Z',
+    hasImage: false,
+    likes: 12,
+    comments: 3,
+  },
+];
+
 export default function FeedScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
@@ -116,41 +149,7 @@ export default function FeedScreen() {
     );
   };
 
-  // Mock sample posts from reference mockup if user feed is initially empty
-  const defaultPosts = [
-    {
-      id: 'mock-1',
-      author_id: 'shiv-1',
-      author: {
-        full_name: 'Shiv',
-        username: 'shivgoyal9888',
-        avatar_url: null,
-      },
-      content:
-        'Just shipped a new AI tool for content generation. Really excited about how it turned out! 🚀',
-      created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-      hasImage: true,
-      likes: 24,
-      comments: 6,
-    },
-    {
-      id: 'mock-2',
-      author_id: 'alex-1',
-      author: {
-        full_name: 'Alex',
-        username: 'alexdev',
-        avatar_url: null,
-      },
-      content:
-        'Working on a distributed system for real-time collaboration across mesh nodes. Looking for feedback on the sync protocol.',
-      created_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
-      hasImage: false,
-      likes: 12,
-      comments: 3,
-    },
-  ];
-
-  const displayPosts = posts.length > 0 ? posts : defaultPosts;
+  const displayPosts = posts.length > 0 ? posts : DEFAULT_POSTS;
 
   return (
     <ScrollView
@@ -484,7 +483,7 @@ export default function FeedScreen() {
                           source={post.image_url ? { uri: post.image_url } : sampleLandscape}
                           style={styles.postImage}
                           contentFit="cover"
-                          priority="medium"
+                          priority="normal"
                         />
                       </View>
                     )}

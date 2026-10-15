@@ -14,7 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../src/hooks/useTheme';
 import { useThemeStore } from '../src/stores/useThemeStore';
 import { useAuth } from '../src/features/auth/AuthContext';
-import { Card, Button, AnimatedEntrance, SegmentedControl } from '../src/components/ui';
+import { Card, AnimatedEntrance, SegmentedControl } from '../src/components/ui';
 
 interface SettingItem {
   icon: keyof typeof Ionicons.glyphMap;

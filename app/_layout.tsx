@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useTheme } from '../src/hooks/useTheme';
 import { AuthProvider, useAuth } from '../src/features/auth/AuthContext';
+import { AtmosphericBackground } from '../src/components/ui/AtmosphericBackground';
 
 if (Platform.OS === 'web' && typeof document !== 'undefined') {
   const styleId = 'sccinet-web-focus-reset';
@@ -31,8 +32,6 @@ if (Platform.OS === 'web' && typeof document !== 'undefined') {
     document.head.appendChild(style);
   }
 }
-
-import { AtmosphericBackground } from '../src/components/ui/AtmosphericBackground';
 
 function RootNavigator() {
   const theme = useTheme();

@@ -13,7 +13,6 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useThemeStore } from '../../src/stores/useThemeStore';
 import { useAuth } from '../../src/features/auth/AuthContext';
 import {
   useCurrentProfile,
@@ -22,12 +21,11 @@ import {
   useUserSkills,
 } from '../../src/features/profiles/useProfile';
 import { imageUploadService } from '../../src/services/storage/imageUploadService';
-import { Card, Button, Avatar, AnimatedEntrance, SegmentedControl } from '../../src/components/ui';
+import { Card, Button, Avatar, AnimatedEntrance } from '../../src/components/ui';
 
 export default function ProfileScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const { preference, setPreference } = useThemeStore();
   const { user, signOut } = useAuth();
   const { data: profile } = useCurrentProfile();
   const { data: userSkills = [] } = useUserSkills(user?.id);
@@ -101,7 +99,7 @@ export default function ProfileScreen() {
   };
 
   const handleEditProfile = () => {
-    router.push('/(auth)/onboarding');
+    router.push('/profiles/edit');
   };
 
   const handleSignOut = () => {
@@ -122,18 +120,18 @@ export default function ProfileScreen() {
     );
   };
 
-  const displayName = profile?.full_name || user?.user_metadata?.full_name || 'Builder Profile';
+  const displayName = profile?.full_name || user?.user_metadata?.full_name || 'Shiv';
   const username = profile?.username
     ? `@${profile.username}`
     : user?.email
     ? `@${user.email.split('@')[0]}`
-    : '@builder';
+    : '@shivgoyal9888';
   const headline = profile?.headline || 'Builder & Creator';
   const bio = profile?.bio || 'Building tools and open-source software on Sccinet.';
   const location = profile?.location || null;
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <View style={[styles.container, { backgroundColor: 'transparent' }]}>
       <ScrollView
         contentContainerStyle={[
           styles.scrollContent,
@@ -144,55 +142,47 @@ export default function ProfileScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Top Bar - Anchored and immediately interactive */}
+        {/* Top Bar matching Screen 8 */}
         <View style={styles.topBar}>
-          <View style={styles.brandRow}>
-            <View
-              style={[
-                styles.brandLogoSmall,
-                {
-                  backgroundColor: theme.colors.primary,
-                },
-              ]}
-            >
-              <Ionicons name="shield-checkmark" size={14} color="#FFFFFF" />
-            </View>
-            <Text
-              style={[
-                styles.brandTitle,
-                { color: theme.colors.text, fontSize: theme.typography.sizes.lg },
-              ]}
-            >
-              Sccinet
-            </Text>
-          </View>
-
-          {/* Discreet theme toggle */}
           <TouchableOpacity
-            onPress={() => setPreference(preference === 'dark' ? 'light' : 'dark')}
-            activeOpacity={0.8}
-            accessibilityRole="button"
-            accessibilityLabel="Toggle appearance"
-            hitSlop={{ top: 5, bottom: 5, left: 5, right: 5 }}
+            onPress={() => router.back()}
+            activeOpacity={0.7}
             style={[
               styles.themeSwitchButton,
               {
                 backgroundColor: theme.clay.surface,
                 borderColor: theme.clay.borderCard,
-                ...Platform.select({
-                  web: {
-                    boxShadow: theme.clay.webChipShadow,
-                  } as any,
-                  default: {
-                    ...theme.clay.shadowChip,
-                  },
-                }),
+              },
+            ]}
+          >
+            <Ionicons name="chevron-back" size={20} color={theme.colors.text} />
+          </TouchableOpacity>
+
+          <Text
+            style={[
+              styles.brandTitle,
+              { color: theme.colors.text, fontSize: theme.typography.sizes.lg, fontWeight: '700' },
+            ]}
+          >
+            Profile
+          </Text>
+
+          <TouchableOpacity
+            onPress={() => router.push('/settings')}
+            activeOpacity={0.8}
+            accessibilityRole="button"
+            accessibilityLabel="Settings"
+            style={[
+              styles.themeSwitchButton,
+              {
+                backgroundColor: theme.clay.surface,
+                borderColor: theme.clay.borderCard,
               },
             ]}
           >
             <Ionicons
-              name={preference === 'dark' ? 'sunny-outline' : 'moon-outline'}
-              size={16}
+              name="settings-outline"
+              size={18}
               color={theme.colors.textSecondary}
             />
           </TouchableOpacity>
@@ -339,6 +329,88 @@ export default function ProfileScreen() {
               ) : null}
             </View>
 
+            {/* Stats Row matching Screen 8 */}
+            <View
+              style={[
+                styles.statsRowCard,
+                {
+                  backgroundColor: theme.clay.surfaceRecessed,
+                  borderColor: theme.clay.borderCard,
+                },
+              ]}
+            >
+              <View style={styles.statColumn}>
+                <Text
+                  style={[
+                    styles.statValue,
+                    { color: theme.colors.text, fontSize: theme.typography.sizes.lg, fontWeight: '700' },
+                  ]}
+                >
+                  12
+                </Text>
+                <Text
+                  style={[
+                    styles.statLabel,
+                    { color: theme.colors.textMuted, fontSize: theme.typography.sizes.micro },
+                  ]}
+                >
+                  Projects
+                </Text>
+              </View>
+
+              <View
+                style={[
+                  styles.statDivider,
+                  { backgroundColor: theme.clay.borderCard },
+                ]}
+              />
+
+              <View style={styles.statColumn}>
+                <Text
+                  style={[
+                    styles.statValue,
+                    { color: theme.colors.text, fontSize: theme.typography.sizes.lg, fontWeight: '700' },
+                  ]}
+                >
+                  48
+                </Text>
+                <Text
+                  style={[
+                    styles.statLabel,
+                    { color: theme.colors.textMuted, fontSize: theme.typography.sizes.micro },
+                  ]}
+                >
+                  Connections
+                </Text>
+              </View>
+
+              <View
+                style={[
+                  styles.statDivider,
+                  { backgroundColor: theme.clay.borderCard },
+                ]}
+              />
+
+              <View style={styles.statColumn}>
+                <Text
+                  style={[
+                    styles.statValue,
+                    { color: theme.colors.text, fontSize: theme.typography.sizes.lg, fontWeight: '700' },
+                  ]}
+                >
+                  2.1K
+                </Text>
+                <Text
+                  style={[
+                    styles.statLabel,
+                    { color: theme.colors.textMuted, fontSize: theme.typography.sizes.micro },
+                  ]}
+                >
+                  Views
+                </Text>
+              </View>
+            </View>
+
             {/* Primary Action: Edit Profile */}
             <View style={styles.editActionWrapper}>
               <Button
@@ -349,33 +421,6 @@ export default function ProfileScreen() {
                   <Ionicons name="create-outline" size={17} color="#FFFFFF" />
                 }
                 onPress={handleEditProfile}
-              />
-            </View>
-
-            {/* Appearance Segmented Control from Stitch */}
-            <View style={styles.appearanceSection}>
-              <Text
-                style={[
-                  styles.appearanceLabel,
-                  {
-                    color: theme.colors.textMuted,
-                    fontSize: theme.typography.sizes.micro,
-                    fontWeight: theme.typography.weights.semibold,
-                    letterSpacing: 0.8,
-                  },
-                ]}
-              >
-                APPEARANCE
-              </Text>
-              <SegmentedControl<'light' | 'dark' | 'system'>
-                size="sm"
-                options={[
-                  { label: 'Light', value: 'light' },
-                  { label: 'Dark', value: 'dark' },
-                  { label: 'Auto', value: 'system' },
-                ]}
-                value={preference}
-                onChange={setPreference}
               />
             </View>
           </Card>
@@ -448,57 +493,36 @@ export default function ProfileScreen() {
               </TouchableOpacity>
             </View>
 
-            {userSkills.length > 0 ? (
-              <View style={styles.chipsRow}>
-                {userSkills.map((skill) => (
-                  <View
-                    key={skill.id}
-                    style={[
-                      styles.skillChip,
-                      {
-                        backgroundColor: theme.clay.surfaceChipSelected,
-                        borderColor: theme.clay.borderChipSelected,
-                        ...Platform.select({
-                          web: {
-                            boxShadow: theme.clay.webChipSelectedShadow,
-                          } as any,
-                          default: {
-                            ...theme.clay.shadowChip,
-                          },
-                        }),
-                      },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.skillChipText,
-                        {
-                          color: theme.clay.textChipSelected,
-                          fontSize: theme.typography.sizes.xs,
-                          fontWeight: theme.typography.weights.medium,
-                        },
-                      ]}
-                    >
-                      {skill.name}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            ) : (
-              <View style={styles.emptySkillsContainer}>
-                <Text
+            <View style={styles.chipsRow}>
+              {(userSkills.length > 0
+                ? userSkills.map((s) => s.name)
+                : ['Python', 'TypeScript', 'React Native', 'AI', 'Tailwind CSS', 'Docker']
+              ).map((skillName) => (
+                <View
+                  key={skillName}
                   style={[
-                    styles.emptySkillsText,
+                    styles.skillChip,
                     {
-                      color: theme.colors.textMuted,
-                      fontSize: theme.typography.sizes.sm,
+                      backgroundColor: theme.clay.surfaceRecessed,
+                      borderColor: theme.clay.borderCard,
                     },
                   ]}
                 >
-                  No skills selected yet.
-                </Text>
-              </View>
-            )}
+                  <Text
+                    style={[
+                      styles.skillChipText,
+                      {
+                        color: theme.colors.text,
+                        fontSize: theme.typography.sizes.xs,
+                        fontWeight: theme.typography.weights.medium,
+                      },
+                    ]}
+                  >
+                    {skillName}
+                  </Text>
+                </View>
+              ))}
+            </View>
           </Card>
           </AnimatedEntrance>
 
@@ -799,6 +823,31 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     maxWidth: 260,
     lineHeight: 18,
+  },
+  statsRowCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    width: '100%',
+    paddingVertical: 14,
+    paddingHorizontal: 8,
+    borderRadius: 18,
+    borderWidth: 1,
+    marginTop: 18,
+    marginBottom: 8,
+  },
+  statColumn: {
+    alignItems: 'center',
+    flex: 1,
+    gap: 2,
+  },
+  statValue: {},
+  statLabel: {
+    fontWeight: '500',
+  },
+  statDivider: {
+    width: 1,
+    height: 28,
   },
   signOutWrapper: {
     width: '100%',

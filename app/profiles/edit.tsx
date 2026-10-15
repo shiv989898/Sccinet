@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -18,7 +17,6 @@ import { profileUpdateSchema } from '../../src/features/profiles/schemas';
 import {
   useCurrentProfile,
   useUpdateProfile,
-  useAvailableSkills,
   useUserSkills,
   useAddSkill,
   useRemoveSkill,
@@ -31,10 +29,9 @@ export default function EditProfileScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
-  const { data: profile, isLoading: isLoadingProfile } = useCurrentProfile();
+  const { data: profile } = useCurrentProfile();
   const { mutateAsync: updateProfile, isPending: isSaving } = useUpdateProfile();
   const { mutateAsync: uploadAvatar, isPending: isUploadingAvatar } = useUploadAvatar();
-  const { data: availableSkills = [] } = useAvailableSkills();
   const { data: userSkills = [] } = useUserSkills(user?.id);
   const { mutateAsync: addSkill } = useAddSkill(user?.id);
   const { mutateAsync: removeSkill } = useRemoveSkill(user?.id);
@@ -48,14 +45,17 @@ export default function EditProfileScreen() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    if (profile) {
-      setFullName(profile.full_name || '');
-      setUsername(profile.username || '');
-      setHeadline(profile.headline || '');
-      setBio(profile.bio || '');
-    } else if (user?.user_metadata?.full_name) {
-      setFullName(user.user_metadata.full_name);
-    }
+    const timer = setTimeout(() => {
+      if (profile) {
+        setFullName(profile.full_name || '');
+        setUsername(profile.username || '');
+        setHeadline(profile.headline || '');
+        setBio(profile.bio || '');
+      } else if (user?.user_metadata?.full_name) {
+        setFullName(user.user_metadata.full_name);
+      }
+    }, 0);
+    return () => clearTimeout(timer);
   }, [profile, user]);
 
   const handlePickPhoto = async () => {
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   avatarLoadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: 'rgba(0, 0, 0, 0.45)',
     borderRadius: 44,
     alignItems: 'center',

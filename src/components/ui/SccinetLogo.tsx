@@ -1,7 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text, ViewStyle, StyleProp, Platform } from 'react-native';
 import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../hooks/useTheme';
 
 export interface SccinetLogoProps {

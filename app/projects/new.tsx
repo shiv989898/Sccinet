@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import { router } from 'expo-router';
@@ -212,7 +213,7 @@ export default function CreateProjectScreen() {
               },
             ]}
           >
-            <Ionicons name="arrow-back" size={18} color={theme.colors.text} />
+            <Ionicons name="chevron-back" size={20} color={theme.colors.text} />
           </Pressable>
 
           <View style={styles.topBarTitleContainer}>
@@ -226,11 +227,25 @@ export default function CreateProjectScreen() {
                 },
               ]}
             >
-              New Project
+              Create Project
             </Text>
           </View>
 
-          <View style={styles.topBarRightSlot} />
+          <TouchableOpacity
+            onPress={handleSubmit(onSubmit)}
+            disabled={createProjectMutation.isPending}
+            activeOpacity={0.7}
+            style={styles.headerCreateButton}
+          >
+            <Text
+              style={[
+                styles.headerCreateText,
+                { color: theme.colors.primary, fontSize: theme.typography.sizes.md, fontWeight: '600' },
+              ]}
+            >
+              {createProjectMutation.isPending ? 'Creating...' : 'Create'}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Content Container */}
@@ -875,4 +890,9 @@ const styles = StyleSheet.create({
     marginTop: 28,
     gap: 8,
   },
+  headerCreateButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  headerCreateText: {},
 });
