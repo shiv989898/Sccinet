@@ -20,7 +20,7 @@ import {
 } from '../../src/components/ui';
 import { useProject } from '../../src/features/projects';
 
-const sampleLandscape = require('../../../assets/images/sample-landscape.jpg');
+const sampleLandscape = require('../../assets/images/sample-landscape.jpg');
 
 export default function ProjectDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();

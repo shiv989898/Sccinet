@@ -28,7 +28,7 @@ import { useAuth } from '../../src/features/auth/AuthContext';
 import { useCurrentProfile } from '../../src/features/profiles/useProfile';
 import { useCreatePost, useDeletePost, useFeedPosts } from '../../src/features/feed';
 
-const sampleLandscape = require('../../../assets/images/sample-landscape.jpg');
+const sampleLandscape = require('../../assets/images/sample-landscape.jpg');
 
 function formatTimestamp(dateString?: string): string {
   if (!dateString) return '2h';
