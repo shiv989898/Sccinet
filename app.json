@@ -39,7 +39,8 @@
         {
           "photosPermission": "The app accesses your photos to let you choose an avatar or project cover image."
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true,
