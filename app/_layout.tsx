@@ -8,6 +8,11 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useTheme } from '../src/hooks/useTheme';
 import { AuthProvider, useAuth } from '../src/features/auth/AuthContext';
 import { AtmosphericBackground } from '../src/components/ui/AtmosphericBackground';
+import { useFonts } from 'expo-font';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 if (Platform.OS === 'web' && typeof document !== 'undefined') {
   const styleId = 'sccinet-web-focus-reset';
@@ -151,6 +156,16 @@ function RootNavigator() {
 }
 
 export default function RootLayout() {
+  const [fontsLoaded, fontError] = useFonts({
+    ...Ionicons.font,
+  });
+
+  useEffect(() => {
+    if (fontsLoaded || fontError) {
+      SplashScreen.hideAsync().catch(() => {});
+    }
+  }, [fontsLoaded, fontError]);
+
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -163,6 +178,10 @@ export default function RootLayout() {
         },
       })
   );
+
+  if (!fontsLoaded && !fontError) {
+    return null;
+  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
