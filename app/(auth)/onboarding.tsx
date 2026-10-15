@@ -191,8 +191,11 @@ export default function OnboardingScreen() {
             {[0, 1, 2, 3].map((index) => {
               const isActive = index === activeSlide;
               return (
-                <View
+                <TouchableOpacity
                   key={index}
+                  onPress={() => setActiveSlide(index)}
+                  activeOpacity={0.7}
+                  hitSlop={{ top: 8, bottom: 8, left: 6, right: 6 }}
                   style={[
                     styles.dot,
                     {
