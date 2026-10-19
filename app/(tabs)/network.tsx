@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   Alert,
+  Platform,
   RefreshControl,
   ScrollView,
   StyleSheet,
