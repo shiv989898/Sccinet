@@ -150,8 +150,8 @@ export default function ProfileScreen() {
             style={[
               styles.themeSwitchButton,
               {
-                backgroundColor: theme.clay.surface,
-                borderColor: theme.clay.borderCard,
+                backgroundColor: theme.glass.clear.fill,
+                borderColor: theme.glass.clear.border,
               },
             ]}
           >
@@ -175,8 +175,8 @@ export default function ProfileScreen() {
             style={[
               styles.themeSwitchButton,
               {
-                backgroundColor: theme.clay.surface,
-                borderColor: theme.clay.borderCard,
+                backgroundColor: theme.glass.clear.fill,
+                borderColor: theme.glass.clear.border,
               },
             ]}
           >
@@ -202,10 +202,12 @@ export default function ProfileScreen() {
                 style={[
                   styles.avatarWrapper,
                   {
-                    backgroundColor: theme.clay.surface,
-                    borderColor: theme.clay.borderCard,
+                    backgroundColor: theme.glass.clear.fill,
+                    borderColor: theme.glass.clear.border,
                     ...Platform.select({
                       web: {
+                        backdropFilter: 'blur(16px)',
+                        WebkitBackdropFilter: 'blur(16px)',
                         boxShadow: theme.clay.webCardShadow,
                       } as any,
                       default: {
@@ -221,10 +223,12 @@ export default function ProfileScreen() {
                   style={[
                     styles.avatarBadge,
                     {
-                      backgroundColor: theme.clay.surfaceElevated,
-                      borderColor: theme.clay.borderCard,
+                      backgroundColor: theme.glass.elevated.fill,
+                      borderColor: theme.glass.elevated.border,
                       ...Platform.select({
                         web: {
+                          backdropFilter: 'blur(12px)',
+                          WebkitBackdropFilter: 'blur(12px)',
                           boxShadow: theme.clay.webChipShadow,
                         } as any,
                         default: {

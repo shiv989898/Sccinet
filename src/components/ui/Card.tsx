@@ -101,6 +101,17 @@ export function Card({
   const resolvedRadius =
     (flattenedStyle?.borderRadius as number | undefined) ?? theme.borderRadius.card;
 
+  const contentLayout: ViewStyle = {};
+  if (flattenedStyle) {
+    if (flattenedStyle.alignItems !== undefined) contentLayout.alignItems = flattenedStyle.alignItems;
+    if (flattenedStyle.justifyContent !== undefined) contentLayout.justifyContent = flattenedStyle.justifyContent;
+    if (flattenedStyle.flexDirection !== undefined) contentLayout.flexDirection = flattenedStyle.flexDirection;
+    if (flattenedStyle.flexWrap !== undefined) contentLayout.flexWrap = flattenedStyle.flexWrap;
+    if (flattenedStyle.gap !== undefined) contentLayout.gap = flattenedStyle.gap;
+    if (flattenedStyle.rowGap !== undefined) contentLayout.rowGap = flattenedStyle.rowGap;
+    if (flattenedStyle.columnGap !== undefined) contentLayout.columnGap = flattenedStyle.columnGap;
+  }
+
   const glassVariant: GlassVariant =
     variant === 'glass'
       ? 'clear'
@@ -163,7 +174,7 @@ export function Card({
               borderRadius={resolvedRadius}
               border={true}
               style={style}
-              contentStyle={{ padding: getPadding() }}
+              contentStyle={[{ padding: getPadding() }, contentLayout]}
             >
               {children}
             </GlassView>
@@ -198,7 +209,7 @@ export function Card({
       borderRadius={resolvedRadius}
       border={true}
       style={style}
-      contentStyle={{ padding: getPadding() }}
+      contentStyle={[{ padding: getPadding() }, contentLayout]}
     >
       {children}
     </GlassView>
