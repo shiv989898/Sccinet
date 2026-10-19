@@ -110,6 +110,9 @@ export default function TabLayout() {
         tabBarHideOnKeyboard: true,
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.textMuted,
+        sceneStyle: {
+          backgroundColor: 'transparent',
+        },
         tabBarBackground: () => (
           <GlassView
             variant="tabBar"
@@ -125,8 +128,8 @@ export default function TabLayout() {
           left: 0,
           right: 0,
           elevation: 0,
-          height: Platform.OS === 'ios' ? 88 : 64,
-          paddingBottom: Platform.OS === 'ios' ? 28 : 10,
+          height: Platform.OS === 'ios' ? 88 : 72,
+          paddingBottom: Platform.OS === 'ios' ? 28 : 12,
           paddingTop: 8,
           ...Platform.select({
             web: {
@@ -139,6 +142,7 @@ export default function TabLayout() {
           fontSize: theme.typography.sizes.micro,
           fontWeight: '600',
           letterSpacing: 0.2,
+          marginTop: -2,
         },
       }}
     >
