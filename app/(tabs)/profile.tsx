@@ -464,8 +464,8 @@ export default function ProfileScreen() {
                   style={[
                     styles.counterBadge,
                     {
-                      backgroundColor: theme.clay.surfaceRecessed,
-                      borderColor: theme.clay.borderCard,
+                      backgroundColor: theme.glass.input.fill,
+                      borderColor: theme.glass.input.border,
                     },
                   ]}
                 >
@@ -513,8 +513,8 @@ export default function ProfileScreen() {
                   style={[
                     styles.skillChip,
                     {
-                      backgroundColor: theme.clay.surfaceRecessed,
-                      borderColor: theme.clay.borderCard,
+                      backgroundColor: theme.glass.input.fill,
+                      borderColor: theme.glass.input.border,
                     },
                   ]}
                 >
@@ -561,17 +561,18 @@ export default function ProfileScreen() {
               </View>
             </View>
 
-            {/* Clean Tactile Empty State from Stitch */}
+            {/* Clean Tactile Empty State */}
             <View
               style={[
                 styles.emptyProjectsSlot,
                 {
-                  backgroundColor: theme.clay.surfaceRecessed,
-                  borderColor: theme.clay.borderRecessed,
+                  backgroundColor: theme.glass.input.fill,
+                  borderColor: theme.glass.input.border,
                   borderRadius: theme.borderRadius.lg,
                   ...Platform.select({
                     web: {
-                      boxShadow: theme.clay.webRecessedShadow,
+                      backdropFilter: 'blur(12px)',
+                      WebkitBackdropFilter: 'blur(12px)',
                     } as any,
                   }),
                 },
@@ -581,16 +582,8 @@ export default function ProfileScreen() {
                 style={[
                   styles.emptyProjectsIcon,
                   {
-                    backgroundColor: theme.clay.surface,
-                    borderColor: theme.clay.borderCard,
-                    ...Platform.select({
-                      web: {
-                        boxShadow: theme.clay.webPillShadow,
-                      } as any,
-                      default: {
-                        ...theme.clay.shadowChip,
-                      },
-                    }),
+                    backgroundColor: theme.glass.clear.fill,
+                    borderColor: theme.glass.clear.border,
                   },
                 ]}
               >
@@ -684,12 +677,18 @@ const styles = StyleSheet.create({
     letterSpacing: -0.3,
   },
   themeSwitchButton: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    ...Platform.select({
+      web: {
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+      } as any,
+    }),
   },
   centerContainer: {
     width: '100%',
@@ -703,17 +702,25 @@ const styles = StyleSheet.create({
   },
   avatarRow: {
     marginBottom: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
   },
   avatarWrapper: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: 3,
-    borderRadius: 9999,
     borderWidth: 1,
     position: 'relative',
+    alignSelf: 'center',
   },
   avatarBadge: {
     position: 'absolute',
-    bottom: -2,
-    right: -2,
+    bottom: 0,
+    right: 0,
     width: 28,
     height: 28,
     borderRadius: 14,
