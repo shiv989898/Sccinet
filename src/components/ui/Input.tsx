@@ -93,12 +93,12 @@ export function Input({
   const getBorderColor = () => {
     if (error) return theme.colors.error;
     if (isFocused) return theme.colors.primary;
-    if (variant === 'glass') return theme.glass.regular.border;
+    if (variant === 'glass') return theme.glass.input.border;
     return theme.clay.borderCard;
   };
 
   const getBackgroundColor = () => {
-    if (variant === 'glass') return theme.glass.clear.fill;
+    if (variant === 'glass') return theme.glass.input.fill;
     if (variant === 'clay') return theme.clay.surfaceRecessed;
     return theme.colors.surface;
   };
@@ -135,8 +135,8 @@ export function Input({
             paddingHorizontal: theme.spacing.md,
             ...Platform.select({
               web: {
-                backdropFilter: variant === 'glass' ? 'blur(16px)' : undefined,
-                WebkitBackdropFilter: variant === 'glass' ? 'blur(16px)' : undefined,
+                backdropFilter: 'blur(16px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(16px) saturate(180%)',
                 boxShadow: isFocused
                   ? error
                     ? 'inset 0 1px 2px 0 rgba(239, 68, 68, 0.1), 0 0 0 2.5px rgba(239, 68, 68, 0.2)'

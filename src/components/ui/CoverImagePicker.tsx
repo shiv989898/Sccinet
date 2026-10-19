@@ -12,6 +12,7 @@ import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../hooks/useTheme';
 import { imageUploadService } from '../../services/storage/imageUploadService';
+import { GlassView } from './GlassView';
 
 export interface CoverImagePickerProps {
   value?: string | null;
@@ -106,31 +107,31 @@ export function CoverImagePicker({
               accessibilityRole="button"
               accessibilityLabel="Change cover image"
               hitSlop={{ top: 6, bottom: 6, left: 2, right: 2 }}
-              style={[
-                styles.actionButton,
-                {
-                  backgroundColor: theme.glass.regular.fill,
-                  borderColor: theme.glass.regular.border,
-                },
-              ]}
             >
-              <Ionicons
-                name="camera-outline"
-                size={14}
-                color={theme.colors.primary}
-              />
-              <Text
-                style={[
-                  styles.actionText,
-                  {
-                    color: theme.colors.text,
-                    fontSize: theme.typography.sizes.xs,
-                    fontWeight: theme.typography.weights.medium,
-                  },
-                ]}
+              <GlassView
+                variant="elevated"
+                borderRadius={12}
+                style={styles.actionButton}
+                contentStyle={styles.actionButtonContent}
               >
-                Change
-              </Text>
+                <Ionicons
+                  name="camera-outline"
+                  size={14}
+                  color={theme.colors.primary}
+                />
+                <Text
+                  style={[
+                    styles.actionText,
+                    {
+                      color: theme.colors.text,
+                      fontSize: theme.typography.sizes.xs,
+                      fontWeight: theme.typography.weights.medium,
+                    },
+                  ]}
+                >
+                  Change
+                </Text>
+              </GlassView>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -140,27 +141,27 @@ export function CoverImagePicker({
               accessibilityRole="button"
               accessibilityLabel="Remove cover image"
               hitSlop={{ top: 6, bottom: 6, left: 2, right: 2 }}
-              style={[
-                styles.actionButton,
-                {
-                  backgroundColor: theme.isDark ? 'rgba(38, 42, 52, 0.88)' : 'rgba(255, 255, 255, 0.92)',
-                  borderColor: theme.clay.borderCard,
-                },
-              ]}
             >
-              <Ionicons name="trash-outline" size={14} color={theme.colors.error} />
-              <Text
-                style={[
-                  styles.actionText,
-                  {
-                    color: theme.colors.error,
-                    fontSize: theme.typography.sizes.xs,
-                    fontWeight: theme.typography.weights.medium,
-                  },
-                ]}
+              <GlassView
+                variant="elevated"
+                borderRadius={12}
+                style={styles.actionButton}
+                contentStyle={styles.actionButtonContent}
               >
-                Remove
-              </Text>
+                <Ionicons name="trash-outline" size={14} color={theme.colors.error} />
+                <Text
+                  style={[
+                    styles.actionText,
+                    {
+                      color: theme.colors.error,
+                      fontSize: theme.typography.sizes.xs,
+                      fontWeight: theme.typography.weights.medium,
+                    },
+                  ]}
+                >
+                  Remove
+                </Text>
+              </GlassView>
             </TouchableOpacity>
           </View>
 
@@ -280,6 +281,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   actionButton: {
+    borderRadius: 12,
+  },
+  actionButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -287,9 +291,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 7,
     minHeight: 34,
-    minWidth: 64,
-    borderRadius: 8,
-    borderWidth: 1,
   },
   actionText: {
     letterSpacing: -0.1,

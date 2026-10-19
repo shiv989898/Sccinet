@@ -16,6 +16,7 @@ import {
   Avatar,
   Badge,
   Card,
+  GlassView,
   SegmentedControl,
 } from '../../src/components/ui';
 import { useProject } from '../../src/features/projects';
@@ -103,9 +104,16 @@ export default function ProjectDetailScreen() {
             <TouchableOpacity
               onPress={() => router.back()}
               activeOpacity={0.7}
-              style={styles.circleActionButton}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
-              <Ionicons name="chevron-back" size={20} color="#FFFFFF" />
+              <GlassView
+                variant="clear"
+                borderRadius={19}
+                style={styles.circleActionButton}
+                contentStyle={styles.circleActionContent}
+              >
+                <Ionicons name="chevron-back" size={20} color="#FFFFFF" />
+              </GlassView>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -117,16 +125,23 @@ export default function ProjectDetailScreen() {
                 ])
               }
               activeOpacity={0.7}
-              style={styles.circleActionButton}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
-              <Ionicons name="ellipsis-horizontal" size={20} color="#FFFFFF" />
+              <GlassView
+                variant="clear"
+                borderRadius={19}
+                style={styles.circleActionButton}
+                contentStyle={styles.circleActionContent}
+              >
+                <Ionicons name="ellipsis-horizontal" size={20} color="#FFFFFF" />
+              </GlassView>
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Floating Project Header Card matching Screen 11 */}
         <View style={styles.floatingCardWrapper}>
-          <Card variant="clay" padding="lg" style={styles.detailCard}>
+          <Card variant="glass" padding="lg" style={styles.detailCard}>
             {/* Header: Icon + Title & Byline + ACTIVE Badge */}
             <View style={styles.detailHeaderRow}>
               <View style={styles.detailLeftGroup}>
@@ -505,9 +520,10 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: 'rgba(0, 0, 0, 0.45)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.20)',
+  },
+  circleActionContent: {
+    width: 38,
+    height: 38,
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -118,7 +118,7 @@ export default function TabLayout() {
           />
         ),
         tabBarStyle: {
-          backgroundColor: Platform.OS === 'ios' ? 'transparent' : theme.glass.tabBar.fill,
+          backgroundColor: 'transparent',
           borderTopWidth: 0,
           position: 'absolute',
           bottom: 0,

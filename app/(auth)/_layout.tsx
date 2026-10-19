@@ -13,7 +13,7 @@ export default function AuthLayout() {
         animationDuration: 200,
         gestureEnabled: true,
         contentStyle: {
-          backgroundColor: theme.colors.background,
+          backgroundColor: 'transparent',
         },
       }}
     >

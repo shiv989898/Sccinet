@@ -69,19 +69,26 @@ export interface GlassMaterial {
   fill: string;
   blurIntensity: number;
   border: string;
+  borderTop?: string;
 }
 
 export interface GlassTheme {
   regular: GlassMaterial;
   clear: GlassMaterial;
   prominent: GlassMaterial;
+  elevated: GlassMaterial;
   tabBar: {
     fill: string;
     blurIntensity: number;
     borderTop: string;
   };
+  input: {
+    fill: string;
+    border: string;
+  };
   highlight: string;
   ambientShadow: ViewStyle;
+  elevatedShadow: ViewStyle;
 }
 
 export interface Theme {
