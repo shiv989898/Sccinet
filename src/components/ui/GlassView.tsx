@@ -133,13 +133,29 @@ export function GlassView({
   // Web rendering with CSS backdrop-filter
   if (isWeb) {
     const webBlurFilter = `blur(${Math.round(effectiveIntensity / 3)}px) saturate(180%)`;
+    const webBoxShadow =
+      variant === 'elevated'
+        ? theme.isDark
+          ? '0 12px 32px rgba(0, 0, 0, 0.45)'
+          : '0 8px 24px rgba(0, 0, 0, 0.10)'
+        : variant !== 'tabBar' && borderRadius > 0
+        ? theme.isDark
+          ? '0 8px 24px rgba(0, 0, 0, 0.35)'
+          : '0 4px 16px rgba(0, 0, 0, 0.06)'
+        : undefined;
+
     return (
       <View
-        pointerEvents={pointerEvents}
-        style={[styles.container, shadowStyle, style]}
+        style={[
+          styles.container,
+          {
+            boxShadow: webBoxShadow,
+            pointerEvents: pointerEvents as any,
+          } as any,
+          style,
+        ]}
       >
         <View
-          pointerEvents="none"
           style={[
             StyleSheet.absoluteFill,
             {
@@ -148,6 +164,7 @@ export function GlassView({
               backdropFilter: webBlurFilter,
               WebkitBackdropFilter: webBlurFilter,
               overflow: 'hidden',
+              pointerEvents: 'none',
             } as any,
             borderStyles,
           ]}

@@ -121,7 +121,7 @@ export function Card({
         ]}
       >
         <Pressable
-          accessibilityRole="button"
+          accessibilityRole={isWeb ? undefined : 'button'}
           onPress={onPress}
           unstable_pressDelay={0}
           onPressIn={handlePressIn}
@@ -129,7 +129,8 @@ export function Card({
           style={({ pressed }) => [
             {
               opacity: pressed ? 0.92 : 1,
-            },
+              ...(isWeb ? { cursor: 'pointer' } : {}),
+            } as any,
             isWeb && pressed
               ? {
                   transform: [
