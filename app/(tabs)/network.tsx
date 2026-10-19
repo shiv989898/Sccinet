@@ -149,15 +149,23 @@ export default function NetworkScreen() {
               <TouchableOpacity
                 onPress={() => {}}
                 activeOpacity={0.7}
+                accessibilityRole="button"
+                accessibilityLabel="Search network"
                 style={[
                   styles.headerSearchIcon,
                   {
-                    backgroundColor: theme.clay.surfaceRecessed,
-                    borderColor: theme.clay.borderCard,
+                    backgroundColor: theme.glass.clear.fill,
+                    borderColor: theme.glass.clear.border,
+                    ...Platform.select({
+                      web: {
+                        backdropFilter: 'blur(16px)',
+                        WebkitBackdropFilter: 'blur(16px)',
+                      } as any,
+                    }),
                   },
                 ]}
               >
-                <Ionicons name="search" size={18} color={theme.colors.text} />
+                <Ionicons name="search" size={17} color={theme.colors.text} />
               </TouchableOpacity>
             </View>
           </View>
@@ -260,6 +268,7 @@ export default function NetworkScreen() {
                             },
                           ]}
                         >
+                          <Ionicons name="checkmark-circle" size={13} color="#4ADE80" style={{ marginRight: 4 }} />
                           <Text style={[styles.connectedText, { color: '#4ADE80' }]}>
                             Connected
                           </Text>
@@ -269,6 +278,7 @@ export default function NetworkScreen() {
                           title="Connect"
                           size="sm"
                           variant="clayPrimary"
+                          leftIcon={<Ionicons name="person-add" size={13} color="#FFFFFF" />}
                           onPress={() => handleToggleConnect(person.id)}
                           style={styles.connectButton}
                         />
@@ -321,12 +331,14 @@ export default function NetworkScreen() {
                         title="Accept"
                         size="sm"
                         variant="clayPrimary"
+                        leftIcon={<Ionicons name="checkmark" size={14} color="#FFFFFF" />}
                         onPress={() => Alert.alert('Accepted', `Connected with ${req.name}`)}
                       />
                       <Button
                         title="Decline"
                         size="sm"
                         variant="claySecondary"
+                        leftIcon={<Ionicons name="close" size={14} color={theme.colors.textSecondary} />}
                         onPress={() => Alert.alert('Declined', `Declined request from ${req.name}`)}
                       />
                     </View>
@@ -387,6 +399,8 @@ const styles = StyleSheet.create({
   },
   personHeadline: {},
   connectedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 14,
@@ -398,6 +412,6 @@ const styles = StyleSheet.create({
   },
   connectButton: {
     borderRadius: 14,
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
   },
 });

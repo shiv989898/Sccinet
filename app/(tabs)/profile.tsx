@@ -605,9 +605,10 @@ export default function ProfileScreen() {
                 No projects yet. Projects you create or collaborate on will appear here.
               </Text>
               <Button
-                title="+ Create Project"
+                title="Create Project"
                 variant="claySecondary"
                 size="sm"
+                leftIcon={<Ionicons name="add" size={16} color={theme.colors.primary} />}
                 onPress={() => router.push('/projects/new')}
               />
             </View>

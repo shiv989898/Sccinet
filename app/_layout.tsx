@@ -10,8 +10,11 @@ import { AuthProvider, useAuth } from '../src/features/auth/AuthContext';
 import { AtmosphericBackground } from '../src/components/ui/AtmosphericBackground';
 import { useFonts } from 'expo-font';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import Feather from '@expo/vector-icons/Feather';
+import { enableScreens } from 'react-native-screens';
 import * as SplashScreen from 'expo-splash-screen';
 
+enableScreens(true);
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 if (Platform.OS === 'web' && typeof document !== 'undefined') {
@@ -32,6 +35,12 @@ if (Platform.OS === 'web' && typeof document !== 'undefined') {
       }
       *:focus-visible {
         outline: none !important;
+      }
+      /* Prevent inactive tab screens from bleeding through glassmorphic layers on Web */
+      div[style*="z-index: -1"], div[style*="z-index:-1"] {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
       }
     `;
     document.head.appendChild(style);
@@ -175,6 +184,7 @@ function RootNavigator() {
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
     ...Ionicons.font,
+    ...Feather.font,
   });
 
   useEffect(() => {

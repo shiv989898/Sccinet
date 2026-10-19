@@ -108,7 +108,7 @@ export default function WorkspaceScreen() {
           />
 
           <Button
-            title="+ New Project"
+            title="New Project"
             size="md"
             variant="clayPrimary"
             leftIcon={<Ionicons name="add" size={18} color="#FFFFFF" />}
