@@ -338,8 +338,14 @@ export default function ProfileScreen() {
               style={[
                 styles.statsRowCard,
                 {
-                  backgroundColor: theme.clay.surfaceRecessed,
-                  borderColor: theme.clay.borderCard,
+                  backgroundColor: theme.glass.input.fill,
+                  borderColor: theme.glass.input.border,
+                  ...Platform.select({
+                    web: {
+                      backdropFilter: 'blur(12px)',
+                      WebkitBackdropFilter: 'blur(12px)',
+                    } as any,
+                  }),
                 },
               ]}
             >
@@ -365,7 +371,7 @@ export default function ProfileScreen() {
               <View
                 style={[
                   styles.statDivider,
-                  { backgroundColor: theme.clay.borderCard },
+                  { backgroundColor: theme.glass.clear.border },
                 ]}
               />
 
@@ -391,7 +397,7 @@ export default function ProfileScreen() {
               <View
                 style={[
                   styles.statDivider,
-                  { backgroundColor: theme.clay.borderCard },
+                  { backgroundColor: theme.glass.clear.border },
                 ]}
               />
 
