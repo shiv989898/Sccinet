@@ -162,7 +162,7 @@ export default function PublicProfileScreen() {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <View style={[styles.container, { backgroundColor: 'transparent' }]}>
         <View style={[styles.headerBar, { paddingHorizontal: theme.spacing.lg }]}>
           <TouchableOpacity
             onPress={handleBack}
@@ -195,7 +195,7 @@ export default function PublicProfileScreen() {
 
   if (isError || !profile) {
     return (
-      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <View style={[styles.container, { backgroundColor: 'transparent' }]}>
         <View style={[styles.headerBar, { paddingHorizontal: theme.spacing.lg }]}>
           <TouchableOpacity
             onPress={handleBack}
@@ -232,7 +232,7 @@ export default function PublicProfileScreen() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <View style={[styles.container, { backgroundColor: 'transparent' }]}>
       {/* Top Navigation Bar */}
       <View
         style={[

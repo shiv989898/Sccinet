@@ -185,8 +185,8 @@ export default function FeedScreen() {
                 style={[
                   styles.iconButton,
                   {
-                    backgroundColor: theme.clay.surfaceRecessed,
-                    borderColor: theme.clay.borderCard,
+                    backgroundColor: theme.glass.clear.fill,
+                    borderColor: theme.glass.clear.border,
                   },
                 ]}
               >
@@ -225,8 +225,8 @@ export default function FeedScreen() {
                 style={[
                   styles.composerInputWell,
                   {
-                    backgroundColor: theme.clay.surfaceRecessed,
-                    borderColor: theme.clay.borderCard,
+                    backgroundColor: theme.glass.input.fill,
+                    borderColor: theme.glass.input.border,
                   },
                 ]}
               >

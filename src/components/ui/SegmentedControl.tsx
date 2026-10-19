@@ -83,11 +83,13 @@ export function SegmentedControl<T extends string = string>({
         styles.container,
         {
           height: controlHeight,
-          backgroundColor: theme.clay.surfaceRecessed,
-          borderColor: theme.clay.borderCard,
+          backgroundColor: theme.glass.clear.fill,
+          borderColor: theme.glass.clear.border,
           borderRadius: 14,
           ...Platform.select({
             web: {
+              backdropFilter: 'blur(16px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(16px) saturate(180%)',
               boxShadow: theme.clay.webRecessedTrackShadow,
             } as any,
           }),
@@ -107,11 +109,13 @@ export function SegmentedControl<T extends string = string>({
               top: 4,
               left: 4,
               borderRadius: 10,
-              backgroundColor: theme.clay.surfaceActivePill,
-              borderColor: theme.clay.borderCard,
+              backgroundColor: theme.glass.prominent.fill,
+              borderColor: theme.glass.prominent.border,
               transform: [{ translateX }],
               ...Platform.select({
                 web: {
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
                   boxShadow: theme.clay.webPillShadow,
                   transition: 'none',
                 } as any,

@@ -97,7 +97,14 @@ export default function SettingsScreen() {
       >
         <TouchableOpacity
           onPress={() => router.back()}
-          style={styles.backButton}
+          style={[
+            styles.backButton,
+            {
+              backgroundColor: theme.glass.clear.fill,
+              borderColor: theme.glass.clear.border,
+              borderWidth: 1,
+            },
+          ]}
           activeOpacity={0.7}
           hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
         >

@@ -165,8 +165,8 @@ export default function DiscoverScreen() {
                 style={[
                   styles.headerSearchIcon,
                   {
-                    backgroundColor: theme.clay.surfaceRecessed,
-                    borderColor: theme.clay.borderCard,
+                    backgroundColor: theme.glass.clear.fill,
+                    borderColor: theme.glass.clear.border,
                   },
                 ]}
               >
@@ -192,6 +192,7 @@ export default function DiscoverScreen() {
         {/* Search Bar matching Screen 5 placeholder */}
         <AnimatedEntrance staggerIndex={1}>
           <Input
+            variant="glass"
             placeholder="Search projects, skills, or people..."
             value={searchQuery}
             onChangeText={setSearchQuery}

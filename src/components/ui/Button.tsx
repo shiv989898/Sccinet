@@ -252,6 +252,7 @@ export function Button({
           backgroundColor: pressed ? theme.glass.clear.fill : theme.glass.regular.fill,
           borderWidth: 1,
           borderColor: theme.glass.regular.border,
+          borderTopColor: theme.glass.regular.borderTop || theme.glass.regular.border,
           borderRadius: size === 'sm' ? theme.borderRadius.md : theme.borderRadius.lg,
           ...Platform.select({
             web: {

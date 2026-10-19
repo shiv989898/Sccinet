@@ -182,7 +182,7 @@ export default function EditProjectScreen() {
 
   if (isLoadingProject) {
     return (
-      <View style={[styles.container, { backgroundColor: theme.colors.background, padding: 16 }]}>
+      <View style={[styles.container, { backgroundColor: 'transparent', padding: 16 }]}>
         <View style={{ gap: 16, maxWidth: 480, width: '100%', alignSelf: 'center', marginTop: 40 }}>
           <Card variant="clay" padding="lg">
             <View style={{ gap: 14 }}>
@@ -199,7 +199,7 @@ export default function EditProjectScreen() {
 
   if (projectError || !project) {
     return (
-      <View style={[styles.container, styles.centerFlex, { backgroundColor: theme.colors.background }]}>
+      <View style={[styles.container, styles.centerFlex, { backgroundColor: 'transparent' }]}>
         <Card variant="clay" padding="lg" style={styles.errorCard}>
           <Ionicons name="alert-circle-outline" size={40} color={theme.colors.error} />
           <Text style={[styles.errorTitle, { color: theme.colors.text }]}>Project Not Found</Text>
@@ -217,7 +217,7 @@ export default function EditProjectScreen() {
 
   if (!isOwner) {
     return (
-      <View style={[styles.container, styles.centerFlex, { backgroundColor: theme.colors.background }]}>
+      <View style={[styles.container, styles.centerFlex, { backgroundColor: 'transparent' }]}>
         <Card variant="clay" padding="lg" style={styles.errorCard}>
           <Ionicons name="lock-closed-outline" size={40} color={theme.colors.warning} />
           <Text style={[styles.errorTitle, { color: theme.colors.text }]}>Unauthorized</Text>
@@ -245,7 +245,7 @@ export default function EditProjectScreen() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
+      style={[styles.container, { backgroundColor: 'transparent' }]}
     >
       <ScrollView
         contentContainerStyle={styles.scrollContent}
