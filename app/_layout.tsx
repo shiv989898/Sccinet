@@ -1,7 +1,7 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Platform, View } from 'react-native';
-import { router, Stack, useSegments } from 'expo-router';
+import { DarkTheme, DefaultTheme, router, Stack, ThemeProvider, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -43,6 +43,21 @@ function RootNavigator() {
   const { isAuthenticated, isLoading } = useAuth();
   const segments = useSegments();
 
+  const navigationTheme = useMemo(() => {
+    const base = theme.isDark ? DarkTheme : DefaultTheme;
+    return {
+      ...base,
+      colors: {
+        ...base.colors,
+        background: 'transparent',
+        card: theme.colors.surface,
+        text: theme.colors.text,
+        border: theme.colors.border,
+        primary: theme.colors.primary,
+      },
+    };
+  }, [theme.isDark, theme.colors]);
+
   useEffect(() => {
     if (isLoading) return;
 
@@ -73,26 +88,27 @@ function RootNavigator() {
   }
 
   return (
-    <AtmosphericBackground>
-      <StatusBar style={theme.isDark ? 'light' : 'dark'} />
-      <Stack
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: theme.colors.surface,
-          },
-          headerTintColor: theme.colors.text,
-          headerTitleStyle: {
-            fontWeight: '600',
-          },
-          headerShadowVisible: false,
-          animation: Platform.OS === 'web' ? 'fade' : 'slide_from_right',
-          animationDuration: 300,
-          gestureEnabled: true,
-          contentStyle: {
-            backgroundColor: 'transparent',
-          },
-        }}
-      >
+    <ThemeProvider value={navigationTheme}>
+      <AtmosphericBackground>
+        <StatusBar style={theme.isDark ? 'light' : 'dark'} />
+        <Stack
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: theme.colors.surface,
+            },
+            headerTintColor: theme.colors.text,
+            headerTitleStyle: {
+              fontWeight: '600',
+            },
+            headerShadowVisible: false,
+            animation: Platform.OS === 'web' ? 'fade' : 'slide_from_right',
+            animationDuration: 300,
+            gestureEnabled: true,
+            contentStyle: {
+              backgroundColor: 'transparent',
+            },
+          }}
+        >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false, animation: 'fade' }} />
         <Stack.Screen
@@ -152,6 +168,7 @@ function RootNavigator() {
         />
       </Stack>
     </AtmosphericBackground>
+  </ThemeProvider>
   );
 }
 
