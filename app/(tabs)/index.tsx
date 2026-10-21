@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Alert,
+  Animated,
   Keyboard,
   Platform,
   RefreshControl,
@@ -23,6 +24,10 @@ import {
   SkeletonLoader,
   AnimatedEntrance,
   SccinetLogo,
+  LikeButton,
+  AnimatedFilterPills,
+  AnimatedTabTransition,
+  TactilePressable,
 } from '../../src/components/ui';
 import { useAuth } from '../../src/features/auth/AuthContext';
 import { useCurrentProfile } from '../../src/features/profiles/useProfile';
@@ -95,6 +100,18 @@ export default function FeedScreen() {
   const [publishError, setPublishError] = useState<string | null>(null);
   const [isComposerFocused, setIsComposerFocused] = useState(false);
   const [likedPosts, setLikedPosts] = useState<Record<string, boolean>>({});
+
+  const isComposerExpanded = isComposerFocused || postContent.length > 0;
+  const composerAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.spring(composerAnim, {
+      toValue: isComposerExpanded ? 1 : 0,
+      tension: 280,
+      friction: 20,
+      useNativeDriver: Platform.OS !== 'web',
+    }).start();
+  }, [isComposerExpanded, composerAnim]);
 
   const {
     data: posts = [],
@@ -251,9 +268,24 @@ export default function FeedScreen() {
               </View>
             </View>
 
-            {/* Composer Footer (shown when active or has text) */}
-            {(isComposerFocused || postContent.length > 0) && (
-              <View style={styles.composerExpandedFooter}>
+            {/* Animated Composer Footer */}
+            {isComposerExpanded && (
+              <Animated.View
+                style={[
+                  styles.composerExpandedFooter,
+                  {
+                    opacity: composerAnim,
+                    transform: [
+                      {
+                        translateY: composerAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [-6, 0],
+                        }),
+                      },
+                    ],
+                  },
+                ]}
+              >
                 <Text
                   style={[
                     styles.charCount,
@@ -282,7 +314,7 @@ export default function FeedScreen() {
                     onPress={handlePublish}
                   />
                 </View>
-              </View>
+              </Animated.View>
             )}
 
             {publishError && (
@@ -293,50 +325,22 @@ export default function FeedScreen() {
           </Card>
         </AnimatedEntrance>
 
-        {/* Filter Pills Row matching Screen 4 */}
+        {/* Tactile Gliding Filter Pills */}
         <AnimatedEntrance staggerIndex={2}>
-          <View style={styles.filterPillsRow}>
-            {(['all', 'following', 'projects'] as const).map((tab) => {
-              const isActive = filter === tab;
-              const label =
-                tab === 'all' ? 'All' : tab === 'following' ? 'Following' : 'Projects';
-              return (
-                <TouchableOpacity
-                  key={tab}
-                  onPress={() => setFilter(tab)}
-                  activeOpacity={0.7}
-                  style={[
-                    styles.filterPill,
-                    {
-                      backgroundColor: isActive
-                        ? 'rgba(0, 102, 255, 0.28)'
-                        : theme.clay.surfaceRecessed,
-                      borderColor: isActive
-                        ? 'rgba(0, 102, 255, 0.50)'
-                        : theme.clay.borderCard,
-                    },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.filterPillText,
-                      {
-                        color: isActive ? '#FFFFFF' : theme.colors.textSecondary,
-                        fontWeight: isActive ? '600' : '500',
-                        fontSize: theme.typography.sizes.sm,
-                      },
-                    ]}
-                  >
-                    {label}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+          <AnimatedFilterPills<'all' | 'following' | 'projects'>
+            options={[
+              { label: 'All', value: 'all' },
+              { label: 'Following', value: 'following' },
+              { label: 'Projects', value: 'projects' },
+            ]}
+            value={filter}
+            onChange={setFilter}
+          />
         </AnimatedEntrance>
 
         {/* Feed Posts List */}
-        {isLoading ? (
+        <AnimatedTabTransition activeKey={filter}>
+          {isLoading ? (
           <View style={styles.postsList}>
             {[1, 2].map((i) => (
               <Card key={i} variant="clay" padding="md">
@@ -495,33 +499,16 @@ export default function FeedScreen() {
                         { borderTopColor: theme.clay.borderRecessed },
                       ]}
                     >
-                      <TouchableOpacity
-                        onPress={() => toggleLike(post.id)}
-                        activeOpacity={0.7}
-                        style={styles.actionItem}
-                      >
-                        <Ionicons
-                          name={isLiked ? 'heart' : 'heart-outline'}
-                          size={18}
-                          color={isLiked ? '#EF4444' : theme.colors.textMuted}
-                        />
-                        <Text
-                          style={[
-                            styles.actionCount,
-                            {
-                              color: isLiked ? '#EF4444' : theme.colors.textMuted,
-                              fontSize: theme.typography.sizes.xs,
-                            },
-                          ]}
-                        >
-                          {likeCount}
-                        </Text>
-                      </TouchableOpacity>
+                      <LikeButton
+                        isLiked={isLiked}
+                        count={likeCount}
+                        onToggle={() => toggleLike(post.id)}
+                      />
 
-                      <TouchableOpacity
-                        onPress={() => Alert.alert('Comments', '6 comments on this dispatch.')}
-                        activeOpacity={0.7}
+                      <TactilePressable
+                        onPress={() => Alert.alert('Comments', `${commentCount} comments on this dispatch.`)}
                         style={styles.actionItem}
+                        accessibilityLabel="Comments"
                       >
                         <Ionicons
                           name="chatbubble-outline"
@@ -539,19 +526,19 @@ export default function FeedScreen() {
                         >
                           {commentCount}
                         </Text>
-                      </TouchableOpacity>
+                      </TactilePressable>
 
-                      <TouchableOpacity
+                      <TactilePressable
                         onPress={() => Alert.alert('Share', 'Link copied to clipboard.')}
-                        activeOpacity={0.7}
                         style={styles.actionItem}
+                        accessibilityLabel="Share post"
                       >
                         <Ionicons
                           name="paper-plane-outline"
                           size={17}
                           color={theme.colors.textMuted}
                         />
-                      </TouchableOpacity>
+                      </TactilePressable>
                     </View>
                   </Card>
                 </AnimatedEntrance>
@@ -559,6 +546,7 @@ export default function FeedScreen() {
             })}
           </View>
         )}
+        </AnimatedTabTransition>
       </View>
     </ScrollView>
   );

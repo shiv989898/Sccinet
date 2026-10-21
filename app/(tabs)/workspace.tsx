@@ -4,7 +4,15 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Card, Badge, Button, AnimatedEntrance, SkeletonLoader, SegmentedControl } from '../../src/components/ui';
+import {
+  Card,
+  Badge,
+  Button,
+  AnimatedEntrance,
+  SkeletonLoader,
+  SegmentedControl,
+  AnimatedTabTransition,
+} from '../../src/components/ui';
 import { useAuth } from '../../src/features/auth/AuthContext';
 import { useProjects } from '../../src/features/projects';
 
@@ -117,9 +125,10 @@ export default function WorkspaceScreen() {
           />
         </View>
 
-        {/* Projects List */}
-        {isLoadingProjects ? (
-          <View style={styles.projectsList}>
+        {/* Projects List with Smooth Tab Transition */}
+        <AnimatedTabTransition activeKey={activeTab}>
+          {isLoadingProjects ? (
+            <View style={styles.projectsList}>
             {[1, 2].map((i) => (
               <Card key={i} variant="clay" padding="md">
                 <View style={{ gap: 10 }}>
@@ -274,6 +283,7 @@ export default function WorkspaceScreen() {
             })}
           </View>
         )}
+        </AnimatedTabTransition>
       </View>
     </ScrollView>
   );

@@ -14,7 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../src/hooks/useTheme';
 import { useThemeStore } from '../src/stores/useThemeStore';
 import { useAuth } from '../src/features/auth/AuthContext';
-import { Card, AnimatedEntrance, SegmentedControl } from '../src/components/ui';
+import { Card, AnimatedEntrance, SegmentedControl, TactilePressable } from '../src/components/ui';
 
 interface SettingItem {
   icon: keyof typeof Ionicons.glyphMap;
@@ -95,7 +95,7 @@ export default function SettingsScreen() {
           },
         ]}
       >
-        <TouchableOpacity
+        <TactilePressable
           onPress={() => router.back()}
           style={[
             styles.backButton,
@@ -105,11 +105,11 @@ export default function SettingsScreen() {
               borderWidth: 1,
             },
           ]}
-          activeOpacity={0.7}
           hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          accessibilityLabel="Back"
         >
           <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
-        </TouchableOpacity>
+        </TactilePressable>
 
         <Text
           style={[
@@ -184,10 +184,10 @@ export default function SettingsScreen() {
             {navItems.map((item, index) => {
               const isLast = index === navItems.length - 1;
               return (
-                <TouchableOpacity
+                <TactilePressable
                   key={item.label}
                   onPress={item.onPress}
-                  activeOpacity={0.7}
+                  scaleTo={0.98}
                   style={[
                     styles.menuRow,
                     !isLast && {
@@ -195,6 +195,8 @@ export default function SettingsScreen() {
                       borderBottomColor: theme.clay.borderRecessed,
                     },
                   ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={item.label}
                 >
                   <View style={styles.menuLeft}>
                     <Ionicons
@@ -220,7 +222,7 @@ export default function SettingsScreen() {
                     size={18}
                     color={theme.colors.textMuted}
                   />
-                </TouchableOpacity>
+                </TactilePressable>
               );
             })}
           </Card>
@@ -228,9 +230,9 @@ export default function SettingsScreen() {
 
         {/* Sign Out Button */}
         <AnimatedEntrance staggerIndex={2}>
-          <TouchableOpacity
+          <TactilePressable
             onPress={handleSignOut}
-            activeOpacity={0.8}
+            scaleTo={0.96}
             style={[
               styles.signOutButton,
               {
@@ -248,6 +250,8 @@ export default function SettingsScreen() {
                 }),
               },
             ]}
+            accessibilityRole="button"
+            accessibilityLabel="Sign out"
           >
             <Ionicons name="log-out-outline" size={18} color={theme.colors.error} />
             <Text
@@ -262,7 +266,7 @@ export default function SettingsScreen() {
             >
               Sign Out
             </Text>
-          </TouchableOpacity>
+          </TactilePressable>
         </AnimatedEntrance>
       </ScrollView>
     </View>

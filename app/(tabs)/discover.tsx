@@ -20,6 +20,9 @@ import {
   AnimatedEntrance,
   SegmentedControl,
   SkeletonLoader,
+  ConnectButton,
+  AnimatedTabTransition,
+  TactilePressable,
 } from '../../src/components/ui';
 import {
   useDebounce,
@@ -32,6 +35,14 @@ export default function DiscoverScreen() {
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<'projects' | 'people'>('projects');
   const [searchQuery, setSearchQuery] = useState('');
+  const [connectedBuilders, setConnectedBuilders] = useState<Record<string, boolean>>({});
+
+  const handleToggleConnect = (builderId: string) => {
+    setConnectedBuilders((prev) => ({
+      ...prev,
+      [builderId]: !prev[builderId],
+    }));
+  };
 
   const debouncedSearch = useDebounce(searchQuery, 300);
 
@@ -159,9 +170,10 @@ export default function DiscoverScreen() {
                 Discover
               </Text>
 
-              <TouchableOpacity
+              <TactilePressable
                 onPress={() => {}}
-                activeOpacity={0.7}
+                accessibilityRole="button"
+                accessibilityLabel="Search"
                 style={[
                   styles.headerSearchIcon,
                   {
@@ -171,7 +183,7 @@ export default function DiscoverScreen() {
                 ]}
               >
                 <Ionicons name="search" size={18} color={theme.colors.text} />
-              </TouchableOpacity>
+              </TactilePressable>
             </View>
 
             <Text
@@ -220,10 +232,11 @@ export default function DiscoverScreen() {
           />
         </AnimatedEntrance>
 
-        {/* Tab Content */}
-        {activeTab === 'projects' ? (
-          isLoadingProjects ? (
-            <View style={styles.listStack}>
+        {/* Tab Content with Smooth Animated Transition */}
+        <AnimatedTabTransition activeKey={activeTab}>
+          {activeTab === 'projects' ? (
+            isLoadingProjects ? (
+              <View style={styles.listStack}>
               {[1, 2].map((i) => (
                 <Card key={i} variant="clay" padding="md">
                   <View style={{ gap: 12 }}>
@@ -410,11 +423,9 @@ export default function DiscoverScreen() {
                       </Text>
                     </View>
 
-                    <Button
-                      title="Connect"
-                      size="sm"
-                      variant="clayPrimary"
-                      onPress={() => {}}
+                    <ConnectButton
+                      isConnected={!!connectedBuilders[builder.id]}
+                      onPress={() => handleToggleConnect(builder.id)}
                     />
                   </View>
                 </Card>
@@ -422,6 +433,7 @@ export default function DiscoverScreen() {
             ))}
           </View>
         )}
+        </AnimatedTabTransition>
       </View>
     </ScrollView>
   );

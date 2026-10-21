@@ -21,7 +21,7 @@ import {
   useUserSkills,
 } from '../../src/features/profiles/useProfile';
 import { imageUploadService } from '../../src/services/storage/imageUploadService';
-import { Card, Button, Avatar, AnimatedEntrance } from '../../src/components/ui';
+import { Card, Button, Avatar, AnimatedEntrance, TactilePressable } from '../../src/components/ui';
 
 export default function ProfileScreen() {
   const theme = useTheme();
@@ -144,9 +144,8 @@ export default function ProfileScreen() {
       >
         {/* Top Bar matching Screen 8 */}
         <View style={styles.topBar}>
-          <TouchableOpacity
+          <TactilePressable
             onPress={() => router.back()}
-            activeOpacity={0.7}
             style={[
               styles.themeSwitchButton,
               {
@@ -154,9 +153,10 @@ export default function ProfileScreen() {
                 borderColor: theme.glass.clear.border,
               },
             ]}
+            accessibilityLabel="Back"
           >
             <Ionicons name="chevron-back" size={20} color={theme.colors.text} />
-          </TouchableOpacity>
+          </TactilePressable>
 
           <Text
             style={[
@@ -167,9 +167,8 @@ export default function ProfileScreen() {
             Profile
           </Text>
 
-          <TouchableOpacity
+          <TactilePressable
             onPress={() => router.push('/settings')}
-            activeOpacity={0.8}
             accessibilityRole="button"
             accessibilityLabel="Settings"
             style={[
@@ -185,7 +184,7 @@ export default function ProfileScreen() {
               size={18}
               color={theme.colors.textSecondary}
             />
-          </TouchableOpacity>
+          </TactilePressable>
         </View>
 
         <View style={styles.centerContainer}>
@@ -193,10 +192,10 @@ export default function ProfileScreen() {
           <AnimatedEntrance staggerIndex={0}>
             <Card variant="clay" padding="xl" style={styles.identityCard}>
             <View style={styles.avatarRow}>
-              <TouchableOpacity
+              <TactilePressable
                 onPress={handleAvatarPress}
-                activeOpacity={0.85}
                 disabled={isAvatarBusy}
+                scaleTo={0.94}
                 accessibilityRole="button"
                 accessibilityLabel="Change profile avatar"
                 style={[
@@ -254,7 +253,7 @@ export default function ProfileScreen() {
                     <ActivityIndicator size="small" color="#FFFFFF" />
                   </View>
                 ) : null}
-              </TouchableOpacity>
+              </TactilePressable>
             </View>
 
             <View style={styles.identityInfo}>
@@ -508,8 +507,9 @@ export default function ProfileScreen() {
                 ? userSkills.map((s) => s.name)
                 : ['Python', 'TypeScript', 'React Native', 'AI', 'Tailwind CSS', 'Docker']
               ).map((skillName) => (
-                <View
+                <TactilePressable
                   key={skillName}
+                  scaleTo={0.93}
                   style={[
                     styles.skillChip,
                     {
@@ -517,6 +517,7 @@ export default function ProfileScreen() {
                       borderColor: theme.glass.input.border,
                     },
                   ]}
+                  accessibilityLabel={`Skill: ${skillName}`}
                 >
                   <Text
                     style={[
@@ -530,7 +531,7 @@ export default function ProfileScreen() {
                   >
                     {skillName}
                   </Text>
-                </View>
+                </TactilePressable>
               ))}
             </View>
           </Card>

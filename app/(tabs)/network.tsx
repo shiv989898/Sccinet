@@ -19,6 +19,9 @@ import {
   Avatar,
   SegmentedControl,
   AnimatedEntrance,
+  ConnectButton,
+  AnimatedTabTransition,
+  TactilePressable,
 } from '../../src/components/ui';
 import {
   useConnections,
@@ -147,9 +150,8 @@ export default function NetworkScreen() {
                 Network
               </Text>
 
-              <TouchableOpacity
+              <TactilePressable
                 onPress={() => {}}
-                activeOpacity={0.7}
                 accessibilityRole="button"
                 accessibilityLabel="Search network"
                 style={[
@@ -167,7 +169,7 @@ export default function NetworkScreen() {
                 ]}
               >
                 <Ionicons name="search" size={17} color={theme.colors.text} />
-              </TouchableOpacity>
+              </TactilePressable>
             </View>
           </View>
         </AnimatedEntrance>
@@ -190,30 +192,96 @@ export default function NetworkScreen() {
           />
         </AnimatedEntrance>
 
-        {/* Connections List matching Screen 7 */}
-        {activeTab === 'connections' ? (
-          <View style={styles.listStack}>
-            {defaultMockConnections.map((person, index) => {
-              const isConnected = !!connectedState[person.id];
+        {/* Smooth Tab Transition for Connections / Requests */}
+        <AnimatedTabTransition activeKey={activeTab}>
+          {activeTab === 'connections' ? (
+            <View style={styles.listStack}>
+              {defaultMockConnections.map((person, index) => {
+                const isConnected = !!connectedState[person.id];
 
-              return (
-                <AnimatedEntrance key={person.id} staggerIndex={index}>
-                  <Card
-                    variant="clay"
-                    padding="md"
-                    style={styles.personCard}
-                    onPress={() =>
-                      router.push({
-                        pathname: '/profiles/[id]',
-                        params: { id: person.id },
-                      })
-                    }
-                  >
+                return (
+                  <AnimatedEntrance key={person.id} staggerIndex={index}>
+                    <Card
+                      variant="clay"
+                      padding="md"
+                      style={styles.personCard}
+                      onPress={() =>
+                        router.push({
+                          pathname: '/profiles/[id]',
+                          params: { id: person.id },
+                        })
+                      }
+                    >
+                      <View style={styles.personRow}>
+                        <Avatar
+                          name={person.full_name}
+                          size={44}
+                        />
+
+                        <View style={styles.personMeta}>
+                          <Text
+                            style={[
+                              styles.personName,
+                              {
+                                color: theme.colors.text,
+                                fontSize: theme.typography.sizes.sm,
+                                fontWeight: theme.typography.weights.semibold,
+                              },
+                            ]}
+                          >
+                            {person.full_name}
+                          </Text>
+
+                          <Text
+                            style={[
+                              styles.personHandle,
+                              {
+                                color: theme.colors.textMuted,
+                                fontSize: theme.typography.sizes.micro,
+                              },
+                            ]}
+                          >
+                            @{person.username}
+                          </Text>
+
+                          <Text
+                            style={[
+                              styles.personHeadline,
+                              {
+                                color: theme.colors.textSecondary,
+                                fontSize: theme.typography.sizes.xs,
+                                marginTop: 2,
+                              },
+                            ]}
+                            numberOfLines={1}
+                          >
+                            {person.headline}
+                          </Text>
+                        </View>
+
+                        {/* Tactile Connect / Connected Button */}
+                        <ConnectButton
+                          isConnected={isConnected}
+                          onPress={() => handleToggleConnect(person.id)}
+                        />
+                      </View>
+                    </Card>
+                  </AnimatedEntrance>
+                );
+              })}
+            </View>
+          ) : (
+            /* REQUESTS VIEW */
+            <View style={styles.listStack}>
+              {[
+                { id: 'req-1', name: 'Karan', handle: 'karan_builds', role: 'Full Stack Dev' },
+                { id: 'req-2', name: 'Elena', handle: 'elena.ml', role: 'AI Researcher' },
+                { id: 'req-3', name: 'Lucas', handle: 'lucas_dev', role: 'Backend Engineer' },
+              ].map((req, index) => (
+                <AnimatedEntrance key={req.id} staggerIndex={index}>
+                  <Card variant="clay" padding="md" style={styles.personCard}>
                     <View style={styles.personRow}>
-                      <Avatar
-                        name={person.full_name}
-                        size={44}
-                      />
+                      <Avatar name={req.name} size={44} />
 
                       <View style={styles.personMeta}>
                         <Text
@@ -226,129 +294,42 @@ export default function NetworkScreen() {
                             },
                           ]}
                         >
-                          {person.full_name}
-                        </Text>
-
-                        <Text
-                          style={[
-                            styles.personHandle,
-                            {
-                              color: theme.colors.textMuted,
-                              fontSize: theme.typography.sizes.micro,
-                            },
-                          ]}
-                        >
-                          @{person.username}
+                          {req.name}
                         </Text>
 
                         <Text
                           style={[
                             styles.personHeadline,
-                            {
-                              color: theme.colors.textSecondary,
-                              fontSize: theme.typography.sizes.xs,
-                              marginTop: 2,
-                            },
+                            { color: theme.colors.textSecondary, fontSize: theme.typography.sizes.xs },
                           ]}
-                          numberOfLines={1}
                         >
-                          {person.headline}
+                          {req.role}
                         </Text>
                       </View>
 
-                      {/* Action: Connected Pill or Connect Button matching Screen 7 */}
-                      {isConnected ? (
-                        <TouchableOpacity
-                          onPress={() => handleToggleConnect(person.id)}
-                          activeOpacity={0.7}
-                          style={[
-                            styles.connectedBadge,
-                            {
-                              backgroundColor: 'rgba(34, 197, 94, 0.16)',
-                              borderColor: 'rgba(34, 197, 94, 0.35)',
-                            },
-                          ]}
-                        >
-                          <Ionicons name="checkmark-circle" size={13} color="#4ADE80" style={{ marginRight: 4 }} />
-                          <Text style={[styles.connectedText, { color: '#4ADE80' }]}>
-                            Connected
-                          </Text>
-                        </TouchableOpacity>
-                      ) : (
+                      <View style={{ flexDirection: 'row', gap: 6 }}>
                         <Button
-                          title="Connect"
+                          title="Accept"
                           size="sm"
                           variant="clayPrimary"
-                          leftIcon={<Ionicons name="person-add" size={13} color="#FFFFFF" />}
-                          onPress={() => handleToggleConnect(person.id)}
-                          style={styles.connectButton}
+                          leftIcon={<Ionicons name="checkmark" size={14} color="#FFFFFF" />}
+                          onPress={() => Alert.alert('Accepted', `Connected with ${req.name}`)}
                         />
-                      )}
+                        <Button
+                          title="Decline"
+                          size="sm"
+                          variant="claySecondary"
+                          leftIcon={<Ionicons name="close" size={14} color={theme.colors.textSecondary} />}
+                          onPress={() => Alert.alert('Declined', `Declined request from ${req.name}`)}
+                        />
+                      </View>
                     </View>
                   </Card>
                 </AnimatedEntrance>
-              );
-            })}
-          </View>
-        ) : (
-          /* REQUESTS VIEW */
-          <View style={styles.listStack}>
-            {[
-              { id: 'req-1', name: 'Karan', handle: 'karan_builds', role: 'Full Stack Dev' },
-              { id: 'req-2', name: 'Elena', handle: 'elena.ml', role: 'AI Researcher' },
-              { id: 'req-3', name: 'Lucas', handle: 'lucas_dev', role: 'Backend Engineer' },
-            ].map((req, index) => (
-              <AnimatedEntrance key={req.id} staggerIndex={index}>
-                <Card variant="clay" padding="md" style={styles.personCard}>
-                  <View style={styles.personRow}>
-                    <Avatar name={req.name} size={44} />
-
-                    <View style={styles.personMeta}>
-                      <Text
-                        style={[
-                          styles.personName,
-                          {
-                            color: theme.colors.text,
-                            fontSize: theme.typography.sizes.sm,
-                            fontWeight: theme.typography.weights.semibold,
-                          },
-                        ]}
-                      >
-                        {req.name}
-                      </Text>
-
-                      <Text
-                        style={[
-                          styles.personHeadline,
-                          { color: theme.colors.textSecondary, fontSize: theme.typography.sizes.xs },
-                        ]}
-                      >
-                        {req.role}
-                      </Text>
-                    </View>
-
-                    <View style={{ flexDirection: 'row', gap: 6 }}>
-                      <Button
-                        title="Accept"
-                        size="sm"
-                        variant="clayPrimary"
-                        leftIcon={<Ionicons name="checkmark" size={14} color="#FFFFFF" />}
-                        onPress={() => Alert.alert('Accepted', `Connected with ${req.name}`)}
-                      />
-                      <Button
-                        title="Decline"
-                        size="sm"
-                        variant="claySecondary"
-                        leftIcon={<Ionicons name="close" size={14} color={theme.colors.textSecondary} />}
-                        onPress={() => Alert.alert('Declined', `Declined request from ${req.name}`)}
-                      />
-                    </View>
-                  </View>
-                </Card>
-              </AnimatedEntrance>
-            ))}
-          </View>
-        )}
+              ))}
+            </View>
+          )}
+        </AnimatedTabTransition>
       </View>
     </ScrollView>
   );
