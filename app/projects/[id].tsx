@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Alert,
+  Animated,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -18,7 +19,10 @@ import {
   Card,
   GlassView,
   SegmentedControl,
+  TactilePressable,
+  AnimatedTabTransition,
 } from '../../src/components/ui';
+import { useReducedMotion } from '../../src/theme/motion';
 import { useProject } from '../../src/features/projects';
 
 const sampleLandscape = require('../../assets/images/sample-landscape.jpg');
@@ -27,6 +31,8 @@ export default function ProjectDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
+  const reducedMotion = useReducedMotion();
+  const isWeb = Platform.OS === 'web';
 
   const { data: project } = useProject(id);
 
@@ -35,9 +41,29 @@ export default function ProjectDetailScreen() {
   const [starCount, setStarCount] = useState(24);
   const [forkCount, setForkCount] = useState(8);
 
+  const starAnim = useRef(new Animated.Value(1)).current;
+
   const toggleStar = () => {
-    setIsStarred((prev) => !prev);
+    const nextStarred = !isStarred;
+    setIsStarred(nextStarred);
     setStarCount((prev) => (isStarred ? prev - 1 : prev + 1));
+
+    if (!reducedMotion) {
+      Animated.sequence([
+        Animated.spring(starAnim, {
+          toValue: 1.35,
+          tension: 300,
+          friction: 12,
+          useNativeDriver: !isWeb,
+        }),
+        Animated.spring(starAnim, {
+          toValue: 1,
+          tension: 220,
+          friction: 14,
+          useNativeDriver: !isWeb,
+        }),
+      ]).start();
+    }
   };
 
   const handleFork = () => {
@@ -76,6 +102,33 @@ export default function ProjectDetailScreen() {
     { id: 'm6', name: 'Arjun', handle: 'arjunbuilds', role: 'Remove' as const },
   ];
 
+  const mockActivity = [
+    {
+      id: 'a1',
+      icon: 'git-merge-outline' as const,
+      title: 'Merged branch',
+      detail: 'feat/render-engine into main',
+      actor: 'Shiv',
+      time: '2h ago',
+    },
+    {
+      id: 'a2',
+      icon: 'git-pull-request-outline' as const,
+      title: 'Opened pull request',
+      detail: '#14 — Audio timeline alignment',
+      actor: 'Alex',
+      time: '4h ago',
+    },
+    {
+      id: 'a3',
+      icon: 'rocket-outline' as const,
+      title: 'Deployed release',
+      detail: 'v1.2.0 deployed to production node',
+      actor: 'Shiv',
+      time: '1d ago',
+    },
+  ];
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -101,10 +154,12 @@ export default function ProjectDetailScreen() {
               { paddingTop: Math.max(insets.top + 6, 16) },
             ]}
           >
-            <TouchableOpacity
+            <TactilePressable
               onPress={() => router.back()}
-              activeOpacity={0.7}
+              activeScale={0.88}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
             >
               <GlassView
                 variant="clear"
@@ -114,9 +169,9 @@ export default function ProjectDetailScreen() {
               >
                 <Ionicons name="chevron-back" size={20} color="#FFFFFF" />
               </GlassView>
-            </TouchableOpacity>
+            </TactilePressable>
 
-            <TouchableOpacity
+            <TactilePressable
               onPress={() =>
                 Alert.alert('Project Options', 'Project actions', [
                   { text: 'Cancel', style: 'cancel' },
@@ -124,8 +179,10 @@ export default function ProjectDetailScreen() {
                   { text: 'Report' },
                 ])
               }
-              activeOpacity={0.7}
+              activeScale={0.88}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              accessibilityRole="button"
+              accessibilityLabel="Project options"
             >
               <GlassView
                 variant="clear"
@@ -135,7 +192,7 @@ export default function ProjectDetailScreen() {
               >
                 <Ionicons name="ellipsis-horizontal" size={20} color="#FFFFFF" />
               </GlassView>
-            </TouchableOpacity>
+            </TactilePressable>
           </View>
         </View>
 
@@ -243,16 +300,18 @@ export default function ProjectDetailScreen() {
               </View>
             </View>
 
-            {/* Action Buttons: Star 24, Fork 8, Share matching Screen 11 */}
+            {/* Action Buttons: Star, Fork, Share */}
             <View style={styles.actionButtonsRow}>
-              <TouchableOpacity
+              <TactilePressable
                 onPress={toggleStar}
-                activeOpacity={0.7}
+                activeScale={0.94}
+                accessibilityRole="button"
+                accessibilityLabel={isStarred ? 'Unstar project' : 'Star project'}
                 style={[
                   styles.tactileActionButton,
                   {
                     backgroundColor: isStarred
-                      ? 'rgba(245, 158, 11, 0.20)'
+                      ? 'rgba(245, 158, 11, 0.18)'
                       : theme.clay.surfaceRecessed,
                     borderColor: isStarred
                       ? 'rgba(245, 158, 11, 0.40)'
@@ -260,11 +319,13 @@ export default function ProjectDetailScreen() {
                   },
                 ]}
               >
-                <Ionicons
-                  name={isStarred ? 'star' : 'star-outline'}
-                  size={16}
-                  color={isStarred ? '#F59E0B' : theme.colors.text}
-                />
+                <Animated.View style={{ transform: [{ scale: starAnim }] }}>
+                  <Ionicons
+                    name={isStarred ? 'star' : 'star-outline'}
+                    size={16}
+                    color={isStarred ? '#F59E0B' : theme.colors.text}
+                  />
+                </Animated.View>
                 <Text
                   style={[
                     styles.actionButtonText,
@@ -277,11 +338,13 @@ export default function ProjectDetailScreen() {
                 >
                   Star {starCount}
                 </Text>
-              </TouchableOpacity>
+              </TactilePressable>
 
-              <TouchableOpacity
+              <TactilePressable
                 onPress={handleFork}
-                activeOpacity={0.7}
+                activeScale={0.94}
+                accessibilityRole="button"
+                accessibilityLabel="Fork project"
                 style={[
                   styles.tactileActionButton,
                   {
@@ -303,11 +366,13 @@ export default function ProjectDetailScreen() {
                 >
                   Fork {forkCount}
                 </Text>
-              </TouchableOpacity>
+              </TactilePressable>
 
-              <TouchableOpacity
+              <TactilePressable
                 onPress={handleShare}
-                activeOpacity={0.7}
+                activeScale={0.94}
+                accessibilityRole="button"
+                accessibilityLabel="Share project"
                 style={[
                   styles.tactileActionButton,
                   {
@@ -329,7 +394,7 @@ export default function ProjectDetailScreen() {
                 >
                   Share
                 </Text>
-              </TouchableOpacity>
+              </TactilePressable>
             </View>
           </Card>
         </View>
@@ -347,142 +412,210 @@ export default function ProjectDetailScreen() {
           />
         </View>
 
-        {/* Tab 1: Overview / README */}
-        {activeTab === 'overview' && (
-          <View style={styles.tabContentContainer}>
-            <Card variant="clay" padding="lg" style={styles.readmeCard}>
-              <Text
-                style={[
-                  styles.readmeTitle,
-                  {
-                    color: theme.colors.text,
-                    fontSize: theme.typography.sizes.md,
-                    fontWeight: '700',
-                    marginBottom: 10,
-                  },
-                ]}
-              >
-                README
-              </Text>
-
-              <Text
-                style={[
-                  styles.readmeBody,
-                  {
-                    color: theme.colors.textSecondary,
-                    fontSize: theme.typography.sizes.sm,
-                    lineHeight: 22,
-                  },
-                ]}
-              >
-                A complete automation pipeline for generating high-quality videos using AI.
-                Integrates audio alignment, dynamic captions, and background b-roll selection.
-              </Text>
-            </Card>
-          </View>
-        )}
-
-        {/* Tab 2: Members matching Screen 12 */}
-        {activeTab === 'members' && (
-          <View style={styles.tabContentContainer}>
-            <Card variant="clay" padding="lg" style={styles.membersCard}>
-              <View style={styles.membersHeaderRow}>
+        {/* Animated Tab Content with Cross-Fade & Settle */}
+        <AnimatedTabTransition tabKey={activeTab}>
+          {activeTab === 'overview' && (
+            <View style={styles.tabContentContainer}>
+              <Card variant="clay" padding="lg" style={styles.readmeCard}>
                 <Text
                   style={[
-                    styles.membersTitle,
+                    styles.readmeTitle,
                     {
                       color: theme.colors.text,
                       fontSize: theme.typography.sizes.md,
                       fontWeight: '700',
+                      marginBottom: 10,
                     },
                   ]}
                 >
-                  Members
+                  README
                 </Text>
 
-                <TouchableOpacity
-                  onPress={() => Alert.alert('Invite Member', 'Send an invite link to collaborate.')}
-                  activeOpacity={0.7}
-                  style={styles.inviteButton}
+                <Text
+                  style={[
+                    styles.readmeBody,
+                    {
+                      color: theme.colors.textSecondary,
+                      fontSize: theme.typography.sizes.sm,
+                      lineHeight: 22,
+                    },
+                  ]}
                 >
-                  <Text style={[styles.inviteText, { color: theme.colors.primary }]}>
-                    Invite
+                  A complete automation pipeline for generating high-quality videos using AI.
+                  Integrates audio alignment, dynamic captions, and background b-roll selection.
+                </Text>
+              </Card>
+            </View>
+          )}
+
+          {activeTab === 'members' && (
+            <View style={styles.tabContentContainer}>
+              <Card variant="clay" padding="lg" style={styles.membersCard}>
+                <View style={styles.membersHeaderRow}>
+                  <Text
+                    style={[
+                      styles.membersTitle,
+                      {
+                        color: theme.colors.text,
+                        fontSize: theme.typography.sizes.md,
+                        fontWeight: '700',
+                      },
+                    ]}
+                  >
+                    Members
                   </Text>
-                </TouchableOpacity>
-              </View>
 
-              <View style={styles.membersList}>
-                {mockMembers.map((member) => (
-                  <View key={member.id} style={styles.memberRow}>
-                    <Avatar name={member.name} size={40} />
+                  <TactilePressable
+                    onPress={() => Alert.alert('Invite Member', 'Send an invite link to collaborate.')}
+                    activeScale={0.92}
+                    accessibilityRole="button"
+                    accessibilityLabel="Invite member"
+                    style={styles.inviteButton}
+                  >
+                    <Text style={[styles.inviteText, { color: theme.colors.primary }]}>
+                      Invite
+                    </Text>
+                  </TactilePressable>
+                </View>
 
-                    <View style={styles.memberMeta}>
-                      <Text
-                        style={[
-                          styles.memberName,
-                          {
-                            color: theme.colors.text,
-                            fontSize: theme.typography.sizes.sm,
-                            fontWeight: '600',
-                          },
-                        ]}
-                      >
-                        {member.name}
-                      </Text>
+                <View style={styles.membersList}>
+                  {mockMembers.map((member) => (
+                    <TactilePressable
+                      key={member.id}
+                      onPress={() => router.push(`/profiles/${member.handle}`)}
+                      activeScale={0.98}
+                      style={styles.memberRow}
+                    >
+                      <Avatar name={member.name} size={40} />
 
-                      <Text
-                        style={[
-                          styles.memberHandle,
-                          { color: theme.colors.textMuted, fontSize: theme.typography.sizes.xs },
-                        ]}
-                      >
-                        @{member.handle}
-                      </Text>
+                      <View style={styles.memberMeta}>
+                        <Text
+                          style={[
+                            styles.memberName,
+                            {
+                              color: theme.colors.text,
+                              fontSize: theme.typography.sizes.sm,
+                              fontWeight: '600',
+                            },
+                          ]}
+                        >
+                          {member.name}
+                        </Text>
+
+                        <Text
+                          style={[
+                            styles.memberHandle,
+                            { color: theme.colors.textMuted, fontSize: theme.typography.sizes.xs },
+                          ]}
+                        >
+                          @{member.handle}
+                        </Text>
+                      </View>
+
+                      {/* Role Badges */}
+                      {member.role === 'Owner' && (
+                        <Badge variant="roleOwner" label="Owner" size="sm" />
+                      )}
+                      {member.role === 'Admin' && (
+                        <Badge variant="roleAdmin" label="Admin" size="sm" />
+                      )}
+                      {member.role === 'Member' && (
+                        <Badge variant="roleMember" label="Member" size="sm" />
+                      )}
+                      {member.role === 'Remove' && (
+                        <TactilePressable
+                          onPress={() => Alert.alert('Remove Member', `Remove ${member.name} from project?`)}
+                          activeScale={0.9}
+                          hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+                        >
+                          <Badge variant="roleRemove" label="Remove" size="sm" />
+                        </TactilePressable>
+                      )}
+                    </TactilePressable>
+                  ))}
+                </View>
+              </Card>
+            </View>
+          )}
+
+          {activeTab === 'activity' && (
+            <View style={styles.tabContentContainer}>
+              <Card variant="clay" padding="lg">
+                <View style={styles.activityList}>
+                  {mockActivity.map((event, index) => (
+                    <View key={event.id} style={styles.activityRow}>
+                      <View style={styles.activityTimelineColumn}>
+                        <View
+                          style={[
+                            styles.activityIconBox,
+                            {
+                              backgroundColor: theme.clay.surfaceRecessed,
+                              borderColor: theme.clay.borderCard,
+                            },
+                          ]}
+                        >
+                          <Ionicons
+                            name={event.icon}
+                            size={14}
+                            color={theme.colors.primary}
+                          />
+                        </View>
+                        {index < mockActivity.length - 1 && (
+                          <View
+                            style={[
+                              styles.activityConnector,
+                              { backgroundColor: theme.colors.borderSubtle },
+                            ]}
+                          />
+                        )}
+                      </View>
+
+                      <View style={styles.activityContent}>
+                        <View style={styles.activityTitleRow}>
+                          <Text
+                            style={[
+                              styles.activityTitle,
+                              {
+                                color: theme.colors.text,
+                                fontSize: theme.typography.sizes.sm,
+                                fontWeight: '600',
+                              },
+                            ]}
+                          >
+                            {event.title}
+                          </Text>
+                          <Text
+                            style={[
+                              styles.activityTime,
+                              {
+                                color: theme.colors.textMuted,
+                                fontSize: theme.typography.sizes.micro,
+                              },
+                            ]}
+                          >
+                            {event.time}
+                          </Text>
+                        </View>
+                        <Text
+                          style={[
+                            styles.activityDetail,
+                            {
+                              color: theme.colors.textSecondary,
+                              fontSize: theme.typography.sizes.xs,
+                              marginTop: 2,
+                            },
+                          ]}
+                        >
+                          {event.detail} • {event.actor}
+                        </Text>
+                      </View>
                     </View>
-
-                    {/* Role Badges matching Screen 12 */}
-                    {member.role === 'Owner' && (
-                      <Badge variant="roleOwner" label="Owner" size="sm" />
-                    )}
-                    {member.role === 'Admin' && (
-                      <Badge variant="roleAdmin" label="Admin" size="sm" />
-                    )}
-                    {member.role === 'Member' && (
-                      <Badge variant="roleMember" label="Member" size="sm" />
-                    )}
-                    {member.role === 'Remove' && (
-                      <TouchableOpacity
-                        onPress={() => Alert.alert('Remove Member', `Remove ${member.name} from project?`)}
-                        activeOpacity={0.7}
-                      >
-                        <Badge variant="roleRemove" label="Remove" size="sm" />
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                ))}
-              </View>
-            </Card>
-          </View>
-        )}
-
-        {/* Tab 3: Activity */}
-        {activeTab === 'activity' && (
-          <View style={styles.tabContentContainer}>
-            <Card variant="clay" padding="lg">
-              <Text
-                style={{
-                  color: theme.colors.textSecondary,
-                  fontSize: 14,
-                  lineHeight: 22,
-                }}
-              >
-                • Shiv merged branch feat/render-engine (2h ago){'\n'}
-                • Alex opened pull request #14 (4h ago){'\n'}
-                • Release v1.2.0 deployed to production node (1d ago)
-              </Text>
-            </Card>
-          </View>
-        )}
+                  ))}
+                </View>
+              </Card>
+            </View>
+          )}
+        </AnimatedTabTransition>
       </ScrollView>
     </View>
   );
@@ -656,4 +789,42 @@ const styles = StyleSheet.create({
   memberHandle: {
     marginTop: 2,
   },
+  activityList: {
+    gap: 16,
+  },
+  activityRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+  },
+  activityTimelineColumn: {
+    alignItems: 'center',
+    width: 28,
+  },
+  activityIconBox: {
+    width: 28,
+    height: 28,
+    borderRadius: 9,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  activityConnector: {
+    width: 2,
+    height: 24,
+    marginTop: 6,
+    borderRadius: 1,
+  },
+  activityContent: {
+    flex: 1,
+    paddingTop: 2,
+  },
+  activityTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  activityTitle: {},
+  activityTime: {},
+  activityDetail: {},
 });
