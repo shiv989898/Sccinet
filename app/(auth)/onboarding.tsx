@@ -10,7 +10,7 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../src/hooks/useTheme';
-import { Button, AnimatedEntrance } from '../../src/components/ui';
+import { Button, AnimatedEntrance, TactilePressable } from '../../src/components/ui';
 
 export default function OnboardingScreen() {
   const theme = useTheme();
@@ -33,9 +33,11 @@ export default function OnboardingScreen() {
         ]}
       >
         <View style={{ flex: 1 }} />
-        <TouchableOpacity
+        <TactilePressable
           onPress={handleFinishOnboarding}
-          activeOpacity={0.7}
+          scaleTo={0.92}
+          accessibilityRole="button"
+          accessibilityLabel="Skip onboarding"
           style={[
             styles.skipButton,
             {
@@ -52,7 +54,7 @@ export default function OnboardingScreen() {
           >
             Skip
           </Text>
-        </TouchableOpacity>
+        </TactilePressable>
       </View>
 
       {/* Main Content */}
@@ -190,11 +192,13 @@ export default function OnboardingScreen() {
             {[0, 1, 2, 3].map((index) => {
               const isActive = index === activeSlide;
               return (
-                <TouchableOpacity
+                <TactilePressable
                   key={index}
                   onPress={() => setActiveSlide(index)}
-                  activeOpacity={0.7}
+                  scaleTo={0.85}
                   hitSlop={{ top: 8, bottom: 8, left: 6, right: 6 }}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Slide ${index + 1}`}
                   style={[
                     styles.dot,
                     {

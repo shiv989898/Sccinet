@@ -11,7 +11,7 @@ import {
 import { motionTokens, useReducedMotion } from '../../theme/motion';
 
 export interface TactilePressableProps extends Omit<PressableProps, 'style'> {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   scaleTo?: number;
   translateYTo?: number;

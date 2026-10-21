@@ -16,7 +16,16 @@ import { Controller, useForm, useWatch } from 'react-hook-form';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { AnimatedEntrance, Button, Card, Input, SegmentedControl, SkeletonLoader, CoverImagePicker } from '../../src/components/ui';
+import {
+  AnimatedEntrance,
+  Button,
+  Card,
+  Input,
+  SegmentedControl,
+  SkeletonLoader,
+  CoverImagePicker,
+  TactilePressable,
+} from '../../src/components/ui';
 import { motionTokens, useReducedMotion } from '../../src/theme/motion';
 import { useAvailableSkills } from '../../src/features/profiles/useProfile';
 import { useAuth } from '../../src/features/auth/AuthContext';
@@ -263,22 +272,20 @@ export default function EditProjectScreen() {
             },
           ]}
         >
-          <Pressable
+          <TactilePressable
             onPress={() => router.back()}
+            scaleTo={0.88}
             accessibilityRole="button"
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             accessibilityLabel="Go back"
-            style={({ pressed }) => [
+            style={[
               styles.backButton,
               {
                 backgroundColor: theme.clay.surface,
                 borderColor: theme.clay.borderCard,
-                opacity: pressed ? 0.85 : 1,
-                transform: pressed ? [{ scale: 0.96 }, { translateY: 0.5 }] : [],
                 ...Platform.select({
                   web: {
-                    boxShadow: pressed ? theme.clay.webChipShadow : theme.clay.webPillShadow,
-                    transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+                    boxShadow: theme.clay.webPillShadow,
                     cursor: 'pointer',
                   } as any,
                   default: theme.clay.shadowPill,
@@ -287,7 +294,7 @@ export default function EditProjectScreen() {
             ]}
           >
             <Ionicons name="arrow-back" size={18} color={theme.colors.text} />
-          </Pressable>
+          </TactilePressable>
 
           <View style={styles.topBarTitleContainer}>
             <Text
@@ -589,13 +596,14 @@ export default function EditProjectScreen() {
                     style={[styles.searchInput, { color: theme.colors.text }]}
                   />
                   {skillSearch.length > 0 && (
-                    <Pressable
+                    <TactilePressable
                       onPress={() => setSkillSearch('')}
+                      scaleTo={0.88}
                       hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
                       accessibilityLabel="Clear skill search"
                     >
                       <Ionicons name="close-circle" size={16} color={theme.colors.textMuted} />
-                    </Pressable>
+                    </TactilePressable>
                   )}
                 </View>
 
@@ -607,18 +615,17 @@ export default function EditProjectScreen() {
                     </Text>
                     <View style={styles.chipsRow}>
                       {selectedSkills.map((skill) => (
-                        <Pressable
+                        <TactilePressable
                           key={skill.id}
                           onPress={() => handleToggleSkill(skill.id)}
+                          scaleTo={0.94}
                           hitSlop={{ top: 4, bottom: 4, left: 2, right: 2 }}
                           accessibilityLabel={`Remove ${skill.name}`}
-                          style={({ pressed }) => [
+                          style={[
                             styles.chipSelected,
                             {
                               backgroundColor: theme.clay.surfaceChipSelected,
                               borderColor: theme.clay.borderChipSelected,
-                              opacity: pressed ? 0.85 : 1,
-                              transform: pressed ? [{ scale: 0.97 }] : [],
                               ...Platform.select({
                                 web: {
                                   boxShadow: theme.clay.webChipSelectedShadow,
@@ -643,7 +650,7 @@ export default function EditProjectScreen() {
                             color={theme.clay.textChipSelected}
                             style={{ marginLeft: 4 }}
                           />
-                        </Pressable>
+                        </TactilePressable>
                       ))}
                     </View>
                   </View>
@@ -663,18 +670,17 @@ export default function EditProjectScreen() {
                     </Text>
                     <View style={styles.chipsRow}>
                       {suggestedSkills.slice(0, 16).map((skill) => (
-                        <Pressable
+                        <TactilePressable
                           key={skill.id}
                           onPress={() => handleToggleSkill(skill.id)}
+                          scaleTo={0.94}
                           hitSlop={{ top: 4, bottom: 4, left: 2, right: 2 }}
                           accessibilityLabel={`Add ${skill.name}`}
-                          style={({ pressed }) => [
+                          style={[
                             styles.chipSuggested,
                             {
                               backgroundColor: theme.clay.surfaceChipSuggested,
                               borderColor: theme.clay.borderChipSuggested,
-                              opacity: pressed ? 0.85 : 1,
-                              transform: pressed ? [{ scale: 0.97 }] : [],
                               ...Platform.select({
                                 web: {
                                   boxShadow: theme.clay.webChipShadow,
@@ -699,7 +705,7 @@ export default function EditProjectScreen() {
                           >
                             {skill.name}
                           </Text>
-                        </Pressable>
+                        </TactilePressable>
                       ))}
                     </View>
                   </View>
