@@ -156,7 +156,7 @@ export default function ProjectDetailScreen() {
           >
             <TactilePressable
               onPress={() => router.back()}
-              activeScale={0.88}
+              scaleTo={0.88}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               accessibilityRole="button"
               accessibilityLabel="Go back"
@@ -179,7 +179,7 @@ export default function ProjectDetailScreen() {
                   { text: 'Report' },
                 ])
               }
-              activeScale={0.88}
+              scaleTo={0.88}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               accessibilityRole="button"
               accessibilityLabel="Project options"
@@ -304,7 +304,7 @@ export default function ProjectDetailScreen() {
             <View style={styles.actionButtonsRow}>
               <TactilePressable
                 onPress={toggleStar}
-                activeScale={0.94}
+                scaleTo={0.94}
                 accessibilityRole="button"
                 accessibilityLabel={isStarred ? 'Unstar project' : 'Star project'}
                 style={[
@@ -342,7 +342,7 @@ export default function ProjectDetailScreen() {
 
               <TactilePressable
                 onPress={handleFork}
-                activeScale={0.94}
+                scaleTo={0.94}
                 accessibilityRole="button"
                 accessibilityLabel="Fork project"
                 style={[
@@ -370,7 +370,7 @@ export default function ProjectDetailScreen() {
 
               <TactilePressable
                 onPress={handleShare}
-                activeScale={0.94}
+                scaleTo={0.94}
                 accessibilityRole="button"
                 accessibilityLabel="Share project"
                 style={[
@@ -413,7 +413,7 @@ export default function ProjectDetailScreen() {
         </View>
 
         {/* Animated Tab Content with Cross-Fade & Settle */}
-        <AnimatedTabTransition tabKey={activeTab}>
+        <AnimatedTabTransition activeKey={activeTab}>
           {activeTab === 'overview' && (
             <View style={styles.tabContentContainer}>
               <Card variant="clay" padding="lg" style={styles.readmeCard}>
@@ -467,7 +467,7 @@ export default function ProjectDetailScreen() {
 
                   <TactilePressable
                     onPress={() => Alert.alert('Invite Member', 'Send an invite link to collaborate.')}
-                    activeScale={0.92}
+                    scaleTo={0.92}
                     accessibilityRole="button"
                     accessibilityLabel="Invite member"
                     style={styles.inviteButton}
@@ -483,7 +483,7 @@ export default function ProjectDetailScreen() {
                     <TactilePressable
                       key={member.id}
                       onPress={() => router.push(`/profiles/${member.handle}`)}
-                      activeScale={0.98}
+                      scaleTo={0.98}
                       style={styles.memberRow}
                     >
                       <Avatar name={member.name} size={40} />
@@ -525,7 +525,7 @@ export default function ProjectDetailScreen() {
                       {member.role === 'Remove' && (
                         <TactilePressable
                           onPress={() => Alert.alert('Remove Member', `Remove ${member.name} from project?`)}
-                          activeScale={0.9}
+                          scaleTo={0.9}
                           hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
                         >
                           <Badge variant="roleRemove" label="Remove" size="sm" />

@@ -165,9 +165,12 @@ export default function PublicProfileScreen() {
     return (
       <View style={[styles.container, { backgroundColor: 'transparent' }]}>
         <View style={[styles.headerBar, { paddingHorizontal: theme.spacing.lg }]}>
-          <TouchableOpacity
+          <TactilePressable
             onPress={handleBack}
-            activeOpacity={0.8}
+            scaleTo={0.88}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
             style={[
               styles.backButton,
               {
@@ -177,7 +180,7 @@ export default function PublicProfileScreen() {
             ]}
           >
             <Ionicons name="arrow-back" size={20} color={theme.colors.text} />
-          </TouchableOpacity>
+          </TactilePressable>
         </View>
 
         <View style={[styles.content, { padding: theme.spacing.lg, gap: 16 }]}>
@@ -198,9 +201,12 @@ export default function PublicProfileScreen() {
     return (
       <View style={[styles.container, { backgroundColor: 'transparent' }]}>
         <View style={[styles.headerBar, { paddingHorizontal: theme.spacing.lg }]}>
-          <TouchableOpacity
+          <TactilePressable
             onPress={handleBack}
-            activeOpacity={0.8}
+            scaleTo={0.88}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
             style={[
               styles.backButton,
               {
@@ -210,7 +216,7 @@ export default function PublicProfileScreen() {
             ]}
           >
             <Ionicons name="arrow-back" size={20} color={theme.colors.text} />
-          </TouchableOpacity>
+          </TactilePressable>
         </View>
 
         <View style={[styles.content, { padding: theme.spacing.lg }]}>
@@ -244,9 +250,9 @@ export default function PublicProfileScreen() {
           },
         ]}
       >
-        <TouchableOpacity
+        <TactilePressable
           onPress={handleBack}
-          activeOpacity={0.8}
+          scaleTo={0.88}
           accessibilityRole="button"
           accessibilityLabel="Go back"
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -263,7 +269,7 @@ export default function PublicProfileScreen() {
           ]}
         >
           <Ionicons name="arrow-back" size={20} color={theme.colors.text} />
-        </TouchableOpacity>
+        </TactilePressable>
 
         <Text
           style={[
@@ -492,9 +498,9 @@ export default function PublicProfileScreen() {
                           </Text>
                         </View>
 
-                        <TouchableOpacity
+                        <TactilePressable
                           onPress={handleRemove}
-                          activeOpacity={0.7}
+                          scaleTo={0.88}
                           hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
                           accessibilityLabel="Remove connection"
                           style={styles.disconnectProfileButton}
@@ -504,7 +510,7 @@ export default function PublicProfileScreen() {
                             size={16}
                             color={theme.colors.textMuted}
                           />
-                        </TouchableOpacity>
+                        </TactilePressable>
                       </View>
                     ) : null}
                   </View>
